@@ -1,0 +1,11 @@
+$bog_doodle_app $mol_page
+	title @ \Doodle
+	tools /
+		<= Sources $mol_link_source
+			uri \https://github.com/b-on-g/doodle
+	body /
+		<= Intro $mol_text
+			text @ \
+				\Рисуй линии, слушай музыку. Каждая линия звучит в выбранной тональности, всё бесплатно и работает без сети.
+				\
+				\Скоро здесь будет холст.

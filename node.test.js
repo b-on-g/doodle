@@ -6108,6 +6108,18 @@ var $;
 
 
 ;
+	($.$mol_icon_layers) = class $mol_icon_layers extends ($.$mol_icon) {
+		path(){
+			return "M12,16L19.36,10.27L21,9L12,2L3,9L4.63,10.27M12,18.54L4.62,12.81L3,14.07L12,21.07L21,14.07L19.37,12.8L12,18.54Z";
+		}
+	};
+
+
+;
+"use strict";
+
+
+;
 	($.$mol_icon_tune) = class $mol_icon_tune extends ($.$mol_icon) {
 		path(){
 			return "M3,17V19H9V17H3M3,5V7H13V5H3M13,21V19H21V17H13V15H11V21H13M7,9V11H3V13H7V15H9V9H7M21,13V11H11V13H21M15,9H17V7H21V5H17V3H15V9Z";
@@ -6120,9 +6132,9 @@ var $;
 
 
 ;
-	($.$mol_icon_pencil) = class $mol_icon_pencil extends ($.$mol_icon) {
+	($.$mol_icon_brush) = class $mol_icon_brush extends ($.$mol_icon) {
 		path(){
-			return "M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z";
+			return "M20.71,4.63L19.37,3.29C19,2.9 18.35,2.9 17.96,3.29L9,12.25L11.75,15L20.71,6.04C21.1,5.65 21.1,5 20.71,4.63M7,14A3,3 0 0,0 4,17C4,18.31 2.84,19 2,19C2.92,20.22 4.5,21 6,21A4,4 0 0,0 10,17A3,3 0 0,0 7,14Z";
 		}
 	};
 
@@ -6168,1800 +6180,52 @@ var $;
 
 
 ;
-	($.$mol_icon_magnify) = class $mol_icon_magnify extends ($.$mol_icon) {
-		path(){
-			return "M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z";
+	($.$bog_doodle_slider) = class $bog_doodle_slider extends ($.$mol_view) {
+		hint(){
+			return "";
 		}
-	};
-
-
-;
-"use strict";
-
-
-;
-	($.$mol_icon_magnify_minus) = class $mol_icon_magnify_minus extends ($.$mol_icon) {
-		path(){
-			return "M9,2A7,7 0 0,1 16,9C16,10.57 15.5,12 14.61,13.19L15.41,14H16L22,20L20,22L14,16V15.41L13.19,14.61C12,15.5 10.57,16 9,16A7,7 0 0,1 2,9A7,7 0 0,1 9,2M5,8V10H13V8H5Z";
+		value_text(){
+			return "0";
 		}
-	};
-
-
-;
-"use strict";
-
-
-;
-	($.$mol_icon_content_duplicate) = class $mol_icon_content_duplicate extends ($.$mol_icon) {
-		path(){
-			return "M11,17H4A2,2 0 0,1 2,15V3A2,2 0 0,1 4,1H16V3H4V15H11V13L15,16L11,19V17M19,21V7H8V13H6V7A2,2 0 0,1 8,5H19A2,2 0 0,1 21,7V21A2,2 0 0,1 19,23H8A2,2 0 0,1 6,21V19H8V21H19Z";
-		}
-	};
-
-
-;
-"use strict";
-
-
-;
-	($.$mol_icon_delete) = class $mol_icon_delete extends ($.$mol_icon) {
-		path(){
-			return "M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z";
-		}
-	};
-
-
-;
-"use strict";
-
-
-;
-	($.$mol_icon_plus) = class $mol_icon_plus extends ($.$mol_icon) {
-		path(){
-			return "M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z";
-		}
-	};
-
-
-;
-"use strict";
-
-
-;
-"use strict";
-var $;
-(function ($) {
-    function $bog_doodle_sketch_stroke_box(stroke) {
-        let left = Infinity, right = -Infinity, top = Infinity, bottom = -Infinity;
-        const points = stroke.points;
-        for (let i = 0; i < points.length; i += 3) {
-            left = Math.min(left, points[i]);
-            right = Math.max(right, points[i]);
-            top = Math.min(top, points[i + 1]);
-            bottom = Math.max(bottom, points[i + 1]);
-        }
-        return { left, right, top, bottom };
-    }
-    $.$bog_doodle_sketch_stroke_box = $bog_doodle_sketch_stroke_box;
-    function $bog_doodle_sketch_stroke_near(stroke, x, y, radius) {
-        const points = stroke.points;
-        const r2 = radius * radius;
-        for (let i = 0; i < points.length; i += 3) {
-            const dx = points[i] - x;
-            const dy = points[i + 1] - y;
-            if (dx * dx + dy * dy <= r2)
-                return true;
-            if (i + 3 >= points.length)
-                continue;
-            const sx = points[i + 3] - points[i];
-            const sy = points[i + 4] - points[i + 1];
-            const len = sx * sx + sy * sy;
-            if (!len)
-                continue;
-            const t = Math.max(0, Math.min(1, ((x - points[i]) * sx + (y - points[i + 1]) * sy) / len));
-            const px = points[i] + t * sx - x;
-            const py = points[i + 1] + t * sy - y;
-            if (px * px + py * py <= r2)
-                return true;
-        }
-        return false;
-    }
-    $.$bog_doodle_sketch_stroke_near = $bog_doodle_sketch_stroke_near;
-    function $bog_doodle_sketch_stroke_shift(stroke, dx, dy, id = stroke.id) {
-        const points = stroke.points.map((v, i) => {
-            if (i % 3 === 0)
-                return Math.max(0, Math.min(0.9999, v + dx));
-            if (i % 3 === 1)
-                return Math.max(0, Math.min(1, v + dy));
-            return v;
-        });
-        return { ...stroke, id, points };
-    }
-    $.$bog_doodle_sketch_stroke_shift = $bog_doodle_sketch_stroke_shift;
-    function $bog_doodle_sketch_stroke_id() {
-        return Math.random().toString(36).slice(2, 10);
-    }
-    $.$bog_doodle_sketch_stroke_id = $bog_doodle_sketch_stroke_id;
-    class $bog_doodle_sketch extends $mol_object {
-        strokes(next) {
-            return next ?? [];
-        }
-        past(next) {
-            return next ?? [];
-        }
-        future(next) {
-            return next ?? [];
-        }
-        commit(next) {
-            const prev = this.strokes();
-            if (prev === next)
-                return;
-            this.past([...this.past().slice(-199), prev]);
-            this.future([]);
-            this.strokes(next);
-        }
-        reset(next) {
-            this.past([]);
-            this.future([]);
-            this.strokes(next);
-        }
-        undo_enabled() {
-            return this.past().length > 0;
-        }
-        redo_enabled() {
-            return this.future().length > 0;
-        }
-        undo() {
-            const past = this.past();
-            if (!past.length)
-                return;
-            this.future([this.strokes(), ...this.future()]);
-            this.past(past.slice(0, -1));
-            this.strokes(past[past.length - 1]);
-        }
-        redo() {
-            const future = this.future();
-            if (!future.length)
-                return;
-            this.past([...this.past(), this.strokes()]);
-            this.future(future.slice(1));
-            this.strokes(future[0]);
-        }
-        add(stroke) {
-            this.commit([...this.strokes(), stroke]);
-        }
-        remove(ids) {
-            if (!ids.length)
-                return;
-            const drop = new Set(ids);
-            this.commit(this.strokes().filter(s => !drop.has(s.id)));
-        }
-        shift(ids, dx, dy) {
-            if (!ids.length)
-                return;
-            const moved = new Set(ids);
-            this.commit(this.strokes().map(s => moved.has(s.id) ? $bog_doodle_sketch_stroke_shift(s, dx, dy) : s));
-        }
-        copy(ids, dx, dy) {
-            const picked = new Set(ids);
-            const copies = this.strokes()
-                .filter(s => picked.has(s.id))
-                .map(s => $bog_doodle_sketch_stroke_shift(s, dx, dy, $bog_doodle_sketch_stroke_id()));
-            if (!copies.length)
-                return [];
-            this.commit([...this.strokes(), ...copies]);
-            return copies.map(s => s.id);
-        }
-        clear() {
-            if (!this.strokes().length)
-                return;
-            this.commit([]);
-        }
-        hits(x, y, radius) {
-            return this.strokes().filter(s => $bog_doodle_sketch_stroke_near(s, x, y, radius)).map(s => s.id);
-        }
-        inside(left, top, right, bottom) {
-            return this.strokes().filter(s => {
-                const box = $bog_doodle_sketch_stroke_box(s);
-                return box.right >= left && box.left <= right && box.bottom >= top && box.top <= bottom;
-            }).map(s => s.id);
-        }
-    }
-    __decorate([
-        $mol_mem
-    ], $bog_doodle_sketch.prototype, "strokes", null);
-    __decorate([
-        $mol_mem
-    ], $bog_doodle_sketch.prototype, "past", null);
-    __decorate([
-        $mol_mem
-    ], $bog_doodle_sketch.prototype, "future", null);
-    $.$bog_doodle_sketch = $bog_doodle_sketch;
-})($ || ($ = {}));
-
-;
-	($.$bog_doodle_board) = class $bog_doodle_board extends ($.$mol_view) {
-		pointer_down(next){
-			if(next !== undefined) return next;
-			return null;
-		}
-		pointer_move(next){
-			if(next !== undefined) return next;
-			return null;
-		}
-		pointer_up(next){
-			if(next !== undefined) return next;
-			return null;
-		}
-		pointer_cancel(next){
-			if(next !== undefined) return next;
-			return null;
-		}
-		pointer_leave(next){
-			if(next !== undefined) return next;
-			return null;
-		}
-		wheel(next){
-			if(next !== undefined) return next;
-			return null;
-		}
-		context_menu(next){
+		changed(next){
 			if(next !== undefined) return next;
 			return null;
 		}
 		dom_name(){
-			return "canvas";
+			return "input";
 		}
-		sketch(){
-			const obj = new this.$.$bog_doodle_sketch();
-			return obj;
-		}
-		notes(){
-			return [];
-		}
-		steps(){
-			return 16;
-		}
-		beat_steps(){
-			return 2;
-		}
-		bar_steps(){
-			return 8;
-		}
-		tool(next){
+		value(next){
 			if(next !== undefined) return next;
-			return "draw";
-		}
-		color(){
 			return 0;
 		}
-		snap(){
-			return false;
+		min(){
+			return 0;
 		}
-		pen_only(){
-			return false;
+		max(){
+			return 100;
 		}
-		back(){
-			return "";
-		}
-		selected(next){
-			if(next !== undefined) return next;
-			return [];
-		}
-		playhead(){
-			return null;
-		}
-		playing(){
-			return false;
-		}
-		note_hover(next){
-			if(next !== undefined) return next;
-			return null;
+		step(){
+			return 1;
 		}
 		attr(){
-			return {...(super.attr()), "bog_doodle_board_tool": (this.tool())};
-		}
-		event(){
 			return {
-				"pointerdown": (next) => (this.pointer_down(next)), 
-				"pointermove": (next) => (this.pointer_move(next)), 
-				"pointerup": (next) => (this.pointer_up(next)), 
-				"pointercancel": (next) => (this.pointer_cancel(next)), 
-				"pointerleave": (next) => (this.pointer_leave(next)), 
-				"wheel": (next) => (this.wheel(next)), 
-				"contextmenu": (next) => (this.context_menu(next))
+				...(super.attr()), 
+				"type": "range", 
+				"min": (this.min()), 
+				"max": (this.max()), 
+				"step": (this.step()), 
+				"title": (this.hint())
 			};
 		}
-	};
-	($mol_mem(($.$bog_doodle_board.prototype), "pointer_down"));
-	($mol_mem(($.$bog_doodle_board.prototype), "pointer_move"));
-	($mol_mem(($.$bog_doodle_board.prototype), "pointer_up"));
-	($mol_mem(($.$bog_doodle_board.prototype), "pointer_cancel"));
-	($mol_mem(($.$bog_doodle_board.prototype), "pointer_leave"));
-	($mol_mem(($.$bog_doodle_board.prototype), "wheel"));
-	($mol_mem(($.$bog_doodle_board.prototype), "context_menu"));
-	($mol_mem(($.$bog_doodle_board.prototype), "sketch"));
-	($mol_mem(($.$bog_doodle_board.prototype), "tool"));
-	($mol_mem(($.$bog_doodle_board.prototype), "selected"));
-	($mol_mem(($.$bog_doodle_board.prototype), "note_hover"));
-
-
-;
-"use strict";
-var $;
-(function ($) {
-    $.$bog_doodle_scale_steps = {
-        major_penta: [0, 2, 4, 7, 9],
-        minor_penta: [0, 3, 5, 7, 10],
-        major: [0, 2, 4, 5, 7, 9, 11],
-        minor: [0, 2, 3, 5, 7, 8, 10],
-        harmonic: [0, 2, 3, 5, 7, 8, 11],
-        dorian: [0, 2, 3, 5, 7, 9, 10],
-        phrygian: [0, 1, 3, 5, 7, 8, 10],
-        lydian: [0, 2, 4, 6, 7, 9, 11],
-        mixolydian: [0, 2, 4, 5, 7, 9, 10],
-        blues: [0, 3, 5, 6, 7, 10],
-        chromatic: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
-    };
-    $.$bog_doodle_scale_keys = ['C', 'C♯', 'D', 'E♭', 'E', 'F', 'F♯', 'G', 'A♭', 'A', 'B♭', 'B'];
-    function $bog_doodle_scale_notes(key, scale, octave, range) {
-        const steps = $.$bog_doodle_scale_steps[scale] ?? $.$bog_doodle_scale_steps.major;
-        const base = 12 * (octave + 1) + key;
-        const notes = [];
-        for (let o = 0; o < range; ++o) {
-            for (const step of steps)
-                notes.push(base + 12 * o + step);
-        }
-        notes.push(base + 12 * range);
-        return notes;
-    }
-    $.$bog_doodle_scale_notes = $bog_doodle_scale_notes;
-    function $bog_doodle_scale_row(y, count) {
-        const row = Math.floor((1 - y) * count);
-        return Math.max(0, Math.min(count - 1, row));
-    }
-    $.$bog_doodle_scale_row = $bog_doodle_scale_row;
-    function $bog_doodle_scale_row_y(row, count) {
-        return 1 - (row + 0.5) / count;
-    }
-    $.$bog_doodle_scale_row_y = $bog_doodle_scale_row_y;
-    function $bog_doodle_scale_name(midi) {
-        return $.$bog_doodle_scale_keys[((midi % 12) + 12) % 12] + (Math.floor(midi / 12) - 1);
-    }
-    $.$bog_doodle_scale_name = $bog_doodle_scale_name;
-    function $bog_doodle_scale_freq(midi) {
-        return 440 * 2 ** ((midi - 69) / 12);
-    }
-    $.$bog_doodle_scale_freq = $bog_doodle_scale_freq;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $.$bog_doodle_score_grids = {
-        '4': 4,
-        '8': 8,
-        '8t': 12,
-        '16': 16,
-        '16t': 24,
-        '32': 32,
-        'free': 96,
-    };
-    function rows_at(points, left, right, count) {
-        const center = (left + right) / 2;
-        const found = new Map();
-        for (let i = 0; i + 3 < points.length; i += 3) {
-            const x1 = points[i], x2 = points[i + 3];
-            if (Math.min(x1, x2) > center || Math.max(x1, x2) < center || x1 === x2)
-                continue;
-            const t = (center - x1) / (x2 - x1);
-            const y = points[i + 1] + t * (points[i + 4] - points[i + 1]);
-            const p = points[i + 2] + t * (points[i + 5] - points[i + 2]);
-            const row = $bog_doodle_scale_row(y, count);
-            found.set(row, Math.max(found.get(row) ?? 0, p));
-        }
-        if (found.size)
-            return found;
-        let low = Infinity, high = -Infinity, pressure = 0;
-        for (let i = 0; i < points.length; i += 3) {
-            if (points[i] < left || points[i] >= right)
-                continue;
-            const row = $bog_doodle_scale_row(points[i + 1], count);
-            low = Math.min(low, row);
-            high = Math.max(high, row);
-            pressure = Math.max(pressure, points[i + 2]);
-        }
-        for (let row = low; row <= high; ++row)
-            found.set(row, pressure);
-        return found;
-    }
-    function $bog_doodle_score(strokes, notes, steps) {
-        const events = [];
-        for (const stroke of strokes) {
-            const box = $bog_doodle_sketch_stroke_box(stroke);
-            const first = Math.max(0, Math.floor(box.left * steps));
-            const last = Math.min(steps - 1, Math.max(first, Math.ceil(box.right * steps) - 1));
-            let open = new Map();
-            for (let step = first; step <= last; ++step) {
-                const rows = rows_at(stroke.points, step / steps, (step + 1) / steps, notes.length);
-                const next = new Map();
-                for (const [row, pressure] of rows) {
-                    const prev = open.get(row);
-                    if (prev) {
-                        prev.length++;
-                        next.set(row, prev);
-                        continue;
-                    }
-                    const event = {
-                        stroke: stroke.id,
-                        color: stroke.color,
-                        step,
-                        length: 1,
-                        midi: notes[row],
-                        velocity: Math.round((0.25 + 0.75 * pressure) * 100) / 100,
-                    };
-                    events.push(event);
-                    next.set(row, event);
-                }
-                open = next;
-            }
-        }
-        return events.sort((a, b) => a.step - b.step || a.midi - b.midi);
-    }
-    $.$bog_doodle_score = $bog_doodle_score;
-    function $bog_doodle_score_time(step, steps_per_bar, bar_time, swing) {
-        const step_time = bar_time / steps_per_bar;
-        const swingable = steps_per_bar === 8 || steps_per_bar === 16;
-        const shift = swingable && step % 2 === 1 ? swing * step_time / 3 : 0;
-        return step * step_time + shift;
-    }
-    $.$bog_doodle_score_time = $bog_doodle_score_time;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_base64_encode(src) {
-        return src.toBase64();
-    }
-    $.$mol_base64_encode = $mol_base64_encode;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_base64_encode_node(str) {
-        if (!str)
-            return '';
-        const buf = Buffer.isBuffer(str) ? str : Buffer.from(str);
-        return buf.toString('base64');
-    }
-    $.$mol_base64_encode_node = $mol_base64_encode_node;
-    if (!('toBase64' in Uint8Array.prototype)) {
-        $.$mol_base64_encode = $mol_base64_encode_node;
-    }
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_base64_decode(base64) {
-        return Uint8Array.fromBase64(base64);
-    }
-    $.$mol_base64_decode = $mol_base64_decode;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_base64_decode_node(base64Str) {
-        // without Uint8Array breaks $mol_compare_deep
-        const buffer = Buffer.from(base64Str, 'base64');
-        return new Uint8Array(buffer.buffer, buffer.byteOffset, buffer.byteLength);
-    }
-    $.$mol_base64_decode_node = $mol_base64_decode_node;
-    if (!('fromBase64' in Uint8Array)) {
-        $.$mol_base64_decode = $mol_base64_decode_node;
-    }
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    function $bog_doodle_piece_empty() {
-        return {
-            title: '',
-            key: 0,
-            scale: 'major_penta',
-            octave: 3,
-            range: 2,
-            bpm: 100,
-            bars: 2,
-            grid: '8',
-            swing: 0,
-            patterns: [[]],
-            chain: false,
-            back: '',
-        };
-    }
-    $.$bog_doodle_piece_empty = $bog_doodle_piece_empty;
-    function points_pack(points) {
-        const bytes = new Uint8Array(points.length / 3 * 4);
-        for (let i = 0, j = 0; i < points.length; i += 3, j += 4) {
-            const x = Math.round(Math.max(0, Math.min(1, points[i])) * 4095);
-            const y = Math.round(Math.max(0, Math.min(1, points[i + 1])) * 4095);
-            const p = Math.round(Math.max(0, Math.min(1, points[i + 2])) * 255);
-            bytes[j] = x >> 4;
-            bytes[j + 1] = ((x & 15) << 4) | (y >> 8);
-            bytes[j + 2] = y & 255;
-            bytes[j + 3] = p;
-        }
-        return $mol_base64_encode(bytes).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-    }
-    function points_unpack(str) {
-        const base64 = str.replace(/-/g, '+').replace(/_/g, '/');
-        const bytes = $mol_base64_decode(base64 + '='.repeat((4 - base64.length % 4) % 4));
-        const points = [];
-        for (let j = 0; j + 3 < bytes.length; j += 4) {
-            const x = (bytes[j] << 4) | (bytes[j + 1] >> 4);
-            const y = ((bytes[j + 1] & 15) << 8) | bytes[j + 2];
-            points.push(x / 4095, y / 4095, bytes[j + 3] / 255);
-        }
-        return points;
-    }
-    function $bog_doodle_piece_pack(piece) {
-        return JSON.stringify({
-            v: 1,
-            t: piece.title,
-            k: piece.key,
-            s: piece.scale,
-            o: piece.octave,
-            r: piece.range,
-            b: piece.bpm,
-            n: piece.bars,
-            g: piece.grid,
-            w: piece.swing,
-            c: piece.chain ? 1 : 0,
-            p: piece.patterns.map(strokes => strokes.map(s => s.color + '.' + points_pack(s.points))),
-        });
-    }
-    $.$bog_doodle_piece_pack = $bog_doodle_piece_pack;
-    function $bog_doodle_piece_unpack(str) {
-        const raw = JSON.parse(str);
-        const empty = $bog_doodle_piece_empty();
-        const patterns = (raw.p ?? [[]]).map(strokes => strokes.map(item => {
-            const [color, points] = item.split('.');
-            return { id: $bog_doodle_sketch_stroke_id(), color: Number(color) || 0, points: points_unpack(points ?? '') };
-        }));
-        return {
-            ...empty,
-            title: String(raw.t ?? ''),
-            key: Number(raw.k ?? empty.key),
-            scale: raw.s in $bog_doodle_scale_steps ? raw.s : empty.scale,
-            octave: Number(raw.o ?? empty.octave),
-            range: Number(raw.r ?? empty.range),
-            bpm: Number(raw.b ?? empty.bpm),
-            bars: Number(raw.n ?? empty.bars),
-            grid: raw.g in $bog_doodle_score_grids ? raw.g : empty.grid,
-            swing: Number(raw.w ?? 0),
-            chain: Boolean(raw.c),
-            patterns: patterns.length ? patterns : [[]],
-        };
-    }
-    $.$bog_doodle_piece_unpack = $bog_doodle_piece_unpack;
-    function $bog_doodle_piece_simplify(points, tolerance) {
-        const count = points.length / 3;
-        if (count < 3)
-            return points;
-        const keep = new Uint8Array(count);
-        keep[0] = keep[count - 1] = 1;
-        const stack = [[0, count - 1]];
-        while (stack.length) {
-            const [from, to] = stack.pop();
-            const ax = points[from * 3], ay = points[from * 3 + 1];
-            const bx = points[to * 3], by = points[to * 3 + 1];
-            const len = Math.hypot(bx - ax, by - ay) || 1e-9;
-            let far = -1, dist = tolerance;
-            for (let i = from + 1; i < to; ++i) {
-                const px = points[i * 3], py = points[i * 3 + 1];
-                const d = Math.abs((bx - ax) * (ay - py) - (ax - px) * (by - ay)) / len;
-                const dp = Math.abs(points[i * 3 + 2] - points[from * 3 + 2]);
-                const score = Math.max(d, dp * tolerance * 4);
-                if (score > dist) {
-                    dist = score;
-                    far = i;
-                }
-            }
-            if (far < 0)
-                continue;
-            keep[far] = 1;
-            stack.push([from, far], [far, to]);
-        }
-        const result = [];
-        for (let i = 0; i < count; ++i) {
-            if (keep[i])
-                result.push(points[i * 3], points[i * 3 + 1], points[i * 3 + 2]);
-        }
-        return result;
-    }
-    $.$bog_doodle_piece_simplify = $bog_doodle_piece_simplify;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $.$bog_doodle_synth_colors = [
-        { ink: '#1f1d1a', name: 'Пианино' },
-        { ink: '#d8452f', name: 'Щипок' },
-        { ink: '#2f6fd8', name: 'Пэд' },
-        { ink: '#2a9d5c', name: 'Маримба' },
-        { ink: '#e39a1b', name: 'Лид' },
-        { ink: '#8a44c8', name: 'Колокол' },
-    ];
-    function envelope(ctx, dest, time, attack, peak, hold, release) {
-        const gain = ctx.createGain();
-        gain.gain.setValueAtTime(0.0001, time);
-        gain.gain.linearRampToValueAtTime(peak, time + attack);
-        gain.gain.setTargetAtTime(peak * 0.6, time + attack, hold / 3 + 0.01);
-        gain.gain.setTargetAtTime(0.0001, time + attack + hold, release / 4);
-        gain.connect(dest);
-        return { gain, end: time + attack + hold + release };
-    }
-    function osc(ctx, type, freq, dest, time, end, detune = 0) {
-        const node = ctx.createOscillator();
-        node.type = type;
-        node.frequency.setValueAtTime(freq, time);
-        node.detune.setValueAtTime(detune, time);
-        node.connect(dest);
-        node.start(time);
-        node.stop(end);
-        return node;
-    }
-    function $bog_doodle_synth_note(ctx, dest, color, freq, time, length, velocity) {
-        const level = 0.18 * velocity;
-        switch (color) {
-            case 1: {
-                const env = envelope(ctx, dest, time, 0.004, level * 1.2, Math.min(length, 0.25), 0.4);
-                const filter = ctx.createBiquadFilter();
-                filter.type = 'lowpass';
-                filter.frequency.setValueAtTime(freq * 8, time);
-                filter.frequency.exponentialRampToValueAtTime(freq * 1.5, time + 0.3);
-                filter.connect(env.gain);
-                osc(ctx, 'sawtooth', freq, filter, time, env.end);
-                return;
-            }
-            case 2: {
-                const env = envelope(ctx, dest, time, Math.min(0.25, length / 2), level * 0.8, length, 0.6);
-                osc(ctx, 'sine', freq, env.gain, time, env.end, -7);
-                osc(ctx, 'triangle', freq, env.gain, time, env.end, 7);
-                osc(ctx, 'sine', freq * 2, env.gain, time, env.end, 3);
-                return;
-            }
-            case 3: {
-                const env = envelope(ctx, dest, time, 0.003, level * 1.4, 0.05, 0.5);
-                osc(ctx, 'sine', freq, env.gain, time, env.end);
-                const over = envelope(ctx, dest, time, 0.002, level * 0.4, 0.01, 0.12);
-                osc(ctx, 'sine', freq * 4, over.gain, time, over.end);
-                return;
-            }
-            case 4: {
-                const env = envelope(ctx, dest, time, 0.01, level * 0.6, length, 0.12);
-                const filter = ctx.createBiquadFilter();
-                filter.type = 'lowpass';
-                filter.frequency.setValueAtTime(Math.min(12000, freq * 6), time);
-                filter.Q.setValueAtTime(4, time);
-                filter.connect(env.gain);
-                osc(ctx, 'square', freq, filter, time, env.end);
-                osc(ctx, 'sawtooth', freq, filter, time, env.end, 9);
-                return;
-            }
-            case 5: {
-                const env = envelope(ctx, dest, time, 0.002, level * 1.1, 0.02, 1.6);
-                const carrier = osc(ctx, 'sine', freq, env.gain, time, env.end);
-                const depth = ctx.createGain();
-                depth.gain.setValueAtTime(freq * 2.5, time);
-                depth.gain.exponentialRampToValueAtTime(1, time + 1.2);
-                depth.connect(carrier.frequency);
-                osc(ctx, 'sine', freq * 3.5, depth, time, env.end);
-                return;
-            }
-            default: {
-                const env = envelope(ctx, dest, time, 0.005, level * 1.3, Math.min(length, 0.4), 0.8);
-                osc(ctx, 'triangle', freq, env.gain, time, env.end);
-                const over = envelope(ctx, dest, time, 0.003, level * 0.35, 0.05, 0.3);
-                osc(ctx, 'sine', freq * 2, over.gain, time, over.end);
-            }
-        }
-    }
-    $.$bog_doodle_synth_note = $bog_doodle_synth_note;
-    function $bog_doodle_synth_click(ctx, dest, time, accent) {
-        const env = envelope(ctx, dest, time, 0.001, accent ? 0.25 : 0.12, 0.005, 0.05);
-        osc(ctx, 'square', accent ? 1760 : 1320, env.gain, time, env.end);
-    }
-    $.$bog_doodle_synth_click = $bog_doodle_synth_click;
-    function $bog_doodle_synth_bus(ctx) {
-        const comp = ctx.createDynamicsCompressor();
-        comp.threshold.setValueAtTime(-14, 0);
-        comp.ratio.setValueAtTime(4, 0);
-        comp.connect(ctx.destination);
-        return comp;
-    }
-    $.$bog_doodle_synth_bus = $bog_doodle_synth_bus;
-})($ || ($ = {}));
-
-;
-"use strict";
-
-;
-"use strict";
-
-;
-"use strict";
-
-;
-"use strict";
-
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_style_sheet(Component, config0) {
-        let rules = [];
-        const block = $mol_dom_qname($mol_ambient({}).$mol_func_name(Component));
-        const kebab = (name) => name.replace(/[A-Z]/g, letter => '-' + letter.toLowerCase());
-        const make_class = (prefix, path, config) => {
-            const props = [];
-            const selector = (prefix, path) => {
-                if (path.length === 0)
-                    return prefix || `[${block}]`;
-                let res = `[${block}_${path.join('_')}]`;
-                if (prefix)
-                    res = prefix + ' :where(' + res + ')';
-                return res;
-            };
-            for (const key of Object.keys(config).reverse()) {
-                if (/^(--)?[a-z]/.test(key)) {
-                    const addProp = (keys, val) => {
-                        if (Array.isArray(val)) {
-                            if (val[0] && [Array, Object].includes(val[0].constructor)) {
-                                val = val.map(v => {
-                                    return Object.entries(v).map(([n, a]) => {
-                                        if (a === true)
-                                            return kebab(n);
-                                        if (a === false)
-                                            return null;
-                                        return String(a);
-                                    }).filter(Boolean).join(' ');
-                                }).join(',');
-                            }
-                            else {
-                                val = val.join(' ');
-                            }
-                            props.push(`\t${keys.join('-')}: ${val};\n`);
-                        }
-                        else if (val.constructor === Object) {
-                            for (let suffix of Object.keys(val).reverse()) {
-                                addProp([...keys, kebab(suffix)], val[suffix]);
-                            }
-                        }
-                        else {
-                            props.push(`\t${keys.join('-')}: ${val};\n`);
-                        }
-                    };
-                    addProp([kebab(key)], config[key]);
-                }
-                else if (/^[A-Z]/.test(key)) {
-                    make_class(prefix, [...path, key.toLowerCase()], config[key]);
-                }
-                else if (key[0] === '$') {
-                    make_class(selector(prefix, path) + ' :where([' + $mol_dom_qname(key) + '])', [], config[key]);
-                }
-                else if (key === '>') {
-                    const types = config[key];
-                    for (let type of Object.keys(types).reverse()) {
-                        make_class(selector(prefix, path) + ' > :where([' + $mol_dom_qname(type) + '])', [], types[type]);
-                    }
-                }
-                else if (key === '@') {
-                    const attrs = config[key];
-                    for (let name of Object.keys(attrs).reverse()) {
-                        for (let val in attrs[name]) {
-                            make_class(selector(prefix, path) + ':where([' + name + '=' + JSON.stringify(val) + '])', [], attrs[name][val]);
-                        }
-                    }
-                }
-                else if (key === '@media' || key === '@container') {
-                    const media = config[key];
-                    for (let query of Object.keys(media).reverse()) {
-                        rules.push('}\n');
-                        make_class(prefix, path, media[query]);
-                        rules.push(`${key} ${query} {\n`);
-                    }
-                }
-                else if (key === '@starting-style') {
-                    const styles = config[key];
-                    rules.push('}\n');
-                    make_class(prefix, path, styles);
-                    rules.push(`${key} {\n`);
-                }
-                else if (key[0] === '[' && key[key.length - 1] === ']') {
-                    const attr = key.slice(1, -1);
-                    const vals = config[key];
-                    for (let val of Object.keys(vals).reverse()) {
-                        make_class(selector(prefix, path) + ':where([' + attr + '=' + JSON.stringify(val) + '])', [], vals[val]);
-                    }
-                }
-                else {
-                    make_class(selector(prefix, path) + key, [], config[key]);
-                }
-            }
-            if (props.length) {
-                rules.push(`${selector(prefix, path)} {\n${props.reverse().join('')}}\n`);
-            }
-        };
-        make_class('', [], config0);
-        return rules.reverse().join('');
-    }
-    $.$mol_style_sheet = $mol_style_sheet;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    /**
-     * CSS in TS.
-     * Statically typed CSS style sheets. Following samples show which CSS code are generated from TS code.
-     * @see https://mol.hyoo.ru/#!section=docs/=xwq9q5_f966fg
-     */
-    function $mol_style_define(Component, config) {
-        return $mol_style_attach(Component.name, $mol_style_sheet(Component, config));
-    }
-    $.$mol_style_define = $mol_style_define;
-})($ || ($ = {}));
-
-;
-"use strict";
-
-
-;
-"use strict";
-var $;
-(function ($) {
-    var $$;
-    (function ($$) {
-        class $bog_doodle_board extends $.$bog_doodle_board {
-            view(next) {
-                return next ?? { zoom: 1, x: 0, y: 0 };
-            }
-            size() {
-                const rect = this.view_rect();
-                const dpr = this.$.$mol_dom_context.devicePixelRatio || 1;
-                return {
-                    width: Math.max(1, Math.round((rect?.width ?? 0) * dpr)),
-                    height: Math.max(1, Math.round((rect?.height ?? 0) * dpr)),
-                    dpr,
-                };
-            }
-            rect() {
-                return this.dom_node().getBoundingClientRect();
-            }
-            to_world(client_x, client_y) {
-                const rect = this.rect();
-                const view = this.view();
-                const x = (client_x - rect.left) / (rect.width || 1);
-                const y = (client_y - rect.top) / (rect.height || 1);
-                return {
-                    x: Math.max(0, Math.min(0.9999, view.x + x / view.zoom)),
-                    y: Math.max(0, Math.min(1, view.y + y / view.zoom)),
-                    raw_x: x,
-                    raw_y: y,
-                };
-            }
-            view_clamp(next) {
-                const zoom = Math.max(1, Math.min(8, next.zoom));
-                const span = 1 - 1 / zoom;
-                return {
-                    zoom,
-                    x: Math.max(0, Math.min(span, next.x)),
-                    y: Math.max(0, Math.min(span, next.y)),
-                };
-            }
-            zoom_at(factor, raw_x, raw_y) {
-                const view = this.view();
-                const zoom = Math.max(1, Math.min(8, view.zoom * factor));
-                const wx = view.x + raw_x / view.zoom;
-                const wy = view.y + raw_y / view.zoom;
-                this.view(this.view_clamp({ zoom, x: wx - raw_x / zoom, y: wy - raw_y / zoom }));
-            }
-            zoom_reset() {
-                this.view({ zoom: 1, x: 0, y: 0 });
-            }
-            pan_by(raw_dx, raw_dy) {
-                const view = this.view();
-                this.view(this.view_clamp({ ...view, x: view.x - raw_dx / view.zoom, y: view.y - raw_dy / view.zoom }));
-            }
-            gesture = null;
-            touches = new Map();
-            draft = [];
-            smooth = null;
-            erased = new Set();
-            box = null;
-            drag = null;
-            pinch = null;
-            hover = null;
-            pressure(event) {
-                if (event.pointerType === 'pen')
-                    return Math.max(0.05, event.pressure || 0.5);
-                return 0.5;
-            }
-            gesture_tool(event) {
-                if (event.button === 1 || this.touches.size > 1)
-                    return 'pan';
-                if (this.pen_only() && event.pointerType === 'touch')
-                    return 'pan';
-                const tool = this.tool();
-                if (event.button === 2 || (event.buttons & 32))
-                    return 'erase';
-                return tool;
-            }
-            pointer_down(event) {
-                event.preventDefault();
-                try {
-                    this.dom_node().setPointerCapture(event.pointerId);
-                }
-                catch { }
-                this.touches.set(event.pointerId, { x: event.clientX, y: event.clientY });
-                if (this.touches.size === 2) {
-                    this.draft = [];
-                    this.gesture = 'pinch';
-                    this.pinch = this.pinch_state();
-                    this.redraw();
-                    return;
-                }
-                if (this.touches.size > 2)
-                    return;
-                const point = this.to_world(event.clientX, event.clientY);
-                const gesture = this.gesture_tool(event);
-                if (gesture === 'draw') {
-                    this.gesture = 'draw';
-                    this.smooth = null;
-                    this.draft = [];
-                    this.draft_add(point.x, point.y, this.pressure(event));
-                    this.note_play(point.y);
-                }
-                else if (gesture === 'erase') {
-                    this.gesture = 'erase';
-                    this.erased = new Set;
-                    this.erase_at(point.x, point.y);
-                }
-                else if (gesture === 'select') {
-                    const hit = this.sketch().hits(point.x, point.y, this.hit_radius());
-                    const selected = this.selected();
-                    if (hit.some(id => selected.includes(id))) {
-                        this.gesture = 'move';
-                        this.drag = { x: point.x, y: point.y, dx: 0, dy: 0 };
-                    }
-                    else if (hit.length) {
-                        this.selected([hit[hit.length - 1]]);
-                        this.gesture = 'move';
-                        this.drag = { x: point.x, y: point.y, dx: 0, dy: 0 };
-                    }
-                    else {
-                        this.gesture = 'select';
-                        this.box = { x1: point.x, y1: point.y, x2: point.x, y2: point.y };
-                    }
-                }
-                else {
-                    this.gesture = 'pan';
-                }
-                this.redraw();
-            }
-            pointer_move(event) {
-                const prev = this.touches.get(event.pointerId);
-                const point = this.to_world(event.clientX, event.clientY);
-                this.hover = event.pointerType === 'mouse' ? { x: point.x, y: point.y } : null;
-                if (!prev) {
-                    this.redraw();
-                    return;
-                }
-                this.touches.set(event.pointerId, { x: event.clientX, y: event.clientY });
-                if (this.gesture === 'pinch') {
-                    const next = this.pinch_state();
-                    const rect = this.rect();
-                    if (this.pinch && next) {
-                        this.pan_by((next.x - this.pinch.x) / (rect.width || 1), (next.y - this.pinch.y) / (rect.height || 1));
-                        const raw = this.to_world(next.x, next.y);
-                        this.zoom_at(next.dist / (this.pinch.dist || 1), raw.raw_x, raw.raw_y);
-                    }
-                    this.pinch = next;
-                }
-                else if (this.gesture === 'pan') {
-                    const rect = this.rect();
-                    this.pan_by((event.clientX - prev.x) / (rect.width || 1), (event.clientY - prev.y) / (rect.height || 1));
-                }
-                else if (this.gesture === 'draw') {
-                    const list = event.getCoalescedEvents?.();
-                    for (const item of list?.length ? list : [event]) {
-                        const at = this.to_world(item.clientX, item.clientY);
-                        this.draft_add(at.x, at.y, this.pressure(item));
-                    }
-                }
-                else if (this.gesture === 'erase') {
-                    this.erase_at(point.x, point.y);
-                }
-                else if (this.gesture === 'select' && this.box) {
-                    this.box = { ...this.box, x2: point.x, y2: point.y };
-                }
-                else if (this.gesture === 'move' && this.drag) {
-                    this.drag = { ...this.drag, dx: point.x - this.drag.x, dy: point.y - this.drag.y };
-                }
-                this.redraw();
-            }
-            pointer_up(event) {
-                if (!this.touches.has(event.pointerId))
-                    return;
-                this.touches.delete(event.pointerId);
-                if (this.gesture === 'pinch') {
-                    if (this.touches.size === 0)
-                        this.gesture = null;
-                    this.redraw();
-                    return;
-                }
-                if (this.gesture === 'draw')
-                    this.draft_commit();
-                if (this.gesture === 'erase')
-                    this.sketch().remove([...this.erased]);
-                if (this.gesture === 'select' && this.box) {
-                    const { x1, y1, x2, y2 } = this.box;
-                    this.selected(this.sketch().inside(Math.min(x1, x2), Math.min(y1, y2), Math.max(x1, x2), Math.max(y1, y2)));
-                }
-                if (this.gesture === 'move' && this.drag && (this.drag.dx || this.drag.dy)) {
-                    this.sketch().shift(this.selected(), this.drag.dx, this.drag.dy);
-                }
-                this.gesture = null;
-                this.erased = new Set;
-                this.box = null;
-                this.drag = null;
-                this.draft = [];
-                this.redraw();
-            }
-            pointer_cancel(event) {
-                this.touches.delete(event.pointerId);
-                this.gesture = null;
-                this.draft = [];
-                this.erased = new Set;
-                this.box = null;
-                this.drag = null;
-                this.redraw();
-            }
-            pointer_leave(event) {
-                this.hover = null;
-                this.redraw();
-            }
-            wheel(event) {
-                event.preventDefault();
-                const point = this.to_world(event.clientX, event.clientY);
-                if (event.ctrlKey || event.metaKey) {
-                    this.zoom_at(Math.exp(-event.deltaY / 200), point.raw_x, point.raw_y);
-                }
-                else {
-                    const rect = this.rect();
-                    this.pan_by(-event.deltaX / (rect.width || 1), -event.deltaY / (rect.height || 1));
-                }
-            }
-            context_menu(event) {
-                event.preventDefault();
-            }
-            pinch_state() {
-                const list = [...this.touches.values()];
-                if (list.length < 2)
-                    return null;
-                const [a, b] = list;
-                return { dist: Math.hypot(a.x - b.x, a.y - b.y), x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
-            }
-            hit_radius() {
-                return 0.02 / this.view().zoom;
-            }
-            snap_y(y) {
-                if (!this.snap())
-                    return y;
-                const count = this.notes().length;
-                return $bog_doodle_scale_row_y($bog_doodle_scale_row(y, count), count);
-            }
-            draft_add(x, y, p) {
-                const prev = this.smooth;
-                const k = 0.45;
-                const next = prev
-                    ? { x: prev.x + (x - prev.x) * k, y: prev.y + (y - prev.y) * k, p: prev.p + (p - prev.p) * k }
-                    : { x, y, p };
-                this.smooth = next;
-                const count = this.draft.length;
-                if (count >= 3) {
-                    const dx = next.x - this.draft[count - 3];
-                    const dy = this.snap_y(next.y) - this.draft[count - 2];
-                    if (dx * dx + dy * dy < 1e-7)
-                        return;
-                }
-                this.draft.push(next.x, this.snap_y(next.y), next.p);
-                const row = $bog_doodle_scale_row(next.y, this.notes().length);
-                this.note_hover(this.notes()[row] ?? null);
-            }
-            draft_commit() {
-                const draft = this.draft;
-                if (!draft.length)
-                    return;
-                const points = $bog_doodle_piece_simplify(draft, 0.0012 / this.view().zoom);
-                this.sketch().add({ id: $bog_doodle_sketch_stroke_id(), color: this.color(), points });
-                this.note_hover(null);
-            }
-            note_play(y) {
-                const notes = this.notes();
-                this.note_hover(notes[$bog_doodle_scale_row(this.snap_y(y), notes.length)] ?? null);
-            }
-            erase_at(x, y) {
-                for (const id of this.sketch().hits(x, y, this.hit_radius()))
-                    this.erased.add(id);
-            }
-            frame = null;
-            redraw() {
-                if (this.frame)
-                    return;
-                this.frame = new this.$.$mol_after_frame(() => {
-                    this.frame = null;
-                    this.present();
-                });
-            }
-            back_image() {
-                const uri = this.back();
-                if (!uri)
-                    return null;
-                const image = new this.$.$mol_dom_context.Image;
-                image.onload = () => this.redraw();
-                image.src = uri;
-                return image;
-            }
-            layer() {
-                const doc = this.$.$mol_dom_context.document;
-                const canvas = doc.createElement('canvas');
-                const { width, height, dpr } = this.size();
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext('2d');
-                if (!ctx)
-                    return canvas;
-                this.paint_grid(ctx, width, height, dpr);
-                this.paint_strokes(ctx, width, height, dpr);
-                return canvas;
-            }
-            ink(color) {
-                return $bog_doodle_synth_colors[color]?.ink ?? '#1f1d1a';
-            }
-            view_fixed = null;
-            view_used() {
-                return this.view_fixed ?? this.view();
-            }
-            sx(x, width) {
-                const view = this.view_used();
-                return (x - view.x) * view.zoom * width;
-            }
-            sy(y, height) {
-                const view = this.view_used();
-                return (y - view.y) * view.zoom * height;
-            }
-            export_canvas() {
-                const canvas = this.$.$mol_dom_context.document.createElement('canvas');
-                canvas.width = 1920;
-                canvas.height = 1080;
-                const ctx = canvas.getContext('2d');
-                if (!ctx)
-                    return canvas;
-                this.view_fixed = { zoom: 1, x: 0, y: 0 };
-                try {
-                    this.paint_grid(ctx, canvas.width, canvas.height, 2);
-                    this.paint_strokes(ctx, canvas.width, canvas.height, 2, true);
-                }
-                finally {
-                    this.view_fixed = null;
-                }
-                return canvas;
-            }
-            paint_grid(ctx, width, height, dpr) {
-                ctx.fillStyle = '#fbfaf6';
-                ctx.fillRect(0, 0, width, height);
-                const image = this.back_image();
-                if (image?.complete && image.naturalWidth) {
-                    ctx.globalAlpha = 0.35;
-                    ctx.drawImage(image, this.sx(0, width), this.sy(0, height), this.view_used().zoom * width, this.view_used().zoom * height);
-                    ctx.globalAlpha = 1;
-                }
-                const notes = this.notes();
-                const count = notes.length;
-                const tonic = notes[0] % 12;
-                const row_height = this.view_used().zoom * height / count;
-                for (let row = 0; row < count; ++row) {
-                    const top = this.sy(1 - (row + 1) / count, height);
-                    if (top > height || top + row_height < 0)
-                        continue;
-                    if (notes[row] % 12 === tonic) {
-                        ctx.fillStyle = '#ece7da';
-                        ctx.fillRect(0, top, width, row_height);
-                    }
-                    else if (row % 2) {
-                        ctx.fillStyle = '#f5f2ea';
-                        ctx.fillRect(0, top, width, row_height);
-                    }
-                    if (row_height > 14 * dpr) {
-                        ctx.fillStyle = '#a39d8e';
-                        ctx.font = `${Math.min(12, row_height / dpr * 0.5) * dpr}px ui-monospace, Menlo, monospace`;
-                        ctx.textBaseline = 'middle';
-                        ctx.fillText($bog_doodle_scale_name(notes[row]), 6 * dpr, top + row_height / 2);
-                    }
-                }
-                const steps = this.steps();
-                const beat = this.beat_steps();
-                const bar = this.bar_steps();
-                const step_width = this.view_used().zoom * width / steps;
-                for (let step = 1; step < steps; ++step) {
-                    const strong = step % bar === 0 ? 2 : step % beat === 0 ? 1 : 0;
-                    if (!strong && step_width < 6 * dpr)
-                        continue;
-                    const x = Math.round(this.sx(step / steps, width)) + 0.5;
-                    if (x < 0 || x > width)
-                        continue;
-                    ctx.strokeStyle = ['#ebe6da', '#d6cfbe', '#b3ab98'][strong];
-                    ctx.lineWidth = strong === 2 ? 2 * dpr : dpr;
-                    ctx.beginPath();
-                    ctx.moveTo(x, 0);
-                    ctx.lineTo(x, height);
-                    ctx.stroke();
-                }
-            }
-            stroke_width(p, dpr) {
-                return dpr * Math.sqrt(this.view_used().zoom) * (1.5 + 6 * p);
-            }
-            paint_path(ctx, points, color, width, height, dpr, dx = 0, dy = 0, halo = false) {
-                const count = points.length / 3;
-                if (!count)
-                    return;
-                ctx.lineCap = 'round';
-                ctx.lineJoin = 'round';
-                ctx.strokeStyle = color;
-                ctx.fillStyle = color;
-                const px = (i) => this.sx(points[i * 3] + dx, width);
-                const py = (i) => this.sy(points[i * 3 + 1] + dy, height);
-                const pw = (i) => this.stroke_width(points[i * 3 + 2], dpr) + (halo ? 6 * dpr : 0);
-                if (count === 1) {
-                    ctx.beginPath();
-                    ctx.arc(px(0), py(0), pw(0) / 2 + dpr, 0, Math.PI * 2);
-                    ctx.fill();
-                    return;
-                }
-                let sx = px(0), sy = py(0);
-                for (let i = 1; i < count; ++i) {
-                    const last = i === count - 1;
-                    const ex = last ? px(i) : (px(i) + px(i + 1)) / 2;
-                    const ey = last ? py(i) : (py(i) + py(i + 1)) / 2;
-                    ctx.lineWidth = pw(i);
-                    ctx.beginPath();
-                    ctx.moveTo(sx, sy);
-                    if (last)
-                        ctx.lineTo(ex, ey);
-                    else
-                        ctx.quadraticCurveTo(px(i), py(i), ex, ey);
-                    ctx.stroke();
-                    sx = ex;
-                    sy = ey;
-                }
-            }
-            paint_strokes(ctx, width, height, dpr, all = false) {
-                const selected = new Set(all ? [] : this.selected());
-                for (const stroke of this.sketch().strokes()) {
-                    if (selected.has(stroke.id))
-                        continue;
-                    this.paint_path(ctx, stroke.points, this.ink(stroke.color), width, height, dpr);
-                }
-            }
-            present() {
-                const canvas = this.dom_node();
-                const { width, height, dpr } = this.size();
-                if (canvas.width !== width)
-                    canvas.width = width;
-                if (canvas.height !== height)
-                    canvas.height = height;
-                const ctx = canvas.getContext?.('2d');
-                if (!ctx)
-                    return;
-                ctx.drawImage(this.layer(), 0, 0);
-                const selected = new Set(this.selected());
-                const drag = this.drag;
-                for (const stroke of this.sketch().strokes()) {
-                    if (!selected.has(stroke.id))
-                        continue;
-                    this.paint_path(ctx, stroke.points, '#2f6fd855', width, height, dpr, drag?.dx, drag?.dy, true);
-                    this.paint_path(ctx, stroke.points, this.ink(stroke.color), width, height, dpr, drag?.dx, drag?.dy);
-                }
-                if (this.erased.size) {
-                    for (const stroke of this.sketch().strokes()) {
-                        if (!this.erased.has(stroke.id))
-                            continue;
-                        this.paint_path(ctx, stroke.points, '#fbfaf6cc', width, height, dpr, 0, 0, true);
-                    }
-                }
-                if (this.draft.length)
-                    this.paint_path(ctx, this.draft, this.ink(this.color()), width, height, dpr);
-                if (this.box) {
-                    const { x1, y1, x2, y2 } = this.box;
-                    ctx.setLineDash([6 * dpr, 4 * dpr]);
-                    ctx.strokeStyle = '#2f6fd8';
-                    ctx.lineWidth = dpr;
-                    ctx.strokeRect(this.sx(x1, width), this.sy(y1, height), this.sx(x2, width) - this.sx(x1, width), this.sy(y2, height) - this.sy(y1, height));
-                    ctx.setLineDash([]);
-                }
-                const head = this.playhead();
-                if (head !== null && head >= 0) {
-                    const x = this.sx(head, width);
-                    ctx.fillStyle = '#d8452f';
-                    ctx.fillRect(x - dpr, 0, 2 * dpr, height);
-                }
-                if (this.hover && this.tool() === 'draw' && !this.gesture) {
-                    const notes = this.notes();
-                    const name = $bog_doodle_scale_name(notes[$bog_doodle_scale_row(this.snap_y(this.hover.y), notes.length)]);
-                    ctx.font = `${12 * dpr}px ui-monospace, Menlo, monospace`;
-                    ctx.textBaseline = 'bottom';
-                    ctx.fillStyle = '#1f1d1a';
-                    ctx.fillText(name, this.sx(this.hover.x, width) + 10 * dpr, this.sy(this.hover.y, height) - 6 * dpr);
-                }
-            }
-            animate = null;
-            loop() {
-                this.present();
-                if (!this.playing()) {
-                    this.animate = null;
-                    return;
-                }
-                this.animate = new this.$.$mol_after_frame(() => this.loop());
-            }
-            repaint() {
-                this.layer();
-                this.selected();
-                this.playing();
-                this.redraw();
-                return null;
-            }
-            animating() {
-                if (this.playing() && !this.animate)
-                    this.loop();
-                return null;
-            }
-            auto() {
-                this.repaint();
-                this.animating();
-            }
-            destructor() {
-                this.frame?.destructor();
-                this.animate?.destructor();
-                super.destructor();
-            }
-        }
-        __decorate([
-            $mol_mem
-        ], $bog_doodle_board.prototype, "view", null);
-        __decorate([
-            $mol_mem
-        ], $bog_doodle_board.prototype, "size", null);
-        __decorate([
-            $mol_mem
-        ], $bog_doodle_board.prototype, "back_image", null);
-        __decorate([
-            $mol_mem
-        ], $bog_doodle_board.prototype, "layer", null);
-        __decorate([
-            $mol_mem
-        ], $bog_doodle_board.prototype, "repaint", null);
-        __decorate([
-            $mol_mem
-        ], $bog_doodle_board.prototype, "animating", null);
-        $$.$bog_doodle_board = $bog_doodle_board;
-    })($$ = $.$$ || ($.$$ = {}));
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    var $$;
-    (function ($$) {
-        $mol_style_define($bog_doodle_board, {
-            flex: {
-                grow: 1,
-                shrink: 1,
-                basis: 0,
-            },
-            minHeight: '16rem',
-            minWidth: 0,
-            touchAction: 'none',
-            userSelect: 'none',
-            cursor: 'crosshair',
-            border: {
-                radius: $mol_gap.round,
-            },
-            '@': {
-                bog_doodle_board_tool: {
-                    select: {
-                        cursor: 'default',
-                    },
-                    pan: {
-                        cursor: 'grab',
-                    },
-                    erase: {
-                        cursor: 'cell',
-                    },
-                },
-            },
-        });
-    })($$ = $.$$ || ($.$$ = {}));
-})($ || ($ = {}));
-
-;
-	($.$mol_list) = class $mol_list extends ($.$mol_view) {
-		gap_before(){
-			return 0;
-		}
-		Gap_before(){
-			const obj = new this.$.$mol_view();
-			(obj.style) = () => ({"paddingTop": (this.gap_before())});
-			return obj;
-		}
-		Empty(){
-			const obj = new this.$.$mol_view();
-			return obj;
-		}
-		gap_after(){
-			return 0;
-		}
-		Gap_after(){
-			const obj = new this.$.$mol_view();
-			(obj.style) = () => ({"paddingTop": (this.gap_after())});
-			return obj;
-		}
-		rows(){
-			return [
-				(this.Gap_before()), 
-				(this.Empty()), 
-				(this.Gap_after())
-			];
-		}
-		render_visible_only(){
-			return true;
-		}
-		render_over(){
-			return 0.1;
-		}
-		sub(){
-			return (this.rows());
-		}
-		item_height_min(id){
-			return 1;
-		}
-		item_width_min(id){
-			return 1;
-		}
-		view_window_shift(next){
-			if(next !== undefined) return next;
-			return 0;
-		}
-		view_window(){
-			return [0, 0];
-		}
-	};
-	($mol_mem(($.$mol_list.prototype), "Gap_before"));
-	($mol_mem(($.$mol_list.prototype), "Empty"));
-	($mol_mem(($.$mol_list.prototype), "Gap_after"));
-	($mol_mem(($.$mol_list.prototype), "view_window_shift"));
-
-
-;
-"use strict";
-var $;
-(function ($) {
-    let cache = null;
-    function $mol_support_css_overflow_anchor() {
-        return cache ?? (cache = this.$mol_dom_context.CSS?.supports('overflow-anchor:auto') ?? false);
-    }
-    $.$mol_support_css_overflow_anchor = $mol_support_css_overflow_anchor;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_dom_listener extends $mol_object {
-        _node;
-        _event;
-        _handler;
-        _config;
-        constructor(_node, _event, _handler, _config = { passive: true }) {
-            super();
-            this._node = _node;
-            this._event = _event;
-            this._handler = _handler;
-            this._config = _config;
-            this._node.addEventListener(this._event, this._handler, this._config);
-        }
-        destructor() {
-            this._node.removeEventListener(this._event, this._handler, this._config);
-            super.destructor();
-        }
-    }
-    $.$mol_dom_listener = $mol_dom_listener;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_print extends $mol_object {
-        static before() {
-            return new $mol_dom_listener(this.$.$mol_dom_context, 'beforeprint', () => {
-                this.active(true);
-            });
-        }
-        static after() {
-            return new $mol_dom_listener(this.$.$mol_dom_context, 'afterprint', () => {
-                this.active(false);
-            });
-        }
-        static active(next) {
-            this.before();
-            this.after();
-            return next || false;
-        }
-    }
-    __decorate([
-        $mol_mem
-    ], $mol_print, "before", null);
-    __decorate([
-        $mol_mem
-    ], $mol_print, "after", null);
-    __decorate([
-        $mol_mem
-    ], $mol_print, "active", null);
-    $.$mol_print = $mol_print;
-})($ || ($ = {}));
-
-;
-"use strict";
-
-
-;
-"use strict";
-var $;
-(function ($) {
-    var $$;
-    (function ($$) {
-        /**
-         * The list of rows with lazy/virtual rendering support based on `minimal_height` of rows.
-         * `mol_list` should contain only components that inherits `mol_view`. You should not place raw strings or numbers in list.
-         * @see https://mol.hyoo.ru/#!section=demos/demo=mol_list_demo
-         */
-        class $mol_list extends $.$mol_list {
-            sub() {
-                const rows = this.rows();
-                const next = (rows.length === 0) ? [this.Empty()] : rows;
-                const prev = $mol_mem_cached(() => this.sub());
-                const [start, end] = $mol_mem_cached(() => this.view_window()) ?? [0, 0];
-                if (prev && $mol_mem_cached(() => prev[start] !== next[start])) {
-                    const index = $mol_mem_cached(() => next.indexOf(prev[start])) ?? -1;
-                    if (index >= 0)
-                        this.view_window_shift(index - start);
-                }
-                return next;
-            }
-            render_visible_only() {
-                return this.$.$mol_support_css_overflow_anchor();
-            }
-            _view_window_last = [0, 0];
-            view_window(next) {
-                const kids = this.sub();
-                if (kids.length < 3)
-                    return [0, kids.length];
-                if (this.$.$mol_print.active())
-                    return [0, kids.length];
-                const rect = this.view_rect();
-                if (next)
-                    return next;
-                let [min, max] = $mol_mem_cached(() => this.view_window()) ?? this._view_window_last;
-                const shift = this.view_window_shift();
-                this.view_window_shift(0);
-                min += shift;
-                max += shift;
-                let max2 = max = Math.min(max, kids.length);
-                let min2 = min = Math.max(0, Math.min(min, max - 1));
-                const anchoring = this.render_visible_only();
-                const window_height = this.$.$mol_window.size().height + 40;
-                const over = Math.ceil(window_height * this.render_over());
-                const limit_top = -over;
-                const limit_bottom = window_height + over;
-                const gap_before = $mol_mem_cached(() => this.gap_before()) ?? 0;
-                const gap_after = $mol_mem_cached(() => this.gap_after()) ?? 0;
-                let top = Math.ceil(rect?.top ?? 0) + gap_before;
-                let bottom = Math.ceil(rect?.bottom ?? 0) - gap_after;
-                // change nothing when already covers all limits
-                if (top <= limit_top && bottom >= limit_bottom) {
-                    return [min2, max2];
-                }
-                // jumps when fully over limits
-                if (anchoring && ((bottom < limit_top) || (top > limit_bottom))) {
-                    min = 0;
-                    top = Math.ceil(rect?.top ?? 0);
-                    while (min < (kids.length - 1)) {
-                        const height = this.item_height_min(min);
-                        if (top + height >= limit_top)
-                            break;
-                        top += height;
-                        ++min;
-                    }
-                    min2 = min;
-                    max2 = max = min;
-                    bottom = top;
-                }
-                let top2 = top;
-                let bottom2 = bottom;
-                // force recalc min when overlapse top limit
-                if (anchoring && (top < limit_top) && (bottom < limit_bottom) && (max < kids.length)) {
-                    min2 = max;
-                    top2 = bottom;
-                }
-                // force recalc max when overlapse bottom limit
-                if ((bottom > limit_bottom) && (top > limit_top) && (min > 0)) {
-                    max2 = min;
-                    bottom2 = top;
-                }
-                // extend min to cover top limit
-                while (anchoring && ((top2 > limit_top) && (min2 > 0))) {
-                    --min2;
-                    top2 -= this.item_height_min(min2);
-                }
-                // extend max to cover bottom limit
-                while (bottom2 < limit_bottom && max2 < kids.length) {
-                    bottom2 += this.item_height_min(max2);
-                    ++max2;
-                }
-                return [min2, max2];
-            }
-            item_height_min(index) {
-                try {
-                    return this.sub()[index]?.minimal_height() ?? 0;
-                }
-                catch (error) {
-                    $mol_fail_log(error);
-                    return 0;
-                }
-            }
-            row_width_min(index) {
-                try {
-                    return this.sub()[index]?.minimal_width() ?? 0;
-                }
-                catch (error) {
-                    $mol_fail_log(error);
-                    return 0;
-                }
-            }
-            gap_before() {
-                let gap = 0;
-                const skipped = this.view_window()[0];
-                for (let i = 0; i < skipped; ++i)
-                    gap += this.item_height_min(i);
-                return gap;
-            }
-            gap_after() {
-                let gap = 0;
-                const from = this.view_window()[1];
-                const to = this.sub().length;
-                for (let i = from; i < to; ++i)
-                    gap += this.item_height_min(i);
-                return gap;
-            }
-            sub_visible() {
-                return [
-                    ...this.gap_before() ? [this.Gap_before()] : [],
-                    ...this.sub().slice(...this._view_window_last = this.view_window()),
-                    ...this.gap_after() ? [this.Gap_after()] : [],
-                ];
-            }
-            minimal_height() {
-                let height = 0;
-                const len = this.sub().length;
-                for (let i = 0; i < len; ++i)
-                    height += this.item_height_min(i);
-                return height;
-            }
-            minimal_width() {
-                let width = 0;
-                const len = this.sub().length;
-                for (let i = 0; i < len; ++i)
-                    width = Math.max(width, this.item_width_min(i));
-                return width;
-            }
-            force_render(path) {
-                const kids = this.rows();
-                const index = kids.findIndex(item => path.has(item));
-                if (index >= 0) {
-                    const win = this.view_window();
-                    if (index < win[0] || index >= win[1]) {
-                        this.view_window([this.render_visible_only() ? index : 0, index + 1]);
-                    }
-                    kids[index].force_render(path);
-                }
-            }
-        }
-        __decorate([
-            $mol_mem
-        ], $mol_list.prototype, "sub", null);
-        __decorate([
-            $mol_mem
-        ], $mol_list.prototype, "view_window", null);
-        __decorate([
-            $mol_mem
-        ], $mol_list.prototype, "gap_before", null);
-        __decorate([
-            $mol_mem
-        ], $mol_list.prototype, "gap_after", null);
-        __decorate([
-            $mol_mem
-        ], $mol_list.prototype, "sub_visible", null);
-        __decorate([
-            $mol_mem
-        ], $mol_list.prototype, "minimal_height", null);
-        __decorate([
-            $mol_mem
-        ], $mol_list.prototype, "minimal_width", null);
-        $$.$mol_list = $mol_list;
-    })($$ = $.$$ || ($.$$ = {}));
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_style_attach("mol/list/list.view.css", "[mol_list] {\n\twill-change: contents;\n\tdisplay: flex;\n\tflex-direction: column;\n\tflex-shrink: 0;\n\tmax-width: 100%;\n\t/* display: flex;\n\talign-items: stretch;\n\talign-content: stretch; */\n\ttransition: none;\n\t/* will-change: contents; */\n}\n\n[mol_list]:where([mol_view_error]) {\n\tmin-height: 1.5rem;\n}\n\n[mol_list_gap_before] ,\n[mol_list_gap_after] {\n\tdisplay: block !important;\n\tflex: none;\n\ttransition: none;\n\toverflow-anchor: none;\n}\n");
-})($ || ($ = {}));
-
-;
-	($.$mol_scroll) = class $mol_scroll extends ($.$mol_view) {
-		tabindex(){
-			return -1;
-		}
-		event_scroll(next){
-			if(next !== undefined) return next;
-			return null;
-		}
-		scroll_top(next){
-			if(next !== undefined) return next;
-			return 0;
-		}
-		scroll_left(next){
-			if(next !== undefined) return next;
-			return 0;
-		}
-		attr(){
-			return {...(super.attr()), "tabindex": (this.tabindex())};
+		field(){
+			return {...(super.field()), "value": (this.value_text())};
 		}
 		event(){
-			return {...(super.event()), "scroll": (next) => (this.event_scroll(next))};
+			return {"input": (next) => (this.changed(next))};
 		}
 	};
-	($mol_mem(($.$mol_scroll.prototype), "event_scroll"));
-	($mol_mem(($.$mol_scroll.prototype), "scroll_top"));
-	($mol_mem(($.$mol_scroll.prototype), "scroll_left"));
+	($mol_mem(($.$bog_doodle_slider.prototype), "changed"));
+	($mol_mem(($.$bog_doodle_slider.prototype), "value"));
 
 
 ;
@@ -7974,42 +6238,17 @@ var $;
 (function ($) {
     var $$;
     (function ($$) {
-        /**
-         * Scrolling pane.
-         * @see https://mol.hyoo.ru/#!section=demos/demo=mol_scroll_demo
-         */
-        class $mol_scroll extends $.$mol_scroll {
-            scroll_top(next, cache) {
-                const el = this.dom_node();
-                if (next !== undefined && !cache)
-                    el.scrollTop = next;
-                return el.scrollTop;
+        class $bog_doodle_slider extends $.$bog_doodle_slider {
+            value_text() {
+                return String(this.value());
             }
-            scroll_left(next, cache) {
-                const el = this.dom_node();
-                if (next !== undefined && !cache)
-                    el.scrollLeft = next;
-                return el.scrollLeft;
-            }
-            event_scroll(next) {
-                const el = this.dom_node();
-                this.scroll_left(el.scrollLeft, 'cache');
-                this.scroll_top(el.scrollTop, 'cache');
-            }
-            minimal_height() {
-                return this.$.$mol_print.active() ? null : 0;
-            }
-            minimal_width() {
-                return this.$.$mol_print.active() ? null : 0;
+            changed(event) {
+                const next = Number(event.target.value);
+                if (!Number.isNaN(next))
+                    this.value(next);
             }
         }
-        __decorate([
-            $mol_mem
-        ], $mol_scroll.prototype, "scroll_top", null);
-        __decorate([
-            $mol_mem
-        ], $mol_scroll.prototype, "scroll_left", null);
-        $$.$mol_scroll = $mol_scroll;
+        $$.$bog_doodle_slider = $bog_doodle_slider;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
 
@@ -8017,58 +6256,20 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    var $$;
-    (function ($$) {
-        const { per, rem, px } = $mol_style_unit;
-        $mol_style_define($mol_scroll, {
-            display: 'grid',
-            overflow: 'auto',
-            flex: {
-                direction: 'column',
-                grow: 1,
-                shrink: 1,
-                // basis: 0,
-            },
-            outline: 'none',
-            align: {
-                self: 'stretch',
-                items: 'flex-start',
-            },
-            boxSizing: 'border-box',
-            willChange: 'scroll-position',
-            scroll: {
-                padding: [rem(.75), 0],
-            },
-            maxHeight: per(100),
-            maxWidth: per(100),
-            webkitOverflowScrolling: 'touch',
-            contain: 'content',
-            '>': {
-                $mol_view: {
-                    // transform: 'translateZ(0)', // enforce gpu scroll in all agents
-                    gridArea: '1/1',
-                },
-            },
-            '::before': {
-                display: 'none',
-            },
-            '::after': {
-                display: 'none',
-            },
-            '::-webkit-scrollbar': {
-                width: rem(.25),
-                height: rem(.25),
-            },
-            '@media': {
-                'print': {
-                    overflow: 'hidden',
-                    contain: 'none',
-                    maxHeight: 'unset',
-                },
-            },
-        });
-    })($$ = $.$$ || ($.$$ = {}));
+    $mol_style_attach("bog/doodle/slider/slider.view.css", "[bog_doodle_slider] {\n\tdisplay: block;\n\tappearance: auto;\n\t-webkit-appearance: auto;\n\tbackground: transparent;\n\twidth: 7rem;\n\theight: 2.5rem;\n\tmargin: 0 var(--mol_gap_text);\n\taccent-color: var(--mol_theme_current);\n\tcursor: pointer;\n}\n");
 })($ || ($ = {}));
+
+;
+	($.$mol_icon_palette) = class $mol_icon_palette extends ($.$mol_icon) {
+		path(){
+			return "M17.5,12A1.5,1.5 0 0,1 16,10.5A1.5,1.5 0 0,1 17.5,9A1.5,1.5 0 0,1 19,10.5A1.5,1.5 0 0,1 17.5,12M14.5,8A1.5,1.5 0 0,1 13,6.5A1.5,1.5 0 0,1 14.5,5A1.5,1.5 0 0,1 16,6.5A1.5,1.5 0 0,1 14.5,8M9.5,8A1.5,1.5 0 0,1 8,6.5A1.5,1.5 0 0,1 9.5,5A1.5,1.5 0 0,1 11,6.5A1.5,1.5 0 0,1 9.5,8M6.5,12A1.5,1.5 0 0,1 5,10.5A1.5,1.5 0 0,1 6.5,9A1.5,1.5 0 0,1 8,10.5A1.5,1.5 0 0,1 6.5,12M12,3A9,9 0 0,0 3,12A9,9 0 0,0 12,21A1.5,1.5 0 0,0 13.5,19.5C13.5,19.11 13.35,18.76 13.11,18.5C12.88,18.23 12.73,17.88 12.73,17.5A1.5,1.5 0 0,1 14.23,16H16A5,5 0 0,0 21,11C21,6.58 16.97,3 12,3Z";
+		}
+	};
+
+
+;
+"use strict";
+
 
 ;
 	($.$mol_hotkey2) = class $mol_hotkey2 extends ($.$mol_plugin) {
@@ -8292,6 +6493,31 @@ var $;
 
 ;
 "use strict";
+var $;
+(function ($) {
+    class $mol_dom_listener extends $mol_object {
+        _node;
+        _event;
+        _handler;
+        _config;
+        constructor(_node, _event, _handler, _config = { passive: true }) {
+            super();
+            this._node = _node;
+            this._event = _event;
+            this._handler = _handler;
+            this._config = _config;
+            this._node.addEventListener(this._event, this._handler, this._config);
+        }
+        destructor() {
+            this._node.removeEventListener(this._event, this._handler, this._config);
+            super.destructor();
+        }
+    }
+    $.$mol_dom_listener = $mol_dom_listener;
+})($ || ($ = {}));
+
+;
+"use strict";
 
 
 ;
@@ -8413,43 +6639,311 @@ var $;
 })($ || ($ = {}));
 
 ;
-	($.$mol_labeler) = class $mol_labeler extends ($.$mol_list) {
-		label(){
-			return [(this.title())];
+	($.$bog_doodle_picker) = class $bog_doodle_picker extends ($.$mol_view) {
+		hue_css(){
+			return "red";
 		}
-		Label(){
+		area_down(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		area_move(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		area_up(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		area_left(){
+			return "0%";
+		}
+		area_top(){
+			return "0%";
+		}
+		Area_knob(){
 			const obj = new this.$.$mol_view();
-			(obj.minimal_height) = () => (32);
-			(obj.sub) = () => ((this.label()));
+			(obj.style) = () => ({
+				...(this.$.$mol_view.prototype.style.call(obj)), 
+				"left": (this.area_left()), 
+				"top": (this.area_top())
+			});
 			return obj;
 		}
-		content(){
+		Area(){
+			const obj = new this.$.$mol_view();
+			(obj.style) = () => ({...(this.$.$mol_view.prototype.style.call(obj)), "--bog_doodle_picker_hue": (this.hue_css())});
+			(obj.event) = () => ({
+				"pointerdown": (next) => (this.area_down(next)), 
+				"pointermove": (next) => (this.area_move(next)), 
+				"pointerup": (next) => (this.area_up(next))
+			});
+			(obj.sub) = () => ([(this.Area_knob())]);
+			return obj;
+		}
+		hue_down(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		hue_move(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		hue_up(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		hue_left(){
+			return "0%";
+		}
+		Hue_knob(){
+			const obj = new this.$.$mol_view();
+			(obj.style) = () => ({...(this.$.$mol_view.prototype.style.call(obj)), "left": (this.hue_left())});
+			return obj;
+		}
+		Hue(){
+			const obj = new this.$.$mol_view();
+			(obj.event) = () => ({
+				"pointerdown": (next) => (this.hue_down(next)), 
+				"pointermove": (next) => (this.hue_move(next)), 
+				"pointerup": (next) => (this.hue_up(next))
+			});
+			(obj.sub) = () => ([(this.Hue_knob())]);
+			return obj;
+		}
+		swatch_color(id){
+			return "";
+		}
+		swatch_pick(id, next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		Swatch(id){
+			const obj = new this.$.$mol_button_minor();
+			(obj.hint) = () => ((this.swatch_color(id)));
+			(obj.click) = (next) => ((this.swatch_pick(id, next)));
+			(obj.style) = () => ({...(this.$.$mol_button_minor.prototype.style.call(obj)), "--bog_doodle_picker_swatch": (this.swatch_color(id))});
+			(obj.sub) = () => ([]);
+			return obj;
+		}
+		swatch_list(){
+			return [(this.Swatch(id))];
+		}
+		Swatches(){
+			const obj = new this.$.$mol_view();
+			(obj.sub) = () => ((this.swatch_list()));
+			return obj;
+		}
+		value(next){
+			if(next !== undefined) return next;
+			return "#1f1d1a";
+		}
+		Preview(){
+			const obj = new this.$.$mol_view();
+			(obj.style) = () => ({...(this.$.$mol_view.prototype.style.call(obj)), "--bog_doodle_picker_swatch": (this.value())});
+			return obj;
+		}
+		hex(next){
+			if(next !== undefined) return next;
+			return "";
+		}
+		Hex(){
+			const obj = new this.$.$mol_string();
+			(obj.hint) = () => ("#rrggbb");
+			(obj.value) = (next) => ((this.hex(next)));
+			return obj;
+		}
+		Hex_row(){
+			const obj = new this.$.$mol_view();
+			(obj.sub) = () => ([(this.Preview()), (this.Hex())]);
+			return obj;
+		}
+		swatches(){
 			return [];
 		}
-		Content(){
-			const obj = new this.$.$mol_view();
-			(obj.minimal_height) = () => (24);
-			(obj.sub) = () => ((this.content()));
-			return obj;
-		}
-		rows(){
-			return [(this.Label()), (this.Content())];
+		sub(){
+			return [
+				(this.Area()), 
+				(this.Hue()), 
+				(this.Swatches()), 
+				(this.Hex_row())
+			];
 		}
 	};
-	($mol_mem(($.$mol_labeler.prototype), "Label"));
-	($mol_mem(($.$mol_labeler.prototype), "Content"));
+	($mol_mem(($.$bog_doodle_picker.prototype), "area_down"));
+	($mol_mem(($.$bog_doodle_picker.prototype), "area_move"));
+	($mol_mem(($.$bog_doodle_picker.prototype), "area_up"));
+	($mol_mem(($.$bog_doodle_picker.prototype), "Area_knob"));
+	($mol_mem(($.$bog_doodle_picker.prototype), "Area"));
+	($mol_mem(($.$bog_doodle_picker.prototype), "hue_down"));
+	($mol_mem(($.$bog_doodle_picker.prototype), "hue_move"));
+	($mol_mem(($.$bog_doodle_picker.prototype), "hue_up"));
+	($mol_mem(($.$bog_doodle_picker.prototype), "Hue_knob"));
+	($mol_mem(($.$bog_doodle_picker.prototype), "Hue"));
+	($mol_mem_key(($.$bog_doodle_picker.prototype), "swatch_pick"));
+	($mol_mem_key(($.$bog_doodle_picker.prototype), "Swatch"));
+	($mol_mem(($.$bog_doodle_picker.prototype), "Swatches"));
+	($mol_mem(($.$bog_doodle_picker.prototype), "value"));
+	($mol_mem(($.$bog_doodle_picker.prototype), "Preview"));
+	($mol_mem(($.$bog_doodle_picker.prototype), "hex"));
+	($mol_mem(($.$bog_doodle_picker.prototype), "Hex"));
+	($mol_mem(($.$bog_doodle_picker.prototype), "Hex_row"));
 
 
 ;
 "use strict";
 var $;
 (function ($) {
-    $mol_style_attach("mol/labeler/labeler.view.css", "[mol_labeler] {\n\tdisplay: flex;\n\tflex-direction: column;\n\talign-items: stretch;\n\tcursor: inherit;\n}\n\n[mol_labeler_label] {\n\tmin-height: 2rem;\n\tcolor: var(--mol_theme_shade);\n\tpadding: 0;\n\tpadding-top: .5rem;\n\tpadding-inline: .75rem;\n\tgap: 0 var(--mol_gap_block);\n\tflex-wrap: wrap;\n}\n\n[mol_labeler_content] {\n\tdisplay: flex;\n\tpadding: var(--mol_gap_text);\n\tmin-height: 2.5rem;\n}\n");
+    function $bog_doodle_picker_hsv(hex) {
+        const clean = hex.replace('#', '').slice(0, 6).padEnd(6, '0');
+        const r = parseInt(clean.slice(0, 2), 16) / 255;
+        const g = parseInt(clean.slice(2, 4), 16) / 255;
+        const b = parseInt(clean.slice(4, 6), 16) / 255;
+        const max = Math.max(r, g, b), min = Math.min(r, g, b);
+        const d = max - min;
+        let h = 0;
+        if (d)
+            h = max === r ? ((g - b) / d + 6) % 6 : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+        return { h: h * 60, s: max ? d / max : 0, v: max };
+    }
+    $.$bog_doodle_picker_hsv = $bog_doodle_picker_hsv;
+    function $bog_doodle_picker_hex(h, s, v) {
+        const f = (n) => {
+            const k = (n + h / 60) % 6;
+            return v - v * s * Math.max(0, Math.min(k, 4 - k, 1));
+        };
+        return '#' + [f(5), f(3), f(1)]
+            .map(c => Math.round(Math.max(0, Math.min(1, c)) * 255).toString(16).padStart(2, '0'))
+            .join('');
+    }
+    $.$bog_doodle_picker_hex = $bog_doodle_picker_hex;
+    function $bog_doodle_picker_valid(hex) {
+        return /^#[0-9a-f]{6}$/i.test(hex);
+    }
+    $.$bog_doodle_picker_valid = $bog_doodle_picker_valid;
 })($ || ($ = {}));
 
 ;
 "use strict";
 
+
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $bog_doodle_picker extends $.$bog_doodle_picker {
+            hsv() {
+                return $bog_doodle_picker_hsv(this.value());
+            }
+            hue_kept = 0;
+            hue(next) {
+                if (next !== undefined)
+                    return this.hue_kept = next;
+                const hsv = this.hsv();
+                if (hsv.s)
+                    this.hue_kept = hsv.h;
+                return this.hue_kept;
+            }
+            hue_css() {
+                return `hsl(${Math.round(this.hue())}deg 100% 50%)`;
+            }
+            area_left() {
+                return `${this.hsv().s * 100}%`;
+            }
+            area_top() {
+                return `${(1 - this.hsv().v) * 100}%`;
+            }
+            hue_left() {
+                return `${this.hue() / 360 * 100}%`;
+            }
+            spot(event, node) {
+                const rect = node.getBoundingClientRect();
+                return {
+                    x: Math.max(0, Math.min(1, (event.clientX - rect.left) / (rect.width || 1))),
+                    y: Math.max(0, Math.min(1, (event.clientY - rect.top) / (rect.height || 1))),
+                };
+            }
+            dragging = '';
+            area_pick(event) {
+                const { x, y } = this.spot(event, this.Area().dom_node());
+                this.value($bog_doodle_picker_hex(this.hue(), x, 1 - y));
+            }
+            area_down(event) {
+                event.preventDefault();
+                try {
+                    this.Area().dom_node().setPointerCapture(event.pointerId);
+                }
+                catch { }
+                this.dragging = 'area';
+                this.area_pick(event);
+            }
+            area_move(event) {
+                if (this.dragging === 'area')
+                    this.area_pick(event);
+            }
+            area_up(event) {
+                this.dragging = '';
+            }
+            hue_pick(event) {
+                const { x } = this.spot(event, this.Hue().dom_node());
+                const hue = Math.min(359.9, x * 360);
+                this.hue(hue);
+                const { s, v } = this.hsv();
+                this.value($bog_doodle_picker_hex(hue, s || 0.8, s ? v : Math.max(v, 0.7)));
+            }
+            hue_down(event) {
+                event.preventDefault();
+                try {
+                    this.Hue().dom_node().setPointerCapture(event.pointerId);
+                }
+                catch { }
+                this.dragging = 'hue';
+                this.hue_pick(event);
+            }
+            hue_move(event) {
+                if (this.dragging === 'hue')
+                    this.hue_pick(event);
+            }
+            hue_up(event) {
+                this.dragging = '';
+            }
+            swatch_list() {
+                return this.swatches().map(color => this.Swatch(color));
+            }
+            swatch_color(color) {
+                return color;
+            }
+            swatch_pick(color) {
+                const hsv = $bog_doodle_picker_hsv(color);
+                if (hsv.s)
+                    this.hue(hsv.h);
+                this.value(color);
+            }
+            hex(next) {
+                if (next !== undefined) {
+                    const clean = next.trim().startsWith('#') ? next.trim() : '#' + next.trim();
+                    if ($bog_doodle_picker_valid(clean))
+                        this.swatch_pick(clean.toLowerCase());
+                    return next;
+                }
+                return this.value();
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $bog_doodle_picker.prototype, "hue", null);
+        $$.$bog_doodle_picker = $bog_doodle_picker;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("bog/doodle/picker/picker.view.css", "[bog_doodle_picker] {\n\tflex-direction: column;\n\tgap: var(--mol_gap_space);\n\tpadding: var(--mol_gap_block);\n\twidth: 16rem;\n\tmax-width: 100%;\n}\n\n[bog_doodle_picker_area] {\n\tposition: relative;\n\theight: 10rem;\n\tborder-radius: var(--mol_gap_round);\n\tbackground:\n\t\tlinear-gradient( to top, #000, transparent ),\n\t\tlinear-gradient( to right, #fff, var(--bog_doodle_picker_hue) );\n\ttouch-action: none;\n\tcursor: crosshair;\n}\n\n[bog_doodle_picker_area_knob] {\n\tposition: absolute;\n\twidth: 1rem;\n\theight: 1rem;\n\tmargin: -0.5rem 0 0 -0.5rem;\n\tborder-radius: 50%;\n\tborder: 2px solid #fff;\n\tbox-shadow: 0 0 0 1px #0008;\n\tpointer-events: none;\n}\n\n[bog_doodle_picker_hue] {\n\tposition: relative;\n\theight: 1rem;\n\tborder-radius: var(--mol_gap_round);\n\tbackground: linear-gradient( to right, #f00, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 );\n\ttouch-action: none;\n\tcursor: pointer;\n}\n\n[bog_doodle_picker_hue_knob] {\n\tposition: absolute;\n\ttop: -2px;\n\tbottom: -2px;\n\twidth: 6px;\n\tmargin-left: -3px;\n\tborder-radius: 3px;\n\tbackground: #fff;\n\tbox-shadow: 0 0 0 1px #0008;\n\tpointer-events: none;\n}\n\n[bog_doodle_picker_swatches] {\n\tflex-wrap: wrap;\n\tgap: 4px;\n}\n\n[bog_doodle_picker_swatch] {\n\twidth: 1.75rem;\n\theight: 1.75rem;\n\tmin-width: 0;\n\tmin-height: 0;\n\tpadding: 0;\n\tborder-radius: 50%;\n\tbackground: var(--bog_doodle_picker_swatch);\n\tbox-shadow: inset 0 0 0 1px #0002;\n}\n\n[bog_doodle_picker_hex_row] {\n\talign-items: center;\n\tgap: var(--mol_gap_space);\n}\n\n[bog_doodle_picker_preview] {\n\tflex: none;\n\twidth: 2.5rem;\n\theight: 2.5rem;\n\tborder-radius: var(--mol_gap_round);\n\tbackground: var(--bog_doodle_picker_swatch);\n\tbox-shadow: inset 0 0 0 1px #0002;\n}\n");
+})($ || ($ = {}));
 
 ;
 	($.$mol_ghost) = class $mol_ghost extends ($.$mol_view) {
@@ -8692,6 +7186,305 @@ var $;
 
 
 ;
+	($.$mol_scroll) = class $mol_scroll extends ($.$mol_view) {
+		tabindex(){
+			return -1;
+		}
+		event_scroll(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		scroll_top(next){
+			if(next !== undefined) return next;
+			return 0;
+		}
+		scroll_left(next){
+			if(next !== undefined) return next;
+			return 0;
+		}
+		attr(){
+			return {...(super.attr()), "tabindex": (this.tabindex())};
+		}
+		event(){
+			return {...(super.event()), "scroll": (next) => (this.event_scroll(next))};
+		}
+	};
+	($mol_mem(($.$mol_scroll.prototype), "event_scroll"));
+	($mol_mem(($.$mol_scroll.prototype), "scroll_top"));
+	($mol_mem(($.$mol_scroll.prototype), "scroll_left"));
+
+
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_print extends $mol_object {
+        static before() {
+            return new $mol_dom_listener(this.$.$mol_dom_context, 'beforeprint', () => {
+                this.active(true);
+            });
+        }
+        static after() {
+            return new $mol_dom_listener(this.$.$mol_dom_context, 'afterprint', () => {
+                this.active(false);
+            });
+        }
+        static active(next) {
+            this.before();
+            this.after();
+            return next || false;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_print, "before", null);
+    __decorate([
+        $mol_mem
+    ], $mol_print, "after", null);
+    __decorate([
+        $mol_mem
+    ], $mol_print, "active", null);
+    $.$mol_print = $mol_print;
+})($ || ($ = {}));
+
+;
+"use strict";
+
+;
+"use strict";
+
+;
+"use strict";
+
+;
+"use strict";
+
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_style_sheet(Component, config0) {
+        let rules = [];
+        const block = $mol_dom_qname($mol_ambient({}).$mol_func_name(Component));
+        const kebab = (name) => name.replace(/[A-Z]/g, letter => '-' + letter.toLowerCase());
+        const make_class = (prefix, path, config) => {
+            const props = [];
+            const selector = (prefix, path) => {
+                if (path.length === 0)
+                    return prefix || `[${block}]`;
+                let res = `[${block}_${path.join('_')}]`;
+                if (prefix)
+                    res = prefix + ' :where(' + res + ')';
+                return res;
+            };
+            for (const key of Object.keys(config).reverse()) {
+                if (/^(--)?[a-z]/.test(key)) {
+                    const addProp = (keys, val) => {
+                        if (Array.isArray(val)) {
+                            if (val[0] && [Array, Object].includes(val[0].constructor)) {
+                                val = val.map(v => {
+                                    return Object.entries(v).map(([n, a]) => {
+                                        if (a === true)
+                                            return kebab(n);
+                                        if (a === false)
+                                            return null;
+                                        return String(a);
+                                    }).filter(Boolean).join(' ');
+                                }).join(',');
+                            }
+                            else {
+                                val = val.join(' ');
+                            }
+                            props.push(`\t${keys.join('-')}: ${val};\n`);
+                        }
+                        else if (val.constructor === Object) {
+                            for (let suffix of Object.keys(val).reverse()) {
+                                addProp([...keys, kebab(suffix)], val[suffix]);
+                            }
+                        }
+                        else {
+                            props.push(`\t${keys.join('-')}: ${val};\n`);
+                        }
+                    };
+                    addProp([kebab(key)], config[key]);
+                }
+                else if (/^[A-Z]/.test(key)) {
+                    make_class(prefix, [...path, key.toLowerCase()], config[key]);
+                }
+                else if (key[0] === '$') {
+                    make_class(selector(prefix, path) + ' :where([' + $mol_dom_qname(key) + '])', [], config[key]);
+                }
+                else if (key === '>') {
+                    const types = config[key];
+                    for (let type of Object.keys(types).reverse()) {
+                        make_class(selector(prefix, path) + ' > :where([' + $mol_dom_qname(type) + '])', [], types[type]);
+                    }
+                }
+                else if (key === '@') {
+                    const attrs = config[key];
+                    for (let name of Object.keys(attrs).reverse()) {
+                        for (let val in attrs[name]) {
+                            make_class(selector(prefix, path) + ':where([' + name + '=' + JSON.stringify(val) + '])', [], attrs[name][val]);
+                        }
+                    }
+                }
+                else if (key === '@media' || key === '@container') {
+                    const media = config[key];
+                    for (let query of Object.keys(media).reverse()) {
+                        rules.push('}\n');
+                        make_class(prefix, path, media[query]);
+                        rules.push(`${key} ${query} {\n`);
+                    }
+                }
+                else if (key === '@starting-style') {
+                    const styles = config[key];
+                    rules.push('}\n');
+                    make_class(prefix, path, styles);
+                    rules.push(`${key} {\n`);
+                }
+                else if (key[0] === '[' && key[key.length - 1] === ']') {
+                    const attr = key.slice(1, -1);
+                    const vals = config[key];
+                    for (let val of Object.keys(vals).reverse()) {
+                        make_class(selector(prefix, path) + ':where([' + attr + '=' + JSON.stringify(val) + '])', [], vals[val]);
+                    }
+                }
+                else {
+                    make_class(selector(prefix, path) + key, [], config[key]);
+                }
+            }
+            if (props.length) {
+                rules.push(`${selector(prefix, path)} {\n${props.reverse().join('')}}\n`);
+            }
+        };
+        make_class('', [], config0);
+        return rules.reverse().join('');
+    }
+    $.$mol_style_sheet = $mol_style_sheet;
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    /**
+     * CSS in TS.
+     * Statically typed CSS style sheets. Following samples show which CSS code are generated from TS code.
+     * @see https://mol.hyoo.ru/#!section=docs/=xwq9q5_f966fg
+     */
+    function $mol_style_define(Component, config) {
+        return $mol_style_attach(Component.name, $mol_style_sheet(Component, config));
+    }
+    $.$mol_style_define = $mol_style_define;
+})($ || ($ = {}));
+
+;
+"use strict";
+
+
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        /**
+         * Scrolling pane.
+         * @see https://mol.hyoo.ru/#!section=demos/demo=mol_scroll_demo
+         */
+        class $mol_scroll extends $.$mol_scroll {
+            scroll_top(next, cache) {
+                const el = this.dom_node();
+                if (next !== undefined && !cache)
+                    el.scrollTop = next;
+                return el.scrollTop;
+            }
+            scroll_left(next, cache) {
+                const el = this.dom_node();
+                if (next !== undefined && !cache)
+                    el.scrollLeft = next;
+                return el.scrollLeft;
+            }
+            event_scroll(next) {
+                const el = this.dom_node();
+                this.scroll_left(el.scrollLeft, 'cache');
+                this.scroll_top(el.scrollTop, 'cache');
+            }
+            minimal_height() {
+                return this.$.$mol_print.active() ? null : 0;
+            }
+            minimal_width() {
+                return this.$.$mol_print.active() ? null : 0;
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_scroll.prototype, "scroll_top", null);
+        __decorate([
+            $mol_mem
+        ], $mol_scroll.prototype, "scroll_left", null);
+        $$.$mol_scroll = $mol_scroll;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        const { per, rem, px } = $mol_style_unit;
+        $mol_style_define($mol_scroll, {
+            display: 'grid',
+            overflow: 'auto',
+            flex: {
+                direction: 'column',
+                grow: 1,
+                shrink: 1,
+                // basis: 0,
+            },
+            outline: 'none',
+            align: {
+                self: 'stretch',
+                items: 'flex-start',
+            },
+            boxSizing: 'border-box',
+            willChange: 'scroll-position',
+            scroll: {
+                padding: [rem(.75), 0],
+            },
+            maxHeight: per(100),
+            maxWidth: per(100),
+            webkitOverflowScrolling: 'touch',
+            contain: 'content',
+            '>': {
+                $mol_view: {
+                    // transform: 'translateZ(0)', // enforce gpu scroll in all agents
+                    gridArea: '1/1',
+                },
+            },
+            '::before': {
+                display: 'none',
+            },
+            '::after': {
+                display: 'none',
+            },
+            '::-webkit-scrollbar': {
+                width: rem(.25),
+                height: rem(.25),
+            },
+            '@media': {
+                'print': {
+                    overflow: 'hidden',
+                    contain: 'none',
+                    maxHeight: 'unset',
+                },
+            },
+        });
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+
+;
 "use strict";
 
 
@@ -8910,6 +7703,1934 @@ var $;
 (function ($) {
     $mol_style_attach("mol/pick/pick.view.css", "[mol_pick_trigger] {\n\talign-items: center;\n\tflex-grow: 1;\n}\n");
 })($ || ($ = {}));
+
+;
+	($.$mol_icon_magnify) = class $mol_icon_magnify extends ($.$mol_icon) {
+		path(){
+			return "M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z";
+		}
+	};
+
+
+;
+"use strict";
+
+
+;
+	($.$mol_icon_magnify_minus) = class $mol_icon_magnify_minus extends ($.$mol_icon) {
+		path(){
+			return "M9,2A7,7 0 0,1 16,9C16,10.57 15.5,12 14.61,13.19L15.41,14H16L22,20L20,22L14,16V15.41L13.19,14.61C12,15.5 10.57,16 9,16A7,7 0 0,1 2,9A7,7 0 0,1 9,2M5,8V10H13V8H5Z";
+		}
+	};
+
+
+;
+"use strict";
+
+
+;
+	($.$mol_icon_magnify_plus) = class $mol_icon_magnify_plus extends ($.$mol_icon) {
+		path(){
+			return "M9,2A7,7 0 0,1 16,9C16,10.57 15.5,12 14.61,13.19L15.41,14H16L22,20L20,22L14,16V15.41L13.19,14.61C12,15.5 10.57,16 9,16A7,7 0 0,1 2,9A7,7 0 0,1 9,2M8,5V8H5V10H8V13H10V10H13V8H10V5H8Z";
+		}
+	};
+
+
+;
+"use strict";
+
+
+;
+	($.$mol_icon_content_duplicate) = class $mol_icon_content_duplicate extends ($.$mol_icon) {
+		path(){
+			return "M11,17H4A2,2 0 0,1 2,15V3A2,2 0 0,1 4,1H16V3H4V15H11V13L15,16L11,19V17M19,21V7H8V13H6V7A2,2 0 0,1 8,5H19A2,2 0 0,1 21,7V21A2,2 0 0,1 19,23H8A2,2 0 0,1 6,21V19H8V21H19Z";
+		}
+	};
+
+
+;
+"use strict";
+
+
+;
+	($.$mol_icon_delete) = class $mol_icon_delete extends ($.$mol_icon) {
+		path(){
+			return "M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z";
+		}
+	};
+
+
+;
+"use strict";
+
+
+;
+	($.$mol_icon_plus) = class $mol_icon_plus extends ($.$mol_icon) {
+		path(){
+			return "M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z";
+		}
+	};
+
+
+;
+"use strict";
+
+
+;
+"use strict";
+var $;
+(function ($) {
+    function $bog_doodle_sketch_stroke_box(stroke) {
+        let left = Infinity, right = -Infinity, top = Infinity, bottom = -Infinity;
+        const points = stroke.points;
+        for (let i = 0; i < points.length; i += 3) {
+            left = Math.min(left, points[i]);
+            right = Math.max(right, points[i]);
+            top = Math.min(top, points[i + 1]);
+            bottom = Math.max(bottom, points[i + 1]);
+        }
+        return { left, right, top, bottom };
+    }
+    $.$bog_doodle_sketch_stroke_box = $bog_doodle_sketch_stroke_box;
+    function $bog_doodle_sketch_stroke_near(stroke, x, y, radius) {
+        const points = stroke.points;
+        const r2 = radius * radius;
+        for (let i = 0; i < points.length; i += 3) {
+            const dx = points[i] - x;
+            const dy = points[i + 1] - y;
+            if (dx * dx + dy * dy <= r2)
+                return true;
+            if (i + 3 >= points.length)
+                continue;
+            const sx = points[i + 3] - points[i];
+            const sy = points[i + 4] - points[i + 1];
+            const len = sx * sx + sy * sy;
+            if (!len)
+                continue;
+            const t = Math.max(0, Math.min(1, ((x - points[i]) * sx + (y - points[i + 1]) * sy) / len));
+            const px = points[i] + t * sx - x;
+            const py = points[i + 1] + t * sy - y;
+            if (px * px + py * py <= r2)
+                return true;
+        }
+        return false;
+    }
+    $.$bog_doodle_sketch_stroke_near = $bog_doodle_sketch_stroke_near;
+    function $bog_doodle_sketch_stroke_shift(stroke, dx, dy, id = stroke.id) {
+        const points = stroke.points.map((v, i) => {
+            if (i % 3 === 0)
+                return Math.max(0, Math.min(0.9999, v + dx));
+            if (i % 3 === 1)
+                return Math.max(0, Math.min(1, v + dy));
+            return v;
+        });
+        return { ...stroke, id, points };
+    }
+    $.$bog_doodle_sketch_stroke_shift = $bog_doodle_sketch_stroke_shift;
+    function $bog_doodle_sketch_stroke_id() {
+        return Math.random().toString(36).slice(2, 10);
+    }
+    $.$bog_doodle_sketch_stroke_id = $bog_doodle_sketch_stroke_id;
+    class $bog_doodle_sketch extends $mol_object {
+        strokes(next) {
+            return next ?? [];
+        }
+        past(next) {
+            return next ?? [];
+        }
+        future(next) {
+            return next ?? [];
+        }
+        commit(next) {
+            const prev = this.strokes();
+            if (prev === next)
+                return;
+            this.past([...this.past().slice(-199), prev]);
+            this.future([]);
+            this.strokes(next);
+        }
+        reset(next) {
+            this.past([]);
+            this.future([]);
+            this.strokes(next);
+        }
+        undo_enabled() {
+            return this.past().length > 0;
+        }
+        redo_enabled() {
+            return this.future().length > 0;
+        }
+        undo() {
+            const past = this.past();
+            if (!past.length)
+                return;
+            this.future([this.strokes(), ...this.future()]);
+            this.past(past.slice(0, -1));
+            this.strokes(past[past.length - 1]);
+        }
+        redo() {
+            const future = this.future();
+            if (!future.length)
+                return;
+            this.past([...this.past(), this.strokes()]);
+            this.future(future.slice(1));
+            this.strokes(future[0]);
+        }
+        add(stroke) {
+            this.commit([...this.strokes(), stroke]);
+        }
+        remove(ids) {
+            if (!ids.length)
+                return;
+            const drop = new Set(ids);
+            this.commit(this.strokes().filter(s => !drop.has(s.id)));
+        }
+        shift(ids, dx, dy) {
+            if (!ids.length)
+                return;
+            const moved = new Set(ids);
+            this.commit(this.strokes().map(s => moved.has(s.id) ? $bog_doodle_sketch_stroke_shift(s, dx, dy) : s));
+        }
+        copy(ids, dx, dy) {
+            const picked = new Set(ids);
+            const copies = this.strokes()
+                .filter(s => picked.has(s.id))
+                .map(s => $bog_doodle_sketch_stroke_shift(s, dx, dy, $bog_doodle_sketch_stroke_id()));
+            if (!copies.length)
+                return [];
+            this.commit([...this.strokes(), ...copies]);
+            return copies.map(s => s.id);
+        }
+        clear(filter = () => true) {
+            const rest = this.strokes().filter(s => !filter(s));
+            if (rest.length === this.strokes().length)
+                return;
+            this.commit(rest);
+        }
+        hits(x, y, radius, filter = () => true) {
+            return this.strokes()
+                .filter(s => filter(s) && $bog_doodle_sketch_stroke_near(s, x, y, radius))
+                .map(s => s.id);
+        }
+        inside(left, top, right, bottom, filter = () => true) {
+            return this.strokes().filter(s => {
+                if (!filter(s))
+                    return false;
+                const box = $bog_doodle_sketch_stroke_box(s);
+                return box.right >= left && box.left <= right && box.bottom >= top && box.top <= bottom;
+            }).map(s => s.id);
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $bog_doodle_sketch.prototype, "strokes", null);
+    __decorate([
+        $mol_mem
+    ], $bog_doodle_sketch.prototype, "past", null);
+    __decorate([
+        $mol_mem
+    ], $bog_doodle_sketch.prototype, "future", null);
+    $.$bog_doodle_sketch = $bog_doodle_sketch;
+})($ || ($ = {}));
+
+;
+	($.$bog_doodle_board) = class $bog_doodle_board extends ($.$mol_view) {
+		pointer_down(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		pointer_move(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		pointer_up(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		pointer_cancel(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		pointer_leave(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		wheel(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		context_menu(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		dom_name(){
+			return "canvas";
+		}
+		sketch(){
+			const obj = new this.$.$bog_doodle_sketch();
+			return obj;
+		}
+		notes(){
+			return [];
+		}
+		steps(){
+			return 16;
+		}
+		beat_steps(){
+			return 2;
+		}
+		bar_steps(){
+			return 8;
+		}
+		axis(){
+			return "time_y";
+		}
+		tool(next){
+			if(next !== undefined) return next;
+			return "draw";
+		}
+		ink(){
+			return "#1f1d1a";
+		}
+		brush(){
+			return 1;
+		}
+		eraser(){
+			return 24;
+		}
+		snap(){
+			return false;
+		}
+		pen_only(){
+			return false;
+		}
+		back(){
+			return "";
+		}
+		layer_order(){
+			return ["l1"];
+		}
+		layer_active(){
+			return "l1";
+		}
+		layer_default(){
+			return "l1";
+		}
+		layer_focus(){
+			return false;
+		}
+		selected(next){
+			if(next !== undefined) return next;
+			return [];
+		}
+		playhead(){
+			return null;
+		}
+		playing(){
+			return false;
+		}
+		note_hover(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		attr(){
+			return {...(super.attr()), "bog_doodle_board_tool": (this.tool())};
+		}
+		event(){
+			return {
+				"pointerdown": (next) => (this.pointer_down(next)), 
+				"pointermove": (next) => (this.pointer_move(next)), 
+				"pointerup": (next) => (this.pointer_up(next)), 
+				"pointercancel": (next) => (this.pointer_cancel(next)), 
+				"pointerleave": (next) => (this.pointer_leave(next)), 
+				"wheel": (next) => (this.wheel(next)), 
+				"contextmenu": (next) => (this.context_menu(next))
+			};
+		}
+	};
+	($mol_mem(($.$bog_doodle_board.prototype), "pointer_down"));
+	($mol_mem(($.$bog_doodle_board.prototype), "pointer_move"));
+	($mol_mem(($.$bog_doodle_board.prototype), "pointer_up"));
+	($mol_mem(($.$bog_doodle_board.prototype), "pointer_cancel"));
+	($mol_mem(($.$bog_doodle_board.prototype), "pointer_leave"));
+	($mol_mem(($.$bog_doodle_board.prototype), "wheel"));
+	($mol_mem(($.$bog_doodle_board.prototype), "context_menu"));
+	($mol_mem(($.$bog_doodle_board.prototype), "sketch"));
+	($mol_mem(($.$bog_doodle_board.prototype), "tool"));
+	($mol_mem(($.$bog_doodle_board.prototype), "selected"));
+	($mol_mem(($.$bog_doodle_board.prototype), "note_hover"));
+
+
+;
+"use strict";
+var $;
+(function ($) {
+    $.$bog_doodle_scale_steps = {
+        major_penta: [0, 2, 4, 7, 9],
+        minor_penta: [0, 3, 5, 7, 10],
+        major: [0, 2, 4, 5, 7, 9, 11],
+        minor: [0, 2, 3, 5, 7, 8, 10],
+        harmonic: [0, 2, 3, 5, 7, 8, 11],
+        dorian: [0, 2, 3, 5, 7, 9, 10],
+        phrygian: [0, 1, 3, 5, 7, 8, 10],
+        lydian: [0, 2, 4, 6, 7, 9, 11],
+        mixolydian: [0, 2, 4, 5, 7, 9, 10],
+        blues: [0, 3, 5, 6, 7, 10],
+        chromatic: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    };
+    $.$bog_doodle_scale_keys = ['C', 'C♯', 'D', 'E♭', 'E', 'F', 'F♯', 'G', 'A♭', 'A', 'B♭', 'B'];
+    function $bog_doodle_scale_notes(key, scale, octave, range) {
+        const steps = $.$bog_doodle_scale_steps[scale] ?? $.$bog_doodle_scale_steps.major;
+        const base = 12 * (octave + 1) + key;
+        const notes = [];
+        for (let o = 0; o < range; ++o) {
+            for (const step of steps)
+                notes.push(base + 12 * o + step);
+        }
+        notes.push(base + 12 * range);
+        return notes;
+    }
+    $.$bog_doodle_scale_notes = $bog_doodle_scale_notes;
+    function $bog_doodle_scale_row(y, count) {
+        const row = Math.floor((1 - y) * count);
+        return Math.max(0, Math.min(count - 1, row));
+    }
+    $.$bog_doodle_scale_row = $bog_doodle_scale_row;
+    function $bog_doodle_scale_row_y(row, count) {
+        return 1 - (row + 0.5) / count;
+    }
+    $.$bog_doodle_scale_row_y = $bog_doodle_scale_row_y;
+    function $bog_doodle_scale_name(midi) {
+        return $.$bog_doodle_scale_keys[((midi % 12) + 12) % 12] + (Math.floor(midi / 12) - 1);
+    }
+    $.$bog_doodle_scale_name = $bog_doodle_scale_name;
+    function $bog_doodle_scale_freq(midi) {
+        return 440 * 2 ** ((midi - 69) / 12);
+    }
+    $.$bog_doodle_scale_freq = $bog_doodle_scale_freq;
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $.$bog_doodle_score_grids = {
+        '4': 4,
+        '8': 8,
+        '8t': 12,
+        '16': 16,
+        '16t': 24,
+        '32': 32,
+        'free': 96,
+    };
+    function rows_at(points, left, right, count) {
+        const center = (left + right) / 2;
+        const found = new Map();
+        for (let i = 0; i + 3 < points.length; i += 3) {
+            const x1 = points[i], x2 = points[i + 3];
+            if (Math.min(x1, x2) > center || Math.max(x1, x2) < center || x1 === x2)
+                continue;
+            const t = (center - x1) / (x2 - x1);
+            const y = points[i + 1] + t * (points[i + 4] - points[i + 1]);
+            const p = points[i + 2] + t * (points[i + 5] - points[i + 2]);
+            const row = $bog_doodle_scale_row(y, count);
+            found.set(row, Math.max(found.get(row) ?? 0, p));
+        }
+        if (found.size)
+            return found;
+        let low = Infinity, high = -Infinity, pressure = 0;
+        for (let i = 0; i < points.length; i += 3) {
+            if (points[i] < left || points[i] >= right)
+                continue;
+            const row = $bog_doodle_scale_row(points[i + 1], count);
+            low = Math.min(low, row);
+            high = Math.max(high, row);
+            pressure = Math.max(pressure, points[i + 2]);
+        }
+        for (let row = low; row <= high; ++row)
+            found.set(row, pressure);
+        return found;
+    }
+    function $bog_doodle_score(strokes, notes, steps) {
+        const events = [];
+        for (const stroke of strokes) {
+            const box = $bog_doodle_sketch_stroke_box(stroke);
+            const first = Math.max(0, Math.floor(box.left * steps));
+            const last = Math.min(steps - 1, Math.max(first, Math.ceil(box.right * steps) - 1));
+            let open = new Map();
+            for (let step = first; step <= last; ++step) {
+                const rows = rows_at(stroke.points, step / steps, (step + 1) / steps, notes.length);
+                const next = new Map();
+                for (const [row, pressure] of rows) {
+                    const prev = open.get(row);
+                    if (prev) {
+                        prev.length++;
+                        next.set(row, prev);
+                        continue;
+                    }
+                    const event = {
+                        stroke: stroke.id,
+                        color: stroke.color,
+                        step,
+                        length: 1,
+                        midi: notes[row],
+                        velocity: Math.round((0.25 + 0.75 * pressure) * 100) / 100,
+                    };
+                    events.push(event);
+                    next.set(row, event);
+                }
+                open = next;
+            }
+        }
+        return events.sort((a, b) => a.step - b.step || a.midi - b.midi);
+    }
+    $.$bog_doodle_score = $bog_doodle_score;
+    function $bog_doodle_score_time(step, steps_per_bar, bar_time, swing) {
+        const step_time = bar_time / steps_per_bar;
+        const swingable = steps_per_bar === 8 || steps_per_bar === 16;
+        const shift = swingable && step % 2 === 1 ? swing * step_time / 3 : 0;
+        return step * step_time + shift;
+    }
+    $.$bog_doodle_score_time = $bog_doodle_score_time;
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_base64_encode(src) {
+        return src.toBase64();
+    }
+    $.$mol_base64_encode = $mol_base64_encode;
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_base64_encode_node(str) {
+        if (!str)
+            return '';
+        const buf = Buffer.isBuffer(str) ? str : Buffer.from(str);
+        return buf.toString('base64');
+    }
+    $.$mol_base64_encode_node = $mol_base64_encode_node;
+    if (!('toBase64' in Uint8Array.prototype)) {
+        $.$mol_base64_encode = $mol_base64_encode_node;
+    }
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_base64_decode(base64) {
+        return Uint8Array.fromBase64(base64);
+    }
+    $.$mol_base64_decode = $mol_base64_decode;
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_base64_decode_node(base64Str) {
+        // without Uint8Array breaks $mol_compare_deep
+        const buffer = Buffer.from(base64Str, 'base64');
+        return new Uint8Array(buffer.buffer, buffer.byteOffset, buffer.byteLength);
+    }
+    $.$mol_base64_decode_node = $mol_base64_decode_node;
+    if (!('fromBase64' in Uint8Array)) {
+        $.$mol_base64_decode = $mol_base64_decode_node;
+    }
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    function $bog_doodle_piece_layer_of(piece, stroke) {
+        const id = stroke.layer;
+        return piece.layers.find(layer => layer.id === id) ?? piece.layers[0];
+    }
+    $.$bog_doodle_piece_layer_of = $bog_doodle_piece_layer_of;
+    function $bog_doodle_piece_empty() {
+        return {
+            title: '',
+            key: 0,
+            scale: 'major_penta',
+            octave: 3,
+            range: 2,
+            bpm: 100,
+            bars: 2,
+            grid: '8',
+            swing: 0,
+            patterns: [[]],
+            chain: false,
+            back: '',
+            layers: [{ id: 'l1', name: '', visible: true, audible: true }],
+            axis: 'time_y',
+        };
+    }
+    $.$bog_doodle_piece_empty = $bog_doodle_piece_empty;
+    function points_pack(points) {
+        const bytes = new Uint8Array(points.length / 3 * 4);
+        for (let i = 0, j = 0; i < points.length; i += 3, j += 4) {
+            const x = Math.round(Math.max(0, Math.min(1, points[i])) * 4095);
+            const y = Math.round(Math.max(0, Math.min(1, points[i + 1])) * 4095);
+            const p = Math.round(Math.max(0, Math.min(1, points[i + 2])) * 255);
+            bytes[j] = x >> 4;
+            bytes[j + 1] = ((x & 15) << 4) | (y >> 8);
+            bytes[j + 2] = y & 255;
+            bytes[j + 3] = p;
+        }
+        return $mol_base64_encode(bytes).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    }
+    function points_unpack(str) {
+        const base64 = str.replace(/-/g, '+').replace(/_/g, '/');
+        const bytes = $mol_base64_decode(base64 + '='.repeat((4 - base64.length % 4) % 4));
+        const points = [];
+        for (let j = 0; j + 3 < bytes.length; j += 4) {
+            const x = (bytes[j] << 4) | (bytes[j + 1] >> 4);
+            const y = ((bytes[j + 1] & 15) << 8) | bytes[j + 2];
+            points.push(x / 4095, y / 4095, bytes[j + 3] / 255);
+        }
+        return points;
+    }
+    function $bog_doodle_piece_pack(piece) {
+        return JSON.stringify({
+            v: 2,
+            t: piece.title,
+            k: piece.key,
+            s: piece.scale,
+            o: piece.octave,
+            r: piece.range,
+            b: piece.bpm,
+            n: piece.bars,
+            g: piece.grid,
+            w: piece.swing,
+            c: piece.chain ? 1 : 0,
+            a: piece.axis,
+            l: piece.layers.map(l => [l.id, l.name, l.visible ? 1 : 0, l.audible ? 1 : 0]),
+            p: piece.patterns.map(strokes => strokes.map(s => [
+                s.color,
+                points_pack(s.points),
+                s.ink ?? '',
+                Math.round((s.size ?? 1) * 100) / 100,
+                s.layer ?? '',
+            ])),
+        });
+    }
+    $.$bog_doodle_piece_pack = $bog_doodle_piece_pack;
+    function stroke_unpack(item) {
+        if (typeof item === 'string') {
+            const [color, points] = item.split('.');
+            return { id: $bog_doodle_sketch_stroke_id(), color: Number(color) || 0, points: points_unpack(points ?? '') };
+        }
+        const [color, points, ink, size, layer] = item;
+        return {
+            id: $bog_doodle_sketch_stroke_id(),
+            color: Number(color) || 0,
+            points: points_unpack(String(points ?? '')),
+            ...ink ? { ink: String(ink) } : {},
+            ...size && Number(size) !== 1 ? { size: Number(size) } : {},
+            ...layer ? { layer: String(layer) } : {},
+        };
+    }
+    function $bog_doodle_piece_unpack(str) {
+        const raw = JSON.parse(str);
+        const empty = $bog_doodle_piece_empty();
+        const patterns = (raw.p ?? [[]]).map(strokes => strokes.map(stroke_unpack));
+        const layers = (raw.l ?? []).map(([id, name, visible, audible]) => ({
+            id: String(id),
+            name: String(name ?? ''),
+            visible: Boolean(visible),
+            audible: Boolean(audible),
+        }));
+        return {
+            ...empty,
+            title: String(raw.t ?? ''),
+            key: Number(raw.k ?? empty.key),
+            scale: raw.s in $bog_doodle_scale_steps ? raw.s : empty.scale,
+            octave: Number(raw.o ?? empty.octave),
+            range: Number(raw.r ?? empty.range),
+            bpm: Number(raw.b ?? empty.bpm),
+            bars: Number(raw.n ?? empty.bars),
+            grid: raw.g in $bog_doodle_score_grids ? raw.g : empty.grid,
+            swing: Number(raw.w ?? 0),
+            chain: Boolean(raw.c),
+            axis: raw.a === 'time_x' ? 'time_x' : 'time_y',
+            layers: layers.length ? layers : empty.layers,
+            patterns: patterns.length ? patterns : [[]],
+        };
+    }
+    $.$bog_doodle_piece_unpack = $bog_doodle_piece_unpack;
+    function $bog_doodle_piece_simplify(points, tolerance) {
+        const count = points.length / 3;
+        if (count < 3)
+            return points;
+        const keep = new Uint8Array(count);
+        keep[0] = keep[count - 1] = 1;
+        const stack = [[0, count - 1]];
+        while (stack.length) {
+            const [from, to] = stack.pop();
+            const ax = points[from * 3], ay = points[from * 3 + 1];
+            const bx = points[to * 3], by = points[to * 3 + 1];
+            const len = Math.hypot(bx - ax, by - ay) || 1e-9;
+            let far = -1, dist = tolerance;
+            for (let i = from + 1; i < to; ++i) {
+                const px = points[i * 3], py = points[i * 3 + 1];
+                const d = Math.abs((bx - ax) * (ay - py) - (ax - px) * (by - ay)) / len;
+                const dp = Math.abs(points[i * 3 + 2] - points[from * 3 + 2]);
+                const score = Math.max(d, dp * tolerance * 4);
+                if (score > dist) {
+                    dist = score;
+                    far = i;
+                }
+            }
+            if (far < 0)
+                continue;
+            keep[far] = 1;
+            stack.push([from, far], [far, to]);
+        }
+        const result = [];
+        for (let i = 0; i < count; ++i) {
+            if (keep[i])
+                result.push(points[i * 3], points[i * 3 + 1], points[i * 3 + 2]);
+        }
+        return result;
+    }
+    $.$bog_doodle_piece_simplify = $bog_doodle_piece_simplify;
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $.$bog_doodle_synth_colors = [
+        { ink: '#1f1d1a', name: 'Пианино' },
+        { ink: '#d8452f', name: 'Щипок' },
+        { ink: '#2f6fd8', name: 'Пэд' },
+        { ink: '#2a9d5c', name: 'Маримба' },
+        { ink: '#e39a1b', name: 'Лид' },
+        { ink: '#8a44c8', name: 'Колокол' },
+    ];
+    function $bog_doodle_synth_hsl(ink) {
+        const hex = ink.replace('#', '').slice(0, 6).padEnd(6, '0');
+        const r = parseInt(hex.slice(0, 2), 16) / 255;
+        const g = parseInt(hex.slice(2, 4), 16) / 255;
+        const b = parseInt(hex.slice(4, 6), 16) / 255;
+        const max = Math.max(r, g, b), min = Math.min(r, g, b);
+        const l = (max + min) / 2;
+        const d = max - min;
+        if (!d)
+            return { h: 0, s: 0, l };
+        const s = d / (1 - Math.abs(2 * l - 1));
+        const h = max === r ? ((g - b) / d + 6) % 6 : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+        return { h: h * 60, s, l };
+    }
+    $.$bog_doodle_synth_hsl = $bog_doodle_synth_hsl;
+    function $bog_doodle_synth_timbre(ink) {
+        const { h, s, l } = $bog_doodle_synth_hsl(ink);
+        if (s < 0.2 || l < 0.12 || l > 0.92)
+            return 0;
+        if (h < 15 || h >= 345)
+            return 1;
+        if (h < 70)
+            return 4;
+        if (h < 170)
+            return 3;
+        if (h < 250)
+            return 2;
+        return 5;
+    }
+    $.$bog_doodle_synth_timbre = $bog_doodle_synth_timbre;
+    function $bog_doodle_synth_ink(stroke) {
+        return stroke.ink || $.$bog_doodle_synth_colors[stroke.color]?.ink || '#1f1d1a';
+    }
+    $.$bog_doodle_synth_ink = $bog_doodle_synth_ink;
+    function envelope(ctx, dest, time, attack, peak, hold, release) {
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0.0001, time);
+        gain.gain.linearRampToValueAtTime(peak, time + attack);
+        gain.gain.setTargetAtTime(peak * 0.6, time + attack, hold / 3 + 0.01);
+        gain.gain.setTargetAtTime(0.0001, time + attack + hold, release / 4);
+        gain.connect(dest);
+        return { gain, end: time + attack + hold + release };
+    }
+    function osc(ctx, type, freq, dest, time, end, detune = 0) {
+        const node = ctx.createOscillator();
+        node.type = type;
+        node.frequency.setValueAtTime(freq, time);
+        node.detune.setValueAtTime(detune, time);
+        node.connect(dest);
+        node.start(time);
+        node.stop(end);
+        return node;
+    }
+    function $bog_doodle_synth_note(ctx, dest, color, freq, time, length, velocity) {
+        const level = 0.18 * velocity;
+        switch (color) {
+            case 1: {
+                const env = envelope(ctx, dest, time, 0.004, level * 1.2, Math.min(length, 0.25), 0.4);
+                const filter = ctx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(freq * 8, time);
+                filter.frequency.exponentialRampToValueAtTime(freq * 1.5, time + 0.3);
+                filter.connect(env.gain);
+                osc(ctx, 'sawtooth', freq, filter, time, env.end);
+                return;
+            }
+            case 2: {
+                const env = envelope(ctx, dest, time, Math.min(0.25, length / 2), level * 0.8, length, 0.6);
+                osc(ctx, 'sine', freq, env.gain, time, env.end, -7);
+                osc(ctx, 'triangle', freq, env.gain, time, env.end, 7);
+                osc(ctx, 'sine', freq * 2, env.gain, time, env.end, 3);
+                return;
+            }
+            case 3: {
+                const env = envelope(ctx, dest, time, 0.003, level * 1.4, 0.05, 0.5);
+                osc(ctx, 'sine', freq, env.gain, time, env.end);
+                const over = envelope(ctx, dest, time, 0.002, level * 0.4, 0.01, 0.12);
+                osc(ctx, 'sine', freq * 4, over.gain, time, over.end);
+                return;
+            }
+            case 4: {
+                const env = envelope(ctx, dest, time, 0.01, level * 0.6, length, 0.12);
+                const filter = ctx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(Math.min(12000, freq * 6), time);
+                filter.Q.setValueAtTime(4, time);
+                filter.connect(env.gain);
+                osc(ctx, 'square', freq, filter, time, env.end);
+                osc(ctx, 'sawtooth', freq, filter, time, env.end, 9);
+                return;
+            }
+            case 5: {
+                const env = envelope(ctx, dest, time, 0.002, level * 1.1, 0.02, 1.6);
+                const carrier = osc(ctx, 'sine', freq, env.gain, time, env.end);
+                const depth = ctx.createGain();
+                depth.gain.setValueAtTime(freq * 2.5, time);
+                depth.gain.exponentialRampToValueAtTime(1, time + 1.2);
+                depth.connect(carrier.frequency);
+                osc(ctx, 'sine', freq * 3.5, depth, time, env.end);
+                return;
+            }
+            default: {
+                const env = envelope(ctx, dest, time, 0.005, level * 1.3, Math.min(length, 0.4), 0.8);
+                osc(ctx, 'triangle', freq, env.gain, time, env.end);
+                const over = envelope(ctx, dest, time, 0.003, level * 0.35, 0.05, 0.3);
+                osc(ctx, 'sine', freq * 2, over.gain, time, over.end);
+            }
+        }
+    }
+    $.$bog_doodle_synth_note = $bog_doodle_synth_note;
+    function $bog_doodle_synth_click(ctx, dest, time, accent) {
+        const env = envelope(ctx, dest, time, 0.001, accent ? 0.25 : 0.12, 0.005, 0.05);
+        osc(ctx, 'square', accent ? 1760 : 1320, env.gain, time, env.end);
+    }
+    $.$bog_doodle_synth_click = $bog_doodle_synth_click;
+    function $bog_doodle_synth_bus(ctx) {
+        const comp = ctx.createDynamicsCompressor();
+        comp.threshold.setValueAtTime(-14, 0);
+        comp.ratio.setValueAtTime(4, 0);
+        comp.connect(ctx.destination);
+        return comp;
+    }
+    $.$bog_doodle_synth_bus = $bog_doodle_synth_bus;
+})($ || ($ = {}));
+
+;
+"use strict";
+
+
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $bog_doodle_board extends $.$bog_doodle_board {
+            view(next) {
+                return next ?? { zoom: 1, x: 0, y: 0 };
+            }
+            size() {
+                const rect = this.view_rect();
+                const dpr = this.$.$mol_dom_context.devicePixelRatio || 1;
+                return {
+                    width: Math.max(1, Math.round((rect?.width ?? 0) * dpr)),
+                    height: Math.max(1, Math.round((rect?.height ?? 0) * dpr)),
+                    dpr,
+                };
+            }
+            rect() {
+                return this.dom_node().getBoundingClientRect();
+            }
+            time_down() {
+                return this.axis() === 'time_y';
+            }
+            norm(x, y) {
+                return this.time_down() ? { u: 1 - y, v: x } : { u: x, v: y };
+            }
+            denorm(u, v) {
+                return this.time_down() ? { x: v, y: 1 - u } : { x: u, y: v };
+            }
+            pt(x, y, width, height) {
+                const view = this.view_used();
+                const { u, v } = this.norm(x, y);
+                return { x: (u - view.x) * view.zoom * width, y: (v - view.y) * view.zoom * height };
+            }
+            to_world(client_x, client_y) {
+                const rect = this.rect();
+                const view = this.view();
+                const raw_x = (client_x - rect.left) / (rect.width || 1);
+                const raw_y = (client_y - rect.top) / (rect.height || 1);
+                const { x, y } = this.denorm(view.x + raw_x / view.zoom, view.y + raw_y / view.zoom);
+                return {
+                    x: Math.max(0, Math.min(0.9999, x)),
+                    y: Math.max(0, Math.min(1, y)),
+                    raw_x,
+                    raw_y,
+                };
+            }
+            zoom_min() {
+                return 0.4;
+            }
+            view_clamp(next) {
+                const zoom = Math.max(this.zoom_min(), Math.min(8, next.zoom));
+                const span = 1 - 1 / zoom;
+                const fit = (value) => span < 0 ? span / 2 : Math.max(0, Math.min(span, value));
+                return { zoom, x: fit(next.x), y: fit(next.y) };
+            }
+            zoom_at(factor, raw_x, raw_y) {
+                const view = this.view();
+                const zoom = Math.max(this.zoom_min(), Math.min(8, view.zoom * factor));
+                const u = view.x + raw_x / view.zoom;
+                const v = view.y + raw_y / view.zoom;
+                this.view(this.view_clamp({ zoom, x: u - raw_x / zoom, y: v - raw_y / zoom }));
+            }
+            zoom_in() {
+                this.zoom_at(1.25, 0.5, 0.5);
+            }
+            zoom_out() {
+                this.zoom_at(0.8, 0.5, 0.5);
+            }
+            zoom_reset() {
+                this.view({ zoom: 1, x: 0, y: 0 });
+            }
+            zoom_percent() {
+                return Math.round(this.view().zoom * 100) + '%';
+            }
+            pan_by(raw_dx, raw_dy) {
+                const view = this.view();
+                this.view(this.view_clamp({ ...view, x: view.x - raw_dx / view.zoom, y: view.y - raw_dy / view.zoom }));
+            }
+            gesture = null;
+            touches = new Map();
+            draft = [];
+            smooth = null;
+            erased = new Set();
+            box = null;
+            drag = null;
+            pinch = null;
+            hover = null;
+            pressure(event) {
+                if (event.pointerType === 'pen')
+                    return Math.max(0.05, event.pressure || 0.5);
+                return 0.5;
+            }
+            gesture_tool(event) {
+                if (event.button === 1 || this.touches.size > 1)
+                    return 'pan';
+                if (this.pen_only() && event.pointerType === 'touch')
+                    return 'pan';
+                if (event.button === 2 || (event.buttons & 32))
+                    return 'erase';
+                return this.tool();
+            }
+            layer_of(stroke) {
+                return stroke.layer || this.layer_default();
+            }
+            editable(stroke) {
+                return this.layer_of(stroke) === this.layer_active() && this.layer_order().includes(this.layer_active());
+            }
+            pointer_down(event) {
+                event.preventDefault();
+                try {
+                    this.dom_node().setPointerCapture(event.pointerId);
+                }
+                catch { }
+                this.touches.set(event.pointerId, { x: event.clientX, y: event.clientY });
+                if (this.touches.size === 2) {
+                    this.draft = [];
+                    this.gesture = 'pinch';
+                    this.pinch = this.pinch_state();
+                    this.redraw();
+                    return;
+                }
+                if (this.touches.size > 2)
+                    return;
+                const point = this.to_world(event.clientX, event.clientY);
+                const gesture = this.gesture_tool(event);
+                if (gesture === 'draw') {
+                    this.gesture = 'draw';
+                    this.smooth = null;
+                    this.draft = [];
+                    this.draft_add(point.x, point.y, this.pressure(event));
+                }
+                else if (gesture === 'erase') {
+                    this.gesture = 'erase';
+                    this.erased = new Set;
+                    this.erase_at(point.x, point.y);
+                }
+                else if (gesture === 'select') {
+                    const hit = this.sketch().hits(point.x, point.y, this.hit_radius(), s => this.editable(s));
+                    const selected = this.selected();
+                    if (hit.some(id => selected.includes(id))) {
+                        this.gesture = 'move';
+                        this.drag = { x: point.x, y: point.y, dx: 0, dy: 0 };
+                    }
+                    else if (hit.length) {
+                        this.selected([hit[hit.length - 1]]);
+                        this.gesture = 'move';
+                        this.drag = { x: point.x, y: point.y, dx: 0, dy: 0 };
+                    }
+                    else {
+                        this.gesture = 'select';
+                        this.box = { x1: point.x, y1: point.y, x2: point.x, y2: point.y };
+                    }
+                }
+                else {
+                    this.gesture = 'pan';
+                }
+                this.redraw();
+            }
+            pointer_move(event) {
+                const prev = this.touches.get(event.pointerId);
+                const point = this.to_world(event.clientX, event.clientY);
+                this.hover = event.pointerType === 'touch' ? null : { x: point.x, y: point.y, erase: Boolean(event.buttons & 32) };
+                if (!prev) {
+                    this.redraw();
+                    return;
+                }
+                this.touches.set(event.pointerId, { x: event.clientX, y: event.clientY });
+                if (this.gesture === 'pinch') {
+                    const next = this.pinch_state();
+                    const rect = this.rect();
+                    if (this.pinch && next) {
+                        this.pan_by((next.x - this.pinch.x) / (rect.width || 1), (next.y - this.pinch.y) / (rect.height || 1));
+                        const raw = this.to_world(next.x, next.y);
+                        this.zoom_at(next.dist / (this.pinch.dist || 1), raw.raw_x, raw.raw_y);
+                    }
+                    this.pinch = next;
+                }
+                else if (this.gesture === 'pan') {
+                    const rect = this.rect();
+                    this.pan_by((event.clientX - prev.x) / (rect.width || 1), (event.clientY - prev.y) / (rect.height || 1));
+                }
+                else if (this.gesture === 'draw') {
+                    const list = event.getCoalescedEvents?.();
+                    for (const item of list?.length ? list : [event]) {
+                        const at = this.to_world(item.clientX, item.clientY);
+                        this.draft_add(at.x, at.y, this.pressure(item));
+                    }
+                }
+                else if (this.gesture === 'erase') {
+                    this.erase_at(point.x, point.y);
+                }
+                else if (this.gesture === 'select' && this.box) {
+                    this.box = { ...this.box, x2: point.x, y2: point.y };
+                }
+                else if (this.gesture === 'move' && this.drag) {
+                    this.drag = { ...this.drag, dx: point.x - this.drag.x, dy: point.y - this.drag.y };
+                }
+                this.redraw();
+            }
+            pointer_up(event) {
+                if (!this.touches.has(event.pointerId))
+                    return;
+                this.touches.delete(event.pointerId);
+                if (this.gesture === 'pinch') {
+                    if (this.touches.size === 0)
+                        this.gesture = null;
+                    this.redraw();
+                    return;
+                }
+                if (this.gesture === 'draw')
+                    this.draft_commit();
+                if (this.gesture === 'erase')
+                    this.sketch().remove([...this.erased]);
+                if (this.gesture === 'select' && this.box) {
+                    const { x1, y1, x2, y2 } = this.box;
+                    this.selected(this.sketch().inside(Math.min(x1, x2), Math.min(y1, y2), Math.max(x1, x2), Math.max(y1, y2), s => this.editable(s)));
+                }
+                if (this.gesture === 'move' && this.drag && (this.drag.dx || this.drag.dy)) {
+                    this.sketch().shift(this.selected(), this.drag.dx, this.drag.dy);
+                }
+                this.gesture_reset();
+            }
+            gesture_reset() {
+                this.gesture = null;
+                this.erased = new Set;
+                this.box = null;
+                this.drag = null;
+                this.draft = [];
+                this.note_hover(null);
+                this.redraw();
+            }
+            pointer_cancel(event) {
+                this.touches.delete(event.pointerId);
+                this.gesture_reset();
+            }
+            pointer_leave(event) {
+                this.hover = null;
+                this.redraw();
+            }
+            wheel(event) {
+                event.preventDefault();
+                const point = this.to_world(event.clientX, event.clientY);
+                if (event.ctrlKey || event.metaKey) {
+                    this.zoom_at(Math.exp(-event.deltaY / 200), point.raw_x, point.raw_y);
+                }
+                else {
+                    const rect = this.rect();
+                    this.pan_by(-event.deltaX / (rect.width || 1), -event.deltaY / (rect.height || 1));
+                }
+            }
+            context_menu(event) {
+                event.preventDefault();
+            }
+            pinch_state() {
+                const list = [...this.touches.values()];
+                if (list.length < 2)
+                    return null;
+                const [a, b] = list;
+                return { dist: Math.hypot(a.x - b.x, a.y - b.y), x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+            }
+            world_per_px() {
+                const rect = this.rect();
+                return 1 / (Math.max(1, Math.min(rect.width, rect.height)) * this.view().zoom);
+            }
+            hit_radius() {
+                return 10 * this.world_per_px();
+            }
+            erase_radius() {
+                return this.eraser() / 2 * this.world_per_px();
+            }
+            snap_y(y) {
+                if (!this.snap())
+                    return y;
+                const count = this.notes().length;
+                return $bog_doodle_scale_row_y($bog_doodle_scale_row(y, count), count);
+            }
+            draft_add(x, y, p) {
+                const prev = this.smooth;
+                const k = 0.45;
+                const next = prev
+                    ? { x: prev.x + (x - prev.x) * k, y: prev.y + (y - prev.y) * k, p: prev.p + (p - prev.p) * k }
+                    : { x, y, p };
+                this.smooth = next;
+                const count = this.draft.length;
+                const snapped = this.snap_y(next.y);
+                if (count >= 3) {
+                    const dx = next.x - this.draft[count - 3];
+                    const dy = snapped - this.draft[count - 2];
+                    if (dx * dx + dy * dy < 1e-7)
+                        return;
+                }
+                this.draft.push(next.x, snapped, next.p);
+                this.note_hover(this.notes()[$bog_doodle_scale_row(snapped, this.notes().length)] ?? null);
+            }
+            draft_commit() {
+                const draft = this.draft;
+                if (!draft.length)
+                    return;
+                const points = $bog_doodle_piece_simplify(draft, 0.0012 / this.view().zoom);
+                const ink = this.ink();
+                const size = this.brush();
+                this.sketch().add({
+                    id: $bog_doodle_sketch_stroke_id(),
+                    color: $bog_doodle_synth_timbre(ink),
+                    ink,
+                    ...size === 1 ? {} : { size },
+                    layer: this.layer_active(),
+                    points,
+                });
+            }
+            erase_at(x, y) {
+                for (const id of this.sketch().hits(x, y, this.erase_radius(), s => this.editable(s)))
+                    this.erased.add(id);
+            }
+            frame = null;
+            redraw() {
+                if (this.frame)
+                    return;
+                this.frame = new this.$.$mol_after_frame(() => {
+                    this.frame = null;
+                    this.present();
+                });
+            }
+            back_image() {
+                const uri = this.back();
+                if (!uri)
+                    return null;
+                const image = new this.$.$mol_dom_context.Image;
+                image.onload = () => this.redraw();
+                image.src = uri;
+                return image;
+            }
+            layer() {
+                const doc = this.$.$mol_dom_context.document;
+                const canvas = doc.createElement('canvas');
+                const { width, height, dpr } = this.size();
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                if (!ctx)
+                    return canvas;
+                this.paint_grid(ctx, width, height, dpr);
+                this.paint_strokes(ctx, width, height, dpr);
+                return canvas;
+            }
+            view_fixed = null;
+            view_used() {
+                return this.view_fixed ?? this.view();
+            }
+            export_canvas() {
+                const canvas = this.$.$mol_dom_context.document.createElement('canvas');
+                const wide = !this.time_down();
+                canvas.width = wide ? 1920 : 1080;
+                canvas.height = wide ? 1080 : 1920;
+                const ctx = canvas.getContext('2d');
+                if (!ctx)
+                    return canvas;
+                this.view_fixed = { zoom: 1, x: 0, y: 0 };
+                try {
+                    this.paint_grid(ctx, canvas.width, canvas.height, 2);
+                    this.paint_strokes(ctx, canvas.width, canvas.height, 2, true);
+                }
+                finally {
+                    this.view_fixed = null;
+                }
+                return canvas;
+            }
+            fill_world(ctx, x1, y1, x2, y2, width, height) {
+                const a = this.pt(x1, y1, width, height);
+                const b = this.pt(x2, y2, width, height);
+                ctx.fillRect(Math.min(a.x, b.x), Math.min(a.y, b.y), Math.abs(b.x - a.x), Math.abs(b.y - a.y));
+            }
+            paint_grid(ctx, width, height, dpr) {
+                ctx.fillStyle = '#d6d0c2';
+                ctx.fillRect(0, 0, width, height);
+                ctx.fillStyle = '#fbfaf6';
+                this.fill_world(ctx, 0, 0, 1, 1, width, height);
+                const image = this.back_image();
+                if (image?.complete && image.naturalWidth) {
+                    const a = this.pt(0, 1, width, height);
+                    const b = this.pt(1, 0, width, height);
+                    ctx.globalAlpha = 0.35;
+                    ctx.drawImage(image, Math.min(a.x, b.x), Math.min(a.y, b.y), Math.abs(b.x - a.x), Math.abs(b.y - a.y));
+                    ctx.globalAlpha = 1;
+                }
+                const notes = this.notes();
+                const count = notes.length;
+                const tonic = notes[0] % 12;
+                const zoom = this.view_used().zoom;
+                const band = zoom * (this.time_down() ? width : height) / count;
+                for (let row = 0; row < count; ++row) {
+                    const top = 1 - (row + 1) / count;
+                    const bottom = 1 - row / count;
+                    if (notes[row] % 12 === tonic) {
+                        ctx.fillStyle = '#ece7da';
+                        this.fill_world(ctx, 0, top, 1, bottom, width, height);
+                    }
+                    else if (row % 2) {
+                        ctx.fillStyle = '#f5f2ea';
+                        this.fill_world(ctx, 0, top, 1, bottom, width, height);
+                    }
+                    if (band < 18 * dpr)
+                        continue;
+                    const center = this.pt(0, (top + bottom) / 2, width, height);
+                    ctx.fillStyle = '#a39d8e';
+                    ctx.font = `${Math.min(12, band / dpr * 0.4) * dpr}px ui-monospace, Menlo, monospace`;
+                    if (this.time_down()) {
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'top';
+                        ctx.fillText($bog_doodle_scale_name(notes[row]), center.x, Math.max(0, center.y) + 6 * dpr);
+                    }
+                    else {
+                        ctx.textAlign = 'left';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText($bog_doodle_scale_name(notes[row]), Math.max(0, center.x) + 6 * dpr, center.y);
+                    }
+                }
+                ctx.textAlign = 'left';
+                const steps = this.steps();
+                const beat = this.beat_steps();
+                const bar = this.bar_steps();
+                const step_size = zoom * (this.time_down() ? height : width) / steps;
+                for (let step = 1; step < steps; ++step) {
+                    const strong = step % bar === 0 ? 2 : step % beat === 0 ? 1 : 0;
+                    if (!strong && step_size < 6 * dpr)
+                        continue;
+                    const a = this.pt(step / steps, 0, width, height);
+                    const b = this.pt(step / steps, 1, width, height);
+                    ctx.strokeStyle = ['#ebe6da', '#d6cfbe', '#b3ab98'][strong];
+                    ctx.lineWidth = strong === 2 ? 2 * dpr : dpr;
+                    ctx.beginPath();
+                    ctx.moveTo(Math.round(a.x) + 0.5, Math.round(a.y) + 0.5);
+                    ctx.lineTo(Math.round(b.x) + 0.5, Math.round(b.y) + 0.5);
+                    ctx.stroke();
+                }
+            }
+            stroke_width(p, size, dpr) {
+                return dpr * Math.sqrt(this.view_used().zoom) * (1.5 + 6 * p) * size;
+            }
+            paint_path(ctx, points, color, size, width, height, dpr, dx = 0, dy = 0, halo = false) {
+                const count = points.length / 3;
+                if (!count)
+                    return;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.strokeStyle = color;
+                ctx.fillStyle = color;
+                const at = (i) => this.pt(points[i * 3] + dx, points[i * 3 + 1] + dy, width, height);
+                const pw = (i) => this.stroke_width(points[i * 3 + 2], size, dpr) + (halo ? 6 * dpr : 0);
+                if (count === 1) {
+                    const p = at(0);
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, pw(0) / 2 + dpr, 0, Math.PI * 2);
+                    ctx.fill();
+                    return;
+                }
+                let start = at(0);
+                for (let i = 1; i < count; ++i) {
+                    const last = i === count - 1;
+                    const here = at(i);
+                    const next = last ? here : at(i + 1);
+                    const end = last ? here : { x: (here.x + next.x) / 2, y: (here.y + next.y) / 2 };
+                    ctx.lineWidth = pw(i);
+                    ctx.beginPath();
+                    ctx.moveTo(start.x, start.y);
+                    if (last)
+                        ctx.lineTo(end.x, end.y);
+                    else
+                        ctx.quadraticCurveTo(here.x, here.y, end.x, end.y);
+                    ctx.stroke();
+                    start = end;
+                }
+            }
+            ordered() {
+                const order = this.layer_order();
+                const strokes = this.sketch().strokes();
+                const list = [];
+                for (const id of order) {
+                    for (const stroke of strokes)
+                        if (this.layer_of(stroke) === id)
+                            list.push(stroke);
+                }
+                return list;
+            }
+            scratch = null;
+            paint_faded(ctx, width, height, alpha, paint) {
+                const canvas = this.scratch ?? (this.scratch = this.$.$mol_dom_context.document.createElement('canvas'));
+                if (canvas.width !== width)
+                    canvas.width = width;
+                if (canvas.height !== height)
+                    canvas.height = height;
+                const temp = canvas.getContext('2d');
+                if (!temp)
+                    return;
+                temp.clearRect(0, 0, width, height);
+                paint(temp);
+                ctx.globalAlpha = alpha;
+                ctx.drawImage(canvas, 0, 0);
+                ctx.globalAlpha = 1;
+            }
+            paint_strokes(ctx, width, height, dpr, all = false) {
+                const selected = new Set(all ? [] : this.selected());
+                const active = this.layer_active();
+                const focus = this.layer_focus() && !all;
+                const strokes = this.ordered().filter(stroke => !selected.has(stroke.id));
+                for (const id of this.layer_order()) {
+                    const list = strokes.filter(stroke => this.layer_of(stroke) === id);
+                    if (!list.length)
+                        continue;
+                    const paint = (target) => {
+                        for (const stroke of list) {
+                            this.paint_path(target, stroke.points, $bog_doodle_synth_ink(stroke), stroke.size ?? 1, width, height, dpr);
+                        }
+                    };
+                    if (focus && id !== active)
+                        this.paint_faded(ctx, width, height, 0.3, paint);
+                    else
+                        paint(ctx);
+                }
+            }
+            present() {
+                const canvas = this.dom_node();
+                const { width, height, dpr } = this.size();
+                if (canvas.width !== width)
+                    canvas.width = width;
+                if (canvas.height !== height)
+                    canvas.height = height;
+                const ctx = canvas.getContext?.('2d');
+                if (!ctx)
+                    return;
+                ctx.drawImage(this.layer(), 0, 0);
+                const picked = new Set(this.selected());
+                const selected = this.sketch().strokes().filter(stroke => picked.has(stroke.id));
+                const drag = this.drag;
+                if (selected.length) {
+                    this.paint_faded(ctx, width, height, 0.35, target => {
+                        for (const stroke of selected) {
+                            this.paint_path(target, stroke.points, '#2f6fd8', stroke.size ?? 1, width, height, dpr, drag?.dx, drag?.dy, true);
+                        }
+                    });
+                    for (const stroke of selected) {
+                        this.paint_path(ctx, stroke.points, $bog_doodle_synth_ink(stroke), stroke.size ?? 1, width, height, dpr, drag?.dx, drag?.dy);
+                    }
+                }
+                if (this.erased.size) {
+                    const erased = this.sketch().strokes().filter(stroke => this.erased.has(stroke.id));
+                    this.paint_faded(ctx, width, height, 0.8, target => {
+                        for (const stroke of erased) {
+                            this.paint_path(target, stroke.points, '#fbfaf6', stroke.size ?? 1, width, height, dpr, 0, 0, true);
+                        }
+                    });
+                }
+                if (this.draft.length)
+                    this.paint_path(ctx, this.draft, this.ink(), this.brush(), width, height, dpr);
+                if (this.box) {
+                    const { x1, y1, x2, y2 } = this.box;
+                    const a = this.pt(x1, y1, width, height);
+                    const b = this.pt(x2, y2, width, height);
+                    ctx.setLineDash([6 * dpr, 4 * dpr]);
+                    ctx.strokeStyle = '#2f6fd8';
+                    ctx.lineWidth = dpr;
+                    ctx.strokeRect(a.x, a.y, b.x - a.x, b.y - a.y);
+                    ctx.setLineDash([]);
+                }
+                const head = this.playhead();
+                if (head !== null && head >= 0) {
+                    const a = this.pt(head, 0, width, height);
+                    const b = this.pt(head, 1, width, height);
+                    ctx.strokeStyle = '#d8452f';
+                    ctx.lineWidth = 2 * dpr;
+                    ctx.beginPath();
+                    ctx.moveTo(a.x, a.y);
+                    ctx.lineTo(b.x, b.y);
+                    ctx.stroke();
+                }
+                this.paint_cursor(ctx, width, height, dpr);
+            }
+            paint_cursor(ctx, width, height, dpr) {
+                const hover = this.hover;
+                if (!hover || this.gesture === 'pan' || this.gesture === 'pinch')
+                    return;
+                const tool = hover.erase || this.gesture === 'erase' ? 'erase' : this.tool();
+                const at = this.pt(hover.x, hover.y, width, height);
+                if (tool === 'erase') {
+                    ctx.strokeStyle = '#1f1d1a88';
+                    ctx.lineWidth = dpr;
+                    ctx.beginPath();
+                    ctx.arc(at.x, at.y, this.eraser() / 2 * dpr, 0, Math.PI * 2);
+                    ctx.stroke();
+                    return;
+                }
+                if (tool !== 'draw' || this.gesture)
+                    return;
+                ctx.strokeStyle = this.ink() + '99';
+                ctx.lineWidth = dpr;
+                ctx.beginPath();
+                ctx.arc(at.x, at.y, Math.max(2 * dpr, this.stroke_width(0.5, this.brush(), dpr) / 2), 0, Math.PI * 2);
+                ctx.stroke();
+                const notes = this.notes();
+                const name = $bog_doodle_scale_name(notes[$bog_doodle_scale_row(this.snap_y(hover.y), notes.length)]);
+                ctx.font = `${12 * dpr}px ui-monospace, Menlo, monospace`;
+                ctx.textBaseline = 'bottom';
+                ctx.fillStyle = '#1f1d1a';
+                ctx.fillText(name, at.x + 10 * dpr, at.y - 6 * dpr);
+            }
+            animate = null;
+            loop() {
+                this.present();
+                if (!this.playing()) {
+                    this.animate = null;
+                    return;
+                }
+                this.animate = new this.$.$mol_after_frame(() => this.loop());
+            }
+            repaint() {
+                this.layer();
+                this.selected();
+                this.playing();
+                this.ink();
+                this.brush();
+                this.eraser();
+                this.redraw();
+                return null;
+            }
+            animating() {
+                if (this.playing() && !this.animate)
+                    this.loop();
+                return null;
+            }
+            auto() {
+                this.repaint();
+                this.animating();
+            }
+            destructor() {
+                this.frame?.destructor();
+                this.animate?.destructor();
+                super.destructor();
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $bog_doodle_board.prototype, "view", null);
+        __decorate([
+            $mol_mem
+        ], $bog_doodle_board.prototype, "size", null);
+        __decorate([
+            $mol_mem
+        ], $bog_doodle_board.prototype, "back_image", null);
+        __decorate([
+            $mol_mem
+        ], $bog_doodle_board.prototype, "layer", null);
+        __decorate([
+            $mol_mem
+        ], $bog_doodle_board.prototype, "repaint", null);
+        __decorate([
+            $mol_mem
+        ], $bog_doodle_board.prototype, "animating", null);
+        $$.$bog_doodle_board = $bog_doodle_board;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        $mol_style_define($bog_doodle_board, {
+            flex: {
+                grow: 1,
+                shrink: 1,
+                basis: 0,
+            },
+            minHeight: '16rem',
+            minWidth: 0,
+            touchAction: 'none',
+            userSelect: 'none',
+            cursor: 'crosshair',
+            border: {
+                radius: $mol_gap.round,
+            },
+            '@': {
+                bog_doodle_board_tool: {
+                    select: {
+                        cursor: 'default',
+                    },
+                    pan: {
+                        cursor: 'grab',
+                    },
+                    erase: {
+                        cursor: 'cell',
+                    },
+                },
+            },
+        });
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+
+;
+	($.$mol_list) = class $mol_list extends ($.$mol_view) {
+		gap_before(){
+			return 0;
+		}
+		Gap_before(){
+			const obj = new this.$.$mol_view();
+			(obj.style) = () => ({"paddingTop": (this.gap_before())});
+			return obj;
+		}
+		Empty(){
+			const obj = new this.$.$mol_view();
+			return obj;
+		}
+		gap_after(){
+			return 0;
+		}
+		Gap_after(){
+			const obj = new this.$.$mol_view();
+			(obj.style) = () => ({"paddingTop": (this.gap_after())});
+			return obj;
+		}
+		rows(){
+			return [
+				(this.Gap_before()), 
+				(this.Empty()), 
+				(this.Gap_after())
+			];
+		}
+		render_visible_only(){
+			return true;
+		}
+		render_over(){
+			return 0.1;
+		}
+		sub(){
+			return (this.rows());
+		}
+		item_height_min(id){
+			return 1;
+		}
+		item_width_min(id){
+			return 1;
+		}
+		view_window_shift(next){
+			if(next !== undefined) return next;
+			return 0;
+		}
+		view_window(){
+			return [0, 0];
+		}
+	};
+	($mol_mem(($.$mol_list.prototype), "Gap_before"));
+	($mol_mem(($.$mol_list.prototype), "Empty"));
+	($mol_mem(($.$mol_list.prototype), "Gap_after"));
+	($mol_mem(($.$mol_list.prototype), "view_window_shift"));
+
+
+;
+"use strict";
+var $;
+(function ($) {
+    let cache = null;
+    function $mol_support_css_overflow_anchor() {
+        return cache ?? (cache = this.$mol_dom_context.CSS?.supports('overflow-anchor:auto') ?? false);
+    }
+    $.$mol_support_css_overflow_anchor = $mol_support_css_overflow_anchor;
+})($ || ($ = {}));
+
+;
+"use strict";
+
+
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        /**
+         * The list of rows with lazy/virtual rendering support based on `minimal_height` of rows.
+         * `mol_list` should contain only components that inherits `mol_view`. You should not place raw strings or numbers in list.
+         * @see https://mol.hyoo.ru/#!section=demos/demo=mol_list_demo
+         */
+        class $mol_list extends $.$mol_list {
+            sub() {
+                const rows = this.rows();
+                const next = (rows.length === 0) ? [this.Empty()] : rows;
+                const prev = $mol_mem_cached(() => this.sub());
+                const [start, end] = $mol_mem_cached(() => this.view_window()) ?? [0, 0];
+                if (prev && $mol_mem_cached(() => prev[start] !== next[start])) {
+                    const index = $mol_mem_cached(() => next.indexOf(prev[start])) ?? -1;
+                    if (index >= 0)
+                        this.view_window_shift(index - start);
+                }
+                return next;
+            }
+            render_visible_only() {
+                return this.$.$mol_support_css_overflow_anchor();
+            }
+            _view_window_last = [0, 0];
+            view_window(next) {
+                const kids = this.sub();
+                if (kids.length < 3)
+                    return [0, kids.length];
+                if (this.$.$mol_print.active())
+                    return [0, kids.length];
+                const rect = this.view_rect();
+                if (next)
+                    return next;
+                let [min, max] = $mol_mem_cached(() => this.view_window()) ?? this._view_window_last;
+                const shift = this.view_window_shift();
+                this.view_window_shift(0);
+                min += shift;
+                max += shift;
+                let max2 = max = Math.min(max, kids.length);
+                let min2 = min = Math.max(0, Math.min(min, max - 1));
+                const anchoring = this.render_visible_only();
+                const window_height = this.$.$mol_window.size().height + 40;
+                const over = Math.ceil(window_height * this.render_over());
+                const limit_top = -over;
+                const limit_bottom = window_height + over;
+                const gap_before = $mol_mem_cached(() => this.gap_before()) ?? 0;
+                const gap_after = $mol_mem_cached(() => this.gap_after()) ?? 0;
+                let top = Math.ceil(rect?.top ?? 0) + gap_before;
+                let bottom = Math.ceil(rect?.bottom ?? 0) - gap_after;
+                // change nothing when already covers all limits
+                if (top <= limit_top && bottom >= limit_bottom) {
+                    return [min2, max2];
+                }
+                // jumps when fully over limits
+                if (anchoring && ((bottom < limit_top) || (top > limit_bottom))) {
+                    min = 0;
+                    top = Math.ceil(rect?.top ?? 0);
+                    while (min < (kids.length - 1)) {
+                        const height = this.item_height_min(min);
+                        if (top + height >= limit_top)
+                            break;
+                        top += height;
+                        ++min;
+                    }
+                    min2 = min;
+                    max2 = max = min;
+                    bottom = top;
+                }
+                let top2 = top;
+                let bottom2 = bottom;
+                // force recalc min when overlapse top limit
+                if (anchoring && (top < limit_top) && (bottom < limit_bottom) && (max < kids.length)) {
+                    min2 = max;
+                    top2 = bottom;
+                }
+                // force recalc max when overlapse bottom limit
+                if ((bottom > limit_bottom) && (top > limit_top) && (min > 0)) {
+                    max2 = min;
+                    bottom2 = top;
+                }
+                // extend min to cover top limit
+                while (anchoring && ((top2 > limit_top) && (min2 > 0))) {
+                    --min2;
+                    top2 -= this.item_height_min(min2);
+                }
+                // extend max to cover bottom limit
+                while (bottom2 < limit_bottom && max2 < kids.length) {
+                    bottom2 += this.item_height_min(max2);
+                    ++max2;
+                }
+                return [min2, max2];
+            }
+            item_height_min(index) {
+                try {
+                    return this.sub()[index]?.minimal_height() ?? 0;
+                }
+                catch (error) {
+                    $mol_fail_log(error);
+                    return 0;
+                }
+            }
+            row_width_min(index) {
+                try {
+                    return this.sub()[index]?.minimal_width() ?? 0;
+                }
+                catch (error) {
+                    $mol_fail_log(error);
+                    return 0;
+                }
+            }
+            gap_before() {
+                let gap = 0;
+                const skipped = this.view_window()[0];
+                for (let i = 0; i < skipped; ++i)
+                    gap += this.item_height_min(i);
+                return gap;
+            }
+            gap_after() {
+                let gap = 0;
+                const from = this.view_window()[1];
+                const to = this.sub().length;
+                for (let i = from; i < to; ++i)
+                    gap += this.item_height_min(i);
+                return gap;
+            }
+            sub_visible() {
+                return [
+                    ...this.gap_before() ? [this.Gap_before()] : [],
+                    ...this.sub().slice(...this._view_window_last = this.view_window()),
+                    ...this.gap_after() ? [this.Gap_after()] : [],
+                ];
+            }
+            minimal_height() {
+                let height = 0;
+                const len = this.sub().length;
+                for (let i = 0; i < len; ++i)
+                    height += this.item_height_min(i);
+                return height;
+            }
+            minimal_width() {
+                let width = 0;
+                const len = this.sub().length;
+                for (let i = 0; i < len; ++i)
+                    width = Math.max(width, this.item_width_min(i));
+                return width;
+            }
+            force_render(path) {
+                const kids = this.rows();
+                const index = kids.findIndex(item => path.has(item));
+                if (index >= 0) {
+                    const win = this.view_window();
+                    if (index < win[0] || index >= win[1]) {
+                        this.view_window([this.render_visible_only() ? index : 0, index + 1]);
+                    }
+                    kids[index].force_render(path);
+                }
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_list.prototype, "sub", null);
+        __decorate([
+            $mol_mem
+        ], $mol_list.prototype, "view_window", null);
+        __decorate([
+            $mol_mem
+        ], $mol_list.prototype, "gap_before", null);
+        __decorate([
+            $mol_mem
+        ], $mol_list.prototype, "gap_after", null);
+        __decorate([
+            $mol_mem
+        ], $mol_list.prototype, "sub_visible", null);
+        __decorate([
+            $mol_mem
+        ], $mol_list.prototype, "minimal_height", null);
+        __decorate([
+            $mol_mem
+        ], $mol_list.prototype, "minimal_width", null);
+        $$.$mol_list = $mol_list;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/list/list.view.css", "[mol_list] {\n\twill-change: contents;\n\tdisplay: flex;\n\tflex-direction: column;\n\tflex-shrink: 0;\n\tmax-width: 100%;\n\t/* display: flex;\n\talign-items: stretch;\n\talign-content: stretch; */\n\ttransition: none;\n\t/* will-change: contents; */\n}\n\n[mol_list]:where([mol_view_error]) {\n\tmin-height: 1.5rem;\n}\n\n[mol_list_gap_before] ,\n[mol_list_gap_after] {\n\tdisplay: block !important;\n\tflex: none;\n\ttransition: none;\n\toverflow-anchor: none;\n}\n");
+})($ || ($ = {}));
+
+;
+	($.$mol_icon_tick) = class $mol_icon_tick extends ($.$mol_icon) {
+		path(){
+			return "M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z";
+		}
+	};
+
+
+;
+"use strict";
+
+
+;
+	($.$mol_check_box) = class $mol_check_box extends ($.$mol_check) {
+		Icon(){
+			const obj = new this.$.$mol_icon_tick();
+			return obj;
+		}
+	};
+	($mol_mem(($.$mol_check_box.prototype), "Icon"));
+
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/check/box/box.view.css", "[mol_check_box_icon] {\n\tborder-radius: var(--mol_gap_round);\n\tbox-shadow: inset 0 0 0 1px var(--mol_theme_line);\n\tcolor: var(--mol_theme_shade);\n\theight: 1rem;\n\talign-self: center;\n}\n\n[mol_check]:not([mol_check_checked]) > [mol_check_box_icon] {\n\tfill: transparent;\n}\n\n[mol_check]:not([disabled]) > [mol_check_box_icon] {\n\tbackground: var(--mol_theme_field);\n\tcolor: var(--mol_theme_text);\n}\n");
+})($ || ($ = {}));
+
+;
+"use strict";
+
+
+;
+	($.$mol_labeler) = class $mol_labeler extends ($.$mol_list) {
+		label(){
+			return [(this.title())];
+		}
+		Label(){
+			const obj = new this.$.$mol_view();
+			(obj.minimal_height) = () => (32);
+			(obj.sub) = () => ((this.label()));
+			return obj;
+		}
+		content(){
+			return [];
+		}
+		Content(){
+			const obj = new this.$.$mol_view();
+			(obj.minimal_height) = () => (24);
+			(obj.sub) = () => ((this.content()));
+			return obj;
+		}
+		rows(){
+			return [(this.Label()), (this.Content())];
+		}
+	};
+	($mol_mem(($.$mol_labeler.prototype), "Label"));
+	($mol_mem(($.$mol_labeler.prototype), "Content"));
+
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/labeler/labeler.view.css", "[mol_labeler] {\n\tdisplay: flex;\n\tflex-direction: column;\n\talign-items: stretch;\n\tcursor: inherit;\n}\n\n[mol_labeler_label] {\n\tmin-height: 2rem;\n\tcolor: var(--mol_theme_shade);\n\tpadding: 0;\n\tpadding-top: .5rem;\n\tpadding-inline: .75rem;\n\tgap: 0 var(--mol_gap_block);\n\tflex-wrap: wrap;\n}\n\n[mol_labeler_content] {\n\tdisplay: flex;\n\tpadding: var(--mol_gap_text);\n\tmin-height: 2.5rem;\n}\n");
+})($ || ($ = {}));
+
+;
+"use strict";
+
+
+;
+	($.$mol_icon_eye) = class $mol_icon_eye extends ($.$mol_icon) {
+		path(){
+			return "M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z";
+		}
+	};
+
+
+;
+"use strict";
+
+
+;
+	($.$mol_icon_volume_high) = class $mol_icon_volume_high extends ($.$mol_icon) {
+		path(){
+			return "M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.84 14,18.7V20.77C18,19.86 21,16.28 21,12C21,7.72 18,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16C15.5,15.29 16.5,13.76 16.5,12M3,9V15H7L12,20V4L7,9H3Z";
+		}
+	};
+
+
+;
+"use strict";
+
+
+;
+	($.$mol_icon_arrow_up) = class $mol_icon_arrow_up extends ($.$mol_icon) {
+		path(){
+			return "M13,20H11V8L5.5,13.5L4.08,12.08L12,4.16L19.92,12.08L18.5,13.5L13,8V20Z";
+		}
+	};
+
+
+;
+"use strict";
+
+
+;
+	($.$mol_icon_arrow_down) = class $mol_icon_arrow_down extends ($.$mol_icon) {
+		path(){
+			return "M11,4H13V16L18.5,10.5L19.92,11.92L12,19.84L4.08,11.92L5.5,10.5L11,16V4Z";
+		}
+	};
+
+
+;
+"use strict";
+
 
 ;
 	($.$mol_paragraph) = class $mol_paragraph extends ($.$mol_view) {
@@ -10633,39 +11354,6 @@ var $;
         $$.$mol_number = $mol_number;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
-
-;
-	($.$mol_icon_tick) = class $mol_icon_tick extends ($.$mol_icon) {
-		path(){
-			return "M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z";
-		}
-	};
-
-
-;
-"use strict";
-
-
-;
-	($.$mol_check_box) = class $mol_check_box extends ($.$mol_check) {
-		Icon(){
-			const obj = new this.$.$mol_icon_tick();
-			return obj;
-		}
-	};
-	($mol_mem(($.$mol_check_box.prototype), "Icon"));
-
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_style_attach("mol/check/box/box.view.css", "[mol_check_box_icon] {\n\tborder-radius: var(--mol_gap_round);\n\tbox-shadow: inset 0 0 0 1px var(--mol_theme_line);\n\tcolor: var(--mol_theme_shade);\n\theight: 1rem;\n\talign-self: center;\n}\n\n[mol_check]:not([mol_check_checked]) > [mol_check_box_icon] {\n\tfill: transparent;\n}\n\n[mol_check]:not([disabled]) > [mol_check_box_icon] {\n\tbackground: var(--mol_theme_field);\n\tcolor: var(--mol_theme_text);\n}\n");
-})($ || ($ = {}));
-
-;
-"use strict";
-
 
 ;
 	($.$mol_icon_upload) = class $mol_icon_upload extends ($.$mol_icon) {
@@ -13914,6 +14602,21 @@ var $;
 			(obj.Icon) = () => ((this.Gallery_open_icon()));
 			return obj;
 		}
+		layers_opened(next){
+			if(next !== undefined) return next;
+			return false;
+		}
+		Layers_open_icon(){
+			const obj = new this.$.$mol_icon_layers();
+			return obj;
+		}
+		Layers_open(){
+			const obj = new this.$.$mol_check_icon();
+			(obj.hint) = () => ((this.$.$mol_locale.text("$bog_doodle_app_Layers_open_hint")));
+			(obj.checked) = (next) => ((this.layers_opened(next)));
+			(obj.Icon) = () => ((this.Layers_open_icon()));
+			return obj;
+		}
 		settings_opened(next){
 			if(next !== undefined) return next;
 			return false;
@@ -13934,7 +14637,7 @@ var $;
 			return false;
 		}
 		Tool_draw_icon(){
-			const obj = new this.$.$mol_icon_pencil();
+			const obj = new this.$.$mol_icon_brush();
 			return obj;
 		}
 		Tool_draw(){
@@ -13989,30 +14692,46 @@ var $;
 			(obj.Icon) = () => ((this.Tool_pan_icon()));
 			return obj;
 		}
-		zoom_reset(next){
-			if(next !== undefined) return next;
-			return null;
-		}
-		Zoom_reset_icon(){
-			const obj = new this.$.$mol_icon_magnify_minus();
-			return obj;
-		}
-		Zoom_reset(){
-			const obj = new this.$.$mol_button_minor();
-			(obj.hint) = () => ((this.$.$mol_locale.text("$bog_doodle_app_Zoom_reset_hint")));
-			(obj.click) = (next) => ((this.zoom_reset(next)));
-			(obj.sub) = () => ([(this.Zoom_reset_icon())]);
-			return obj;
-		}
 		Tools(){
 			const obj = new this.$.$mol_view();
 			(obj.sub) = () => ([
 				(this.Tool_draw()), 
 				(this.Tool_erase()), 
 				(this.Tool_select()), 
-				(this.Tool_pan()), 
-				(this.Zoom_reset())
+				(this.Tool_pan())
 			]);
+			return obj;
+		}
+		brush_value(next){
+			if(next !== undefined) return next;
+			return 10;
+		}
+		Brush_size(){
+			const obj = new this.$.$bog_doodle_slider();
+			(obj.hint) = () => ((this.$.$mol_locale.text("$bog_doodle_app_Brush_size_hint")));
+			(obj.value) = (next) => ((this.brush_value(next)));
+			(obj.min) = () => (2);
+			(obj.max) = () => (40);
+			return obj;
+		}
+		eraser(next){
+			if(next !== undefined) return next;
+			return 24;
+		}
+		Eraser_size(){
+			const obj = new this.$.$bog_doodle_slider();
+			(obj.hint) = () => ((this.$.$mol_locale.text("$bog_doodle_app_Eraser_size_hint")));
+			(obj.value) = (next) => ((this.eraser(next)));
+			(obj.min) = () => (6);
+			(obj.max) = () => (120);
+			return obj;
+		}
+		size_tools(){
+			return [(this.Brush_size()), (this.Eraser_size())];
+		}
+		Size(){
+			const obj = new this.$.$mol_view();
+			(obj.sub) = () => ((this.size_tools()));
 			return obj;
 		}
 		color_name(id){
@@ -14037,12 +14756,107 @@ var $;
 			(obj.sub) = () => ([(this.Color_dot(id))]);
 			return obj;
 		}
+		ink(next){
+			if(next !== undefined) return next;
+			return "#1f1d1a";
+		}
+		Ink_dot(){
+			const obj = new this.$.$mol_view();
+			(obj.style) = () => ({...(this.$.$mol_view.prototype.style.call(obj)), "--bog_doodle_app_ink": (this.ink())});
+			return obj;
+		}
+		Ink_icon(){
+			const obj = new this.$.$mol_icon_palette();
+			return obj;
+		}
+		ink_recent(){
+			return [];
+		}
+		Picker(){
+			const obj = new this.$.$bog_doodle_picker();
+			(obj.value) = (next) => ((this.ink(next)));
+			(obj.swatches) = () => ((this.ink_recent()));
+			return obj;
+		}
+		Ink_pick(){
+			const obj = new this.$.$mol_pick();
+			(obj.hint) = () => ((this.$.$mol_locale.text("$bog_doodle_app_Ink_pick_hint")));
+			(obj.align_hor) = () => ("left");
+			(obj.trigger_content) = () => ([(this.Ink_dot()), (this.Ink_icon())]);
+			(obj.bubble_content) = () => ([(this.Picker())]);
+			return obj;
+		}
+		voice_name(){
+			return "";
+		}
+		Voice(){
+			const obj = new this.$.$mol_view();
+			(obj.sub) = () => ([(this.voice_name())]);
+			return obj;
+		}
 		palette(){
-			return [(this.Color(id))];
+			return [
+				(this.Color(id)), 
+				(this.Ink_pick()), 
+				(this.Voice())
+			];
 		}
 		Palette(){
 			const obj = new this.$.$mol_view();
 			(obj.sub) = () => ((this.palette()));
+			return obj;
+		}
+		zoom_out(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		Zoom_out_icon(){
+			const obj = new this.$.$mol_icon_magnify_minus();
+			return obj;
+		}
+		Zoom_out(){
+			const obj = new this.$.$mol_button_minor();
+			(obj.hint) = () => ((this.$.$mol_locale.text("$bog_doodle_app_Zoom_out_hint")));
+			(obj.click) = (next) => ((this.zoom_out(next)));
+			(obj.sub) = () => ([(this.Zoom_out_icon())]);
+			return obj;
+		}
+		zoom_reset(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		zoom_percent(){
+			return "100%";
+		}
+		Zoom_level(){
+			const obj = new this.$.$mol_button_minor();
+			(obj.hint) = () => ((this.$.$mol_locale.text("$bog_doodle_app_Zoom_level_hint")));
+			(obj.click) = (next) => ((this.zoom_reset(next)));
+			(obj.title) = () => ((this.zoom_percent()));
+			return obj;
+		}
+		zoom_in(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		Zoom_in_icon(){
+			const obj = new this.$.$mol_icon_magnify_plus();
+			return obj;
+		}
+		Zoom_in(){
+			const obj = new this.$.$mol_button_minor();
+			(obj.hint) = () => ((this.$.$mol_locale.text("$bog_doodle_app_Zoom_in_hint")));
+			(obj.click) = (next) => ((this.zoom_in(next)));
+			(obj.sub) = () => ([(this.Zoom_in_icon())]);
+			return obj;
+		}
+		Zoom(){
+			const obj = new this.$.$mol_view();
+			(obj.sub) = () => ([
+				(this.Zoom_out()), 
+				(this.Zoom_level()), 
+				(this.Zoom_in())
+			]);
 			return obj;
 		}
 		selection_copy(next){
@@ -14128,9 +14942,12 @@ var $;
 				(this.Undo()), 
 				(this.Redo()), 
 				(this.Gallery_open()), 
+				(this.Layers_open()), 
 				(this.Settings_open()), 
 				(this.Tools()), 
+				(this.Size()), 
 				(this.Palette()), 
+				(this.Zoom()), 
 				(this.Selection()), 
 				(this.Patterns())
 			]);
@@ -14152,12 +14969,15 @@ var $;
 		bar_steps(){
 			return 8;
 		}
+		axis(){
+			return "time_y";
+		}
 		tool(next){
 			if(next !== undefined) return next;
 			return "draw";
 		}
-		color(){
-			return 0;
+		brush(){
+			return 1;
 		}
 		snap(next){
 			if(next !== undefined) return next;
@@ -14169,6 +14989,20 @@ var $;
 		}
 		back(){
 			return "";
+		}
+		layer_order(){
+			return [];
+		}
+		layer_active(next){
+			if(next !== undefined) return next;
+			return "l1";
+		}
+		layer_default(){
+			return "l1";
+		}
+		layer_focus(next){
+			if(next !== undefined) return next;
+			return false;
 		}
 		selected(next){
 			if(next !== undefined) return next;
@@ -14191,11 +15025,18 @@ var $;
 			(obj.steps) = () => ((this.steps()));
 			(obj.beat_steps) = () => ((this.beat_steps()));
 			(obj.bar_steps) = () => ((this.bar_steps()));
+			(obj.axis) = () => ((this.axis()));
 			(obj.tool) = (next) => ((this.tool(next)));
-			(obj.color) = () => ((this.color()));
+			(obj.ink) = () => ((this.ink()));
+			(obj.brush) = () => ((this.brush()));
+			(obj.eraser) = () => ((this.eraser()));
 			(obj.snap) = () => ((this.snap()));
 			(obj.pen_only) = () => ((this.pen_only()));
 			(obj.back) = () => ((this.back()));
+			(obj.layer_order) = () => ((this.layer_order()));
+			(obj.layer_active) = () => ((this.layer_active()));
+			(obj.layer_default) = () => ((this.layer_default()));
+			(obj.layer_focus) = () => ((this.layer_focus()));
 			(obj.selected) = (next) => ((this.selected(next)));
 			(obj.playhead) = () => ((this.playhead()));
 			(obj.playing) = () => ((this.playing()));
@@ -14221,6 +15062,186 @@ var $;
 		Main(){
 			const obj = new this.$.$mol_view();
 			(obj.sub) = () => ((this.main()));
+			return obj;
+		}
+		layer_add(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		Layer_add(){
+			const obj = new this.$.$mol_button_major();
+			(obj.title) = () => ((this.$.$mol_locale.text("$bog_doodle_app_Layer_add_title")));
+			(obj.click) = (next) => ((this.layer_add(next)));
+			return obj;
+		}
+		Layer_focus(){
+			const obj = new this.$.$mol_check_box();
+			(obj.title) = () => ((this.$.$mol_locale.text("$bog_doodle_app_Layer_focus_title")));
+			(obj.checked) = (next) => ((this.layer_focus(next)));
+			return obj;
+		}
+		Layer_tools(){
+			const obj = new this.$.$mol_view();
+			(obj.sub) = () => ([(this.Layer_add()), (this.Layer_focus())]);
+			return obj;
+		}
+		layer_name_hint(){
+			return "";
+		}
+		layer_name(next){
+			if(next !== undefined) return next;
+			return "";
+		}
+		Layer_name(){
+			const obj = new this.$.$mol_string();
+			(obj.hint) = () => ((this.layer_name_hint()));
+			(obj.value) = (next) => ((this.layer_name(next)));
+			return obj;
+		}
+		Layer_name_field(){
+			const obj = new this.$.$mol_labeler();
+			(obj.title) = () => ((this.$.$mol_locale.text("$bog_doodle_app_Layer_name_field_title")));
+			(obj.content) = () => ([(this.Layer_name())]);
+			return obj;
+		}
+		layer_visible(id, next){
+			if(next !== undefined) return next;
+			return true;
+		}
+		Layer_visible_icon(id){
+			const obj = new this.$.$mol_icon_eye();
+			return obj;
+		}
+		Layer_visible(id){
+			const obj = new this.$.$mol_check_icon();
+			(obj.hint) = () => ((this.$.$mol_locale.text("$bog_doodle_app_Layer_visible_hint")));
+			(obj.checked) = (next) => ((this.layer_visible(id, next)));
+			(obj.Icon) = () => ((this.Layer_visible_icon(id)));
+			return obj;
+		}
+		layer_audible(id, next){
+			if(next !== undefined) return next;
+			return true;
+		}
+		Layer_audible_icon(id){
+			const obj = new this.$.$mol_icon_volume_high();
+			return obj;
+		}
+		Layer_audible(id){
+			const obj = new this.$.$mol_check_icon();
+			(obj.hint) = () => ((this.$.$mol_locale.text("$bog_doodle_app_Layer_audible_hint")));
+			(obj.checked) = (next) => ((this.layer_audible(id, next)));
+			(obj.Icon) = () => ((this.Layer_audible_icon(id)));
+			return obj;
+		}
+		layer_picked(id, next){
+			if(next !== undefined) return next;
+			return false;
+		}
+		layer_title(id){
+			return "";
+		}
+		Layer_pick(id){
+			const obj = new this.$.$mol_check();
+			(obj.hint) = () => ((this.$.$mol_locale.text("$bog_doodle_app_Layer_pick_hint")));
+			(obj.checked) = (next) => ((this.layer_picked(id, next)));
+			(obj.title) = () => ((this.layer_title(id)));
+			return obj;
+		}
+		layer_up(id, next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		Layer_up_icon(id){
+			const obj = new this.$.$mol_icon_arrow_up();
+			return obj;
+		}
+		Layer_up(id){
+			const obj = new this.$.$mol_button_minor();
+			(obj.hint) = () => ((this.$.$mol_locale.text("$bog_doodle_app_Layer_up_hint")));
+			(obj.click) = (next) => ((this.layer_up(id, next)));
+			(obj.sub) = () => ([(this.Layer_up_icon(id))]);
+			return obj;
+		}
+		layer_down(id, next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		Layer_down_icon(id){
+			const obj = new this.$.$mol_icon_arrow_down();
+			return obj;
+		}
+		Layer_down(id){
+			const obj = new this.$.$mol_button_minor();
+			(obj.hint) = () => ((this.$.$mol_locale.text("$bog_doodle_app_Layer_down_hint")));
+			(obj.click) = (next) => ((this.layer_down(id, next)));
+			(obj.sub) = () => ([(this.Layer_down_icon(id))]);
+			return obj;
+		}
+		layer_drop_enabled(){
+			return false;
+		}
+		layer_drop(id, next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		Layer_drop_icon(id){
+			const obj = new this.$.$mol_icon_delete();
+			return obj;
+		}
+		Layer_drop(id){
+			const obj = new this.$.$mol_button_minor();
+			(obj.hint) = () => ((this.$.$mol_locale.text("$bog_doodle_app_Layer_drop_hint")));
+			(obj.enabled) = () => ((this.layer_drop_enabled()));
+			(obj.click) = (next) => ((this.layer_drop(id, next)));
+			(obj.sub) = () => ([(this.Layer_drop_icon(id))]);
+			return obj;
+		}
+		Layer(id){
+			const obj = new this.$.$mol_view();
+			(obj.sub) = () => ([
+				(this.Layer_visible(id)), 
+				(this.Layer_audible(id)), 
+				(this.Layer_pick(id)), 
+				(this.Layer_up(id)), 
+				(this.Layer_down(id)), 
+				(this.Layer_drop(id))
+			]);
+			return obj;
+		}
+		layer_rows(){
+			return [(this.Layer(id))];
+		}
+		Layer_list(){
+			const obj = new this.$.$mol_list();
+			(obj.rows) = () => ((this.layer_rows()));
+			return obj;
+		}
+		vibe_name(id){
+			return "";
+		}
+		vibe_checked(id, next){
+			if(next !== undefined) return next;
+			return false;
+		}
+		Vibe(id){
+			const obj = new this.$.$mol_check();
+			(obj.title) = () => ((this.vibe_name(id)));
+			(obj.checked) = (next) => ((this.vibe_checked(id, next)));
+			return obj;
+		}
+		vibe_list(){
+			return [(this.Vibe(id))];
+		}
+		Vibes(){
+			const obj = new this.$.$mol_view();
+			(obj.sub) = () => ((this.vibe_list()));
+			return obj;
+		}
+		Vibe_field(){
+			const obj = new this.$.$mol_labeler();
+			(obj.title) = () => ((this.$.$mol_locale.text("$bog_doodle_app_Vibe_field_title")));
+			(obj.content) = () => ([(this.Vibes())]);
 			return obj;
 		}
 		piece_title(next){
@@ -14284,6 +15305,22 @@ var $;
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ((this.$.$mol_locale.text("$bog_doodle_app_Scale_field_title")));
 			(obj.content) = () => ([(this.Scale_input())]);
+			return obj;
+		}
+		axis_value(next){
+			if(next !== undefined) return next;
+			return "time_y";
+		}
+		Axis_input(){
+			const obj = new this.$.$mol_switch();
+			(obj.value) = (next) => ((this.axis_value(next)));
+			(obj.options) = () => ({"time_y": (this.$.$mol_locale.text("$bog_doodle_app_Axis_input_options_time_y")), "time_x": (this.$.$mol_locale.text("$bog_doodle_app_Axis_input_options_time_x"))});
+			return obj;
+		}
+		Axis_field(){
+			const obj = new this.$.$mol_labeler();
+			(obj.title) = () => ((this.$.$mol_locale.text("$bog_doodle_app_Axis_field_title")));
+			(obj.content) = () => ([(this.Axis_input())]);
 			return obj;
 		}
 		range_value(next){
@@ -14686,6 +15723,9 @@ var $;
 		untitled(){
 			return (this.$.$mol_locale.text("$bog_doodle_app_untitled"));
 		}
+		layer_prefix(){
+			return (this.$.$mol_locale.text("$bog_doodle_app_layer_prefix"));
+		}
 		Store(){
 			const obj = new this.$.$bog_doodle_gallery();
 			return obj;
@@ -14699,12 +15739,23 @@ var $;
 		sub(){
 			return [(this.Bar()), (this.Main())];
 		}
+		Layers(){
+			const obj = new this.$.$mol_list();
+			(obj.rows) = () => ([
+				(this.Layer_tools()), 
+				(this.Layer_name_field()), 
+				(this.Layer_list())
+			]);
+			return obj;
+		}
 		Settings(){
 			const obj = new this.$.$mol_list();
 			(obj.rows) = () => ([
+				(this.Vibe_field()), 
 				(this.Title_field()), 
 				(this.Key_field()), 
 				(this.Scale_field()), 
+				(this.Axis_field()), 
 				(this.Range_field()), 
 				(this.Octave_field()), 
 				(this.Tempo_field()), 
@@ -14740,6 +15791,9 @@ var $;
 	($mol_mem(($.$bog_doodle_app.prototype), "gallery_opened"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Gallery_open_icon"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Gallery_open"));
+	($mol_mem(($.$bog_doodle_app.prototype), "layers_opened"));
+	($mol_mem(($.$bog_doodle_app.prototype), "Layers_open_icon"));
+	($mol_mem(($.$bog_doodle_app.prototype), "Layers_open"));
 	($mol_mem(($.$bog_doodle_app.prototype), "settings_opened"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Settings_open_icon"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Settings_open"));
@@ -14755,14 +15809,31 @@ var $;
 	($mol_mem(($.$bog_doodle_app.prototype), "tool_pan"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Tool_pan_icon"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Tool_pan"));
-	($mol_mem(($.$bog_doodle_app.prototype), "zoom_reset"));
-	($mol_mem(($.$bog_doodle_app.prototype), "Zoom_reset_icon"));
-	($mol_mem(($.$bog_doodle_app.prototype), "Zoom_reset"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Tools"));
+	($mol_mem(($.$bog_doodle_app.prototype), "brush_value"));
+	($mol_mem(($.$bog_doodle_app.prototype), "Brush_size"));
+	($mol_mem(($.$bog_doodle_app.prototype), "eraser"));
+	($mol_mem(($.$bog_doodle_app.prototype), "Eraser_size"));
+	($mol_mem(($.$bog_doodle_app.prototype), "Size"));
 	($mol_mem_key(($.$bog_doodle_app.prototype), "color_checked"));
 	($mol_mem_key(($.$bog_doodle_app.prototype), "Color_dot"));
 	($mol_mem_key(($.$bog_doodle_app.prototype), "Color"));
+	($mol_mem(($.$bog_doodle_app.prototype), "ink"));
+	($mol_mem(($.$bog_doodle_app.prototype), "Ink_dot"));
+	($mol_mem(($.$bog_doodle_app.prototype), "Ink_icon"));
+	($mol_mem(($.$bog_doodle_app.prototype), "Picker"));
+	($mol_mem(($.$bog_doodle_app.prototype), "Ink_pick"));
+	($mol_mem(($.$bog_doodle_app.prototype), "Voice"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Palette"));
+	($mol_mem(($.$bog_doodle_app.prototype), "zoom_out"));
+	($mol_mem(($.$bog_doodle_app.prototype), "Zoom_out_icon"));
+	($mol_mem(($.$bog_doodle_app.prototype), "Zoom_out"));
+	($mol_mem(($.$bog_doodle_app.prototype), "zoom_reset"));
+	($mol_mem(($.$bog_doodle_app.prototype), "Zoom_level"));
+	($mol_mem(($.$bog_doodle_app.prototype), "zoom_in"));
+	($mol_mem(($.$bog_doodle_app.prototype), "Zoom_in_icon"));
+	($mol_mem(($.$bog_doodle_app.prototype), "Zoom_in"));
+	($mol_mem(($.$bog_doodle_app.prototype), "Zoom"));
 	($mol_mem(($.$bog_doodle_app.prototype), "selection_copy"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Copy_icon"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Copy"));
@@ -14781,12 +15852,44 @@ var $;
 	($mol_mem(($.$bog_doodle_app.prototype), "tool"));
 	($mol_mem(($.$bog_doodle_app.prototype), "snap"));
 	($mol_mem(($.$bog_doodle_app.prototype), "pen_only"));
+	($mol_mem(($.$bog_doodle_app.prototype), "layer_active"));
+	($mol_mem(($.$bog_doodle_app.prototype), "layer_focus"));
 	($mol_mem(($.$bog_doodle_app.prototype), "selected"));
 	($mol_mem(($.$bog_doodle_app.prototype), "note_preview"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Board"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Panel_content"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Panel"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Main"));
+	($mol_mem(($.$bog_doodle_app.prototype), "layer_add"));
+	($mol_mem(($.$bog_doodle_app.prototype), "Layer_add"));
+	($mol_mem(($.$bog_doodle_app.prototype), "Layer_focus"));
+	($mol_mem(($.$bog_doodle_app.prototype), "Layer_tools"));
+	($mol_mem(($.$bog_doodle_app.prototype), "layer_name"));
+	($mol_mem(($.$bog_doodle_app.prototype), "Layer_name"));
+	($mol_mem(($.$bog_doodle_app.prototype), "Layer_name_field"));
+	($mol_mem_key(($.$bog_doodle_app.prototype), "layer_visible"));
+	($mol_mem_key(($.$bog_doodle_app.prototype), "Layer_visible_icon"));
+	($mol_mem_key(($.$bog_doodle_app.prototype), "Layer_visible"));
+	($mol_mem_key(($.$bog_doodle_app.prototype), "layer_audible"));
+	($mol_mem_key(($.$bog_doodle_app.prototype), "Layer_audible_icon"));
+	($mol_mem_key(($.$bog_doodle_app.prototype), "Layer_audible"));
+	($mol_mem_key(($.$bog_doodle_app.prototype), "layer_picked"));
+	($mol_mem_key(($.$bog_doodle_app.prototype), "Layer_pick"));
+	($mol_mem_key(($.$bog_doodle_app.prototype), "layer_up"));
+	($mol_mem_key(($.$bog_doodle_app.prototype), "Layer_up_icon"));
+	($mol_mem_key(($.$bog_doodle_app.prototype), "Layer_up"));
+	($mol_mem_key(($.$bog_doodle_app.prototype), "layer_down"));
+	($mol_mem_key(($.$bog_doodle_app.prototype), "Layer_down_icon"));
+	($mol_mem_key(($.$bog_doodle_app.prototype), "Layer_down"));
+	($mol_mem_key(($.$bog_doodle_app.prototype), "layer_drop"));
+	($mol_mem_key(($.$bog_doodle_app.prototype), "Layer_drop_icon"));
+	($mol_mem_key(($.$bog_doodle_app.prototype), "Layer_drop"));
+	($mol_mem_key(($.$bog_doodle_app.prototype), "Layer"));
+	($mol_mem(($.$bog_doodle_app.prototype), "Layer_list"));
+	($mol_mem_key(($.$bog_doodle_app.prototype), "vibe_checked"));
+	($mol_mem_key(($.$bog_doodle_app.prototype), "Vibe"));
+	($mol_mem(($.$bog_doodle_app.prototype), "Vibes"));
+	($mol_mem(($.$bog_doodle_app.prototype), "Vibe_field"));
 	($mol_mem(($.$bog_doodle_app.prototype), "piece_title"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Title_input"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Title_field"));
@@ -14796,6 +15899,9 @@ var $;
 	($mol_mem(($.$bog_doodle_app.prototype), "scale_value"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Scale_input"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Scale_field"));
+	($mol_mem(($.$bog_doodle_app.prototype), "axis_value"));
+	($mol_mem(($.$bog_doodle_app.prototype), "Axis_input"));
+	($mol_mem(($.$bog_doodle_app.prototype), "Axis_field"));
 	($mol_mem(($.$bog_doodle_app.prototype), "range_value"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Range_input"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Range_field"));
@@ -14861,6 +15967,7 @@ var $;
 	($mol_mem_key(($.$bog_doodle_app.prototype), "Piece_drop"));
 	($mol_mem_key(($.$bog_doodle_app.prototype), "Piece"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Store"));
+	($mol_mem(($.$bog_doodle_app.prototype), "Layers"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Settings"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Gallery"));
 
@@ -14973,7 +16080,9 @@ var $;
             return $bog_doodle_scale_notes(piece.key, piece.scale, piece.octave, piece.range);
         }
         events(pattern) {
-            const events = $bog_doodle_score(this.piece().patterns[pattern] ?? [], this.notes(), this.steps());
+            const piece = this.piece();
+            const strokes = (piece.patterns[pattern] ?? []).filter(s => $bog_doodle_piece_layer_of(piece, s)?.audible !== false);
+            const events = $bog_doodle_score(strokes, this.notes(), this.steps());
             const by_step = new Map();
             for (const event of events) {
                 const list = by_step.get(event.step) ?? [];
@@ -15141,6 +16250,87 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    $.$bog_doodle_vibe_list = [
+        {
+            id: 'calm', name: 'Спокойно', ink: '#2f6fd8',
+            settings: { key: 7, scale: 'major_penta', octave: 3, range: 2, bpm: 72, bars: 2, grid: '8', swing: 0 },
+        },
+        {
+            id: 'sad', name: 'Грусть', ink: '#1f1d1a',
+            settings: { key: 9, scale: 'minor', octave: 3, range: 2, bpm: 66, bars: 2, grid: '8', swing: 0 },
+        },
+        {
+            id: 'dream', name: 'Мечта', ink: '#8a44c8',
+            settings: { key: 5, scale: 'lydian', octave: 4, range: 2, bpm: 84, bars: 2, grid: '8t', swing: 0 },
+        },
+        {
+            id: 'lullaby', name: 'Колыбельная', ink: '#b35fd8',
+            settings: { key: 0, scale: 'major', octave: 4, range: 1, bpm: 60, bars: 2, grid: '4', swing: 0 },
+        },
+        {
+            id: 'blues', name: 'Блюз', ink: '#d8452f',
+            settings: { key: 4, scale: 'blues', octave: 2, range: 2, bpm: 92, bars: 2, grid: '8', swing: 1 },
+        },
+        {
+            id: 'jazz', name: 'Джаз', ink: '#2a9d5c',
+            settings: { key: 2, scale: 'dorian', octave: 3, range: 2, bpm: 118, bars: 2, grid: '8', swing: 0.66 },
+        },
+        {
+            id: 'east', name: 'Восток', ink: '#e39a1b',
+            settings: { key: 4, scale: 'harmonic', octave: 3, range: 2, bpm: 96, bars: 2, grid: '16', swing: 0 },
+        },
+        {
+            id: 'dance', name: 'Танцы', ink: '#e39a1b',
+            settings: { key: 9, scale: 'minor_penta', octave: 3, range: 2, bpm: 124, bars: 1, grid: '16', swing: 0.33 },
+        },
+        {
+            id: 'cyber', name: 'Киберпанк', ink: '#d82f8a',
+            settings: { key: 1, scale: 'phrygian', octave: 2, range: 3, bpm: 140, bars: 1, grid: '16', swing: 0 },
+        },
+        {
+            id: 'game', name: 'Пиксельная игра', ink: '#f2c21b',
+            settings: { key: 0, scale: 'mixolydian', octave: 4, range: 2, bpm: 150, bars: 2, grid: '16', swing: 0 },
+        },
+    ];
+    function $bog_doodle_vibe_apply(piece, id) {
+        const vibe = $.$bog_doodle_vibe_list.find(item => item.id === id);
+        return vibe ? { ...piece, ...vibe.settings } : piece;
+    }
+    $.$bog_doodle_vibe_apply = $bog_doodle_vibe_apply;
+    function $bog_doodle_vibe_current(piece) {
+        return $.$bog_doodle_vibe_list.find(vibe => Object.entries(vibe.settings).every(([key, value]) => piece[key] === value))?.id ?? '';
+    }
+    $.$bog_doodle_vibe_current = $bog_doodle_vibe_current;
+})($ || ($ = {}));
+
+;
+	($.$mol_icon_eye_off) = class $mol_icon_eye_off extends ($.$mol_icon) {
+		path(){
+			return "M11.83,9L15,12.16C15,12.11 15,12.05 15,12A3,3 0 0,0 12,9C11.94,9 11.89,9 11.83,9M7.53,9.8L9.08,11.35C9.03,11.56 9,11.77 9,12A3,3 0 0,0 12,15C12.22,15 12.44,14.97 12.65,14.92L14.2,16.47C13.53,16.8 12.79,17 12,17A5,5 0 0,1 7,12C7,11.21 7.2,10.47 7.53,9.8M2,4.27L4.28,6.55L4.73,7C3.08,8.3 1.78,10 1,12C2.73,16.39 7,19.5 12,19.5C13.55,19.5 15.03,19.2 16.38,18.66L16.81,19.08L19.73,22L21,20.73L3.27,3M12,7A5,5 0 0,1 17,12C17,12.64 16.87,13.26 16.64,13.82L19.57,16.75C21.07,15.5 22.27,13.86 23,12C21.27,7.61 17,4.5 12,4.5C10.6,4.5 9.26,4.75 8,5.2L10.17,7.35C10.74,7.13 11.35,7 12,7Z";
+		}
+	};
+
+
+;
+"use strict";
+
+
+;
+	($.$mol_icon_volume_off) = class $mol_icon_volume_off extends ($.$mol_icon) {
+		path(){
+			return "M12,4L9.91,6.09L12,8.18M4.27,3L3,4.27L7.73,9H3V15H7L12,20V13.27L16.25,17.53C15.58,18.04 14.83,18.46 14,18.7V20.77C15.38,20.45 16.63,19.82 17.68,18.96L19.73,21L21,19.73L12,10.73M19,12C19,12.94 18.8,13.82 18.46,14.64L19.97,16.15C20.62,14.91 21,13.5 21,12C21,7.72 18,4.14 14,3.23V5.29C16.89,6.15 19,8.83 19,12M16.5,12C16.5,10.23 15.5,8.71 14,7.97V10.18L16.45,12.63C16.5,12.43 16.5,12.21 16.5,12Z";
+		}
+	};
+
+
+;
+"use strict";
+
+
+;
+"use strict";
+var $;
+(function ($) {
     function $mol_offline() { }
     $.$mol_offline = $mol_offline;
 })($ || ($ = {}));
@@ -15207,8 +16397,9 @@ var $;
             }
             pattern(next) {
                 const count = this.piece().patterns.length;
-                return Math.max(0, Math.min(count - 1, next ?? 0));
+                return this.pattern_kept = Math.max(0, Math.min(count - 1, next ?? this.pattern_kept));
             }
+            pattern_kept = 0;
             strokes(pattern, next) {
                 const piece = this.piece();
                 if (next === undefined)
@@ -15299,14 +16490,49 @@ var $;
             tool_pan(next) {
                 return this.tool_set('pan', next);
             }
-            zoom_reset() {
-                this.Board().zoom_reset();
+            board() {
+                return this.Board();
             }
-            color(next) {
-                return this.pref('color', next, 0);
+            zoom_reset() {
+                this.board().zoom_reset();
+            }
+            zoom_in() {
+                this.board().zoom_in();
+            }
+            zoom_out() {
+                this.board().zoom_out();
+            }
+            zoom_percent() {
+                return this.board().zoom_percent();
+            }
+            ink(next) {
+                if (next !== undefined) {
+                    this.ink_remember(next);
+                    const selected = this.selected();
+                    if (selected.length)
+                        this.recolor(selected, next);
+                    if (this.tool() !== 'draw' && !selected.length)
+                        this.tool('draw');
+                }
+                return this.pref('ink', next, $bog_doodle_synth_colors[0].ink);
+            }
+            ink_recent(next) {
+                return this.pref('ink_recent', next, []);
+            }
+            ink_remember(ink) {
+                const palette = $bog_doodle_synth_colors.map(c => c.ink);
+                if (palette.includes(ink))
+                    return;
+                this.ink_recent([ink, ...this.ink_recent().filter(item => item !== ink)].slice(0, 12));
+            }
+            color() {
+                return $bog_doodle_synth_timbre(this.ink());
+            }
+            voice_name() {
+                return $bog_doodle_synth_colors[this.color()].name;
             }
             palette() {
-                return $bog_doodle_synth_colors.map((_, index) => this.Color(index));
+                return [...$bog_doodle_synth_colors.map((_, index) => this.Color(index)), this.Ink_pick(), this.Voice()];
             }
             color_name(index) {
                 return $bog_doodle_synth_colors[index].name;
@@ -15315,20 +16541,38 @@ var $;
                 return $bog_doodle_synth_colors[index].ink;
             }
             color_checked(index, next) {
-                if (next) {
-                    this.color(index);
-                    if (this.tool() !== 'draw')
-                        this.tool('draw');
-                    const selected = this.selected();
-                    if (selected.length)
-                        this.recolor(selected, index);
-                }
-                return this.color() === index;
+                if (next)
+                    this.ink(this.color_ink(index));
+                return this.ink() === this.color_ink(index);
             }
-            recolor(ids, color) {
+            recolor(ids, ink) {
                 const picked = new Set(ids);
+                const color = $bog_doodle_synth_timbre(ink);
                 const sketch = this.sketch();
-                sketch.commit(sketch.strokes().map(s => picked.has(s.id) ? { ...s, color } : s));
+                sketch.commit(sketch.strokes().map(s => picked.has(s.id) ? { ...s, ink, color } : s));
+            }
+            brush_value(next) {
+                return this.pref('brush', next, 10);
+            }
+            brush() {
+                return this.brush_value() / 10;
+            }
+            eraser(next) {
+                return this.pref('eraser', next, 24);
+            }
+            size_tools() {
+                const tool = this.tool();
+                if (tool === 'draw')
+                    return [this.Brush_size()];
+                if (tool === 'erase')
+                    return [this.Eraser_size()];
+                return [];
+            }
+            size_step(dir) {
+                if (this.tool() === 'erase')
+                    this.eraser(Math.max(6, Math.min(120, this.eraser() + dir * 6)));
+                else
+                    this.brush_value(Math.max(2, Math.min(40, this.brush_value() + dir * 2)));
             }
             selected(next) {
                 this.sketch_key();
@@ -15399,8 +16643,150 @@ var $;
             main() {
                 return this.panel() ? [this.Board(), this.Panel()] : [this.Board()];
             }
+            layers_opened(next) {
+                if (next !== undefined)
+                    this.panel(next ? 'layers' : '');
+                return this.panel() === 'layers';
+            }
             panel_rows() {
-                return [this.panel() === 'gallery' ? this.Gallery() : this.Settings()];
+                const panel = this.panel();
+                if (panel === 'gallery')
+                    return [this.Gallery()];
+                if (panel === 'layers')
+                    return [this.Layers()];
+                return [this.Settings()];
+            }
+            axis() {
+                return this.piece().axis;
+            }
+            axis_value(next) {
+                if (next !== undefined)
+                    this.piece_patch({ axis: next });
+                return this.piece().axis;
+            }
+            vibe_list() {
+                return $bog_doodle_vibe_list.map(vibe => this.Vibe(vibe.id));
+            }
+            vibe_name(id) {
+                return $bog_doodle_vibe_list.find(vibe => vibe.id === id)?.name ?? id;
+            }
+            vibe_checked(id, next) {
+                if (next) {
+                    this.piece($bog_doodle_vibe_apply(this.piece(), id));
+                    const vibe = $bog_doodle_vibe_list.find(item => item.id === id);
+                    if (vibe)
+                        this.ink(vibe.ink);
+                }
+                return $bog_doodle_vibe_current(this.piece()) === id;
+            }
+            layers() {
+                return this.piece().layers;
+            }
+            layer_default() {
+                return this.layers()[0].id;
+            }
+            layer_order() {
+                return this.layers().filter(layer => layer.visible).map(layer => layer.id);
+            }
+            layer_kept = '';
+            layer_active(next) {
+                const ids = this.layers().map(layer => layer.id);
+                const id = next ?? this.layer_kept;
+                return this.layer_kept = ids.includes(id) ? id : ids[ids.length - 1];
+            }
+            layer_focus(next) {
+                return this.pref('layer_focus', next, false);
+            }
+            layer_rows() {
+                return this.layers().map(layer => layer.id).reverse().map(id => this.Layer(id));
+            }
+            layer_index(id) {
+                return this.layers().findIndex(layer => layer.id === id);
+            }
+            layer_patch(id, patch) {
+                this.piece_patch({ layers: this.layers().map(layer => layer.id === id ? { ...layer, ...patch } : layer) });
+            }
+            layer_title(id) {
+                const layer = this.layers()[this.layer_index(id)];
+                return layer?.name || this.layer_name_default(id);
+            }
+            layer_name_default(id) {
+                return this.layer_prefix() + ' ' + (this.layer_index(id) + 1);
+            }
+            layer_name_hint() {
+                return this.layer_name_default(this.layer_active());
+            }
+            layer_name(next) {
+                const id = this.layer_active();
+                if (next !== undefined)
+                    this.layer_patch(id, { name: next });
+                return this.layers()[this.layer_index(id)]?.name ?? '';
+            }
+            layer_visible(id, next) {
+                if (next !== undefined)
+                    this.layer_patch(id, { visible: next });
+                return this.layers()[this.layer_index(id)]?.visible ?? true;
+            }
+            layer_audible(id, next) {
+                if (next !== undefined)
+                    this.layer_patch(id, { audible: next });
+                return this.layers()[this.layer_index(id)]?.audible ?? true;
+            }
+            Layer_visible_icon(id) {
+                return this.layer_visible(id) ? new this.$.$mol_icon_eye : new this.$.$mol_icon_eye_off;
+            }
+            Layer_audible_icon(id) {
+                return this.layer_audible(id) ? new this.$.$mol_icon_volume_high : new this.$.$mol_icon_volume_off;
+            }
+            layer_picked(id, next) {
+                if (next) {
+                    this.layer_active(id);
+                    this.selected([]);
+                    if (!this.layer_visible(id))
+                        this.layer_visible(id, true);
+                }
+                return this.layer_active() === id;
+            }
+            layer_add() {
+                const id = 'l' + $bog_doodle_sketch_stroke_id();
+                this.piece_patch({ layers: [...this.layers(), { id, name: '', visible: true, audible: true }] });
+                this.layer_active(id);
+                this.selected([]);
+            }
+            layer_move(id, dir) {
+                const layers = this.layers().slice();
+                const from = this.layer_index(id);
+                const to = from + dir;
+                if (from < 0 || to < 0 || to >= layers.length)
+                    return;
+                const [layer] = layers.splice(from, 1);
+                layers.splice(to, 0, layer);
+                const first = this.layers()[0].id;
+                const patterns = first === layers[0].id
+                    ? this.piece().patterns
+                    : this.piece().patterns.map(strokes => strokes.map(s => s.layer ? s : { ...s, layer: first }));
+                this.piece_patch({ layers, patterns });
+            }
+            layer_up(id) {
+                this.layer_move(id, 1);
+            }
+            layer_down(id) {
+                this.layer_move(id, -1);
+            }
+            layer_drop_enabled() {
+                return this.layers().length > 1;
+            }
+            layer_drop(id) {
+                if (this.layers().length < 2)
+                    return;
+                const first = this.layer_default();
+                const of = (s) => s.layer || first;
+                const layers = this.layers().filter(layer => layer.id !== id);
+                const patterns = this.piece().patterns.map(strokes => strokes
+                    .filter(s => of(s) !== id)
+                    .map(s => s.layer ? s : { ...s, layer: first }));
+                this.piece_patch({ layers, patterns });
+                this.selected([]);
             }
             piece_title(next) {
                 if (next !== undefined)
@@ -15540,7 +16926,7 @@ var $;
                 new this.$.$mol_after_timeout(1000, () => win.URL.revokeObjectURL(link.href));
             }
             export_png() {
-                this.Board().export_canvas().toBlob((blob) => blob && this.download(blob, 'png'), 'image/png');
+                this.board().export_canvas().toBlob((blob) => blob && this.download(blob, 'png'), 'image/png');
             }
             export_wav() {
                 this.Player().render(this.piece().chain ? 1 : 2).then(bytes => this.download(new Blob([bytes], { type: 'audio/wav' }), 'wav'));
@@ -15597,7 +16983,9 @@ var $;
                     ? { KeyZ: event.shiftKey ? 'redo' : 'undo', KeyY: 'redo' }[event.code]
                     : {
                         Space: 'play', KeyB: 'draw', KeyP: 'draw', KeyE: 'erase', KeyV: 'select', KeyH: 'pan',
-                        Digit0: 'zoom', KeyD: 'copy', Delete: 'drop', Backspace: 'drop', Escape: 'escape',
+                        Digit0: 'zoom', Equal: 'zoom_in', NumpadAdd: 'zoom_in', Minus: 'zoom_out', NumpadSubtract: 'zoom_out',
+                        BracketLeft: 'smaller', BracketRight: 'bigger',
+                        KeyD: 'copy', Delete: 'drop', Backspace: 'drop', Escape: 'escape',
                     }[event.code];
                 if (!action)
                     return;
@@ -15607,6 +16995,10 @@ var $;
                     case 'redo': return this.redo();
                     case 'play': return this.play_toggle();
                     case 'zoom': return this.zoom_reset();
+                    case 'zoom_in': return this.zoom_in();
+                    case 'zoom_out': return this.zoom_out();
+                    case 'smaller': return this.size_step(-1);
+                    case 'bigger': return this.size_step(1);
                     case 'copy': return this.selected().length && this.selection_copy();
                     case 'drop': return this.selected().length && this.selection_drop();
                     case 'escape': return this.selected([]);
@@ -15661,7 +17053,7 @@ var $;
                 }
                 const y = $bog_doodle_scale_row_y(row, notes.length);
                 const p = Math.max(0, Math.min(1, (hold.velocity - 0.25) / 0.75));
-                this.sketch().add({ id: $bog_doodle_sketch_stroke_id(), color: this.color(), points: [hold.x, y, p, end, y, p] });
+                this.sketch().add({ id: $bog_doodle_sketch_stroke_id(), color: this.color(), ink: this.ink(), layer: this.layer_active(), points: [hold.x, y, p, end, y, p] });
             }
         }
         __decorate([
@@ -15687,13 +17079,34 @@ var $;
         ], $bog_doodle_app.prototype, "tool", null);
         __decorate([
             $mol_mem
-        ], $bog_doodle_app.prototype, "color", null);
+        ], $bog_doodle_app.prototype, "ink", null);
+        __decorate([
+            $mol_mem
+        ], $bog_doodle_app.prototype, "ink_recent", null);
+        __decorate([
+            $mol_mem
+        ], $bog_doodle_app.prototype, "brush_value", null);
+        __decorate([
+            $mol_mem
+        ], $bog_doodle_app.prototype, "eraser", null);
         __decorate([
             $mol_mem
         ], $bog_doodle_app.prototype, "selected", null);
         __decorate([
             $mol_mem
         ], $bog_doodle_app.prototype, "panel", null);
+        __decorate([
+            $mol_mem
+        ], $bog_doodle_app.prototype, "layer_active", null);
+        __decorate([
+            $mol_mem
+        ], $bog_doodle_app.prototype, "layer_focus", null);
+        __decorate([
+            $mol_mem_key
+        ], $bog_doodle_app.prototype, "Layer_visible_icon", null);
+        __decorate([
+            $mol_mem_key
+        ], $bog_doodle_app.prototype, "Layer_audible_icon", null);
         __decorate([
             $mol_mem
         ], $bog_doodle_app.prototype, "click", null);
@@ -15766,6 +17179,11 @@ var $;
                 },
             },
             Palette: {
+                flex: {
+                    wrap: 'wrap',
+                },
+                maxWidth: '100%',
+                alignItems: 'center',
                 border: {
                     radius: $mol_gap.round,
                 },
@@ -15795,6 +17213,99 @@ var $;
                     color: $mol_style_func.vary('--bog_doodle_app_ink'),
                 },
                 boxShadow: `0 0 0 2px ${$mol_theme.back}`,
+            },
+            Ink_dot: {
+                width: '1.25rem',
+                height: '1.25rem',
+                border: {
+                    radius: '50%',
+                },
+                background: {
+                    color: $mol_style_func.vary('--bog_doodle_app_ink'),
+                },
+                boxShadow: `0 0 0 2px ${$mol_theme.back}`,
+            },
+            Voice: {
+                alignItems: 'center',
+                color: $mol_theme.shade,
+                padding: {
+                    left: $mol_gap.text,
+                    right: $mol_gap.text,
+                },
+                font: {
+                    size: '.875rem',
+                },
+            },
+            Size: {
+                alignItems: 'center',
+            },
+            Zoom: {
+                alignItems: 'center',
+                border: {
+                    radius: $mol_gap.round,
+                },
+                background: {
+                    color: $mol_theme.card,
+                },
+            },
+            Zoom_level: {
+                minWidth: '3.5rem',
+                justify: {
+                    content: 'center',
+                },
+            },
+            Vibes: {
+                flex: {
+                    wrap: 'wrap',
+                    shrink: 1,
+                    basis: '100%',
+                },
+                minWidth: 0,
+                gap: $mol_gap.space,
+            },
+            Vibe: {
+                border: {
+                    radius: $mol_gap.round,
+                },
+                background: {
+                    color: $mol_theme.card,
+                },
+                '@': {
+                    mol_check_checked: {
+                        true: {
+                            color: $mol_theme.current,
+                            font: {
+                                weight: 'bold',
+                            },
+                        },
+                    },
+                },
+            },
+            Layer_tools: {
+                flex: {
+                    wrap: 'wrap',
+                },
+                alignItems: 'center',
+                gap: $mol_gap.space,
+                padding: $mol_gap.block,
+            },
+            Layer: {
+                alignItems: 'center',
+            },
+            Layer_pick: {
+                flex: {
+                    grow: 1,
+                },
+                '@': {
+                    mol_check_checked: {
+                        true: {
+                            color: $mol_theme.current,
+                            font: {
+                                weight: 'bold',
+                            },
+                        },
+                    },
+                },
             },
             Patterns: {
                 flex: {
@@ -18548,6 +20059,33 @@ var $;
             $mol_assert_equal(stroke.color, 3);
             $mol_assert_like(stroke.points.map((v) => Math.round(v * 100) / 100), [0, 0, 0, 0.5, 0.25, 1, 1, 1, 0.5]);
         },
+        'ink, size, layers and axis survive the link'() {
+            const piece = {
+                ...$bog_doodle_piece_empty(),
+                axis: 'time_x',
+                layers: [
+                    { id: 'l1', name: 'Бас', visible: true, audible: false },
+                    { id: 'l2', name: '', visible: false, audible: true },
+                ],
+                patterns: [[{ id: 'a', color: 2, ink: '#3399ff', size: 2.5, layer: 'l2', points: [0.5, 0.5, 0.5] }]],
+            };
+            const back = $bog_doodle_piece_unpack($bog_doodle_piece_pack(piece));
+            $mol_assert_equal(back.axis, 'time_x');
+            $mol_assert_like(back.layers, piece.layers);
+            const stroke = back.patterns[0][0];
+            $mol_assert_equal(stroke.ink, '#3399ff');
+            $mol_assert_equal(stroke.size, 2.5);
+            $mol_assert_equal(stroke.layer, 'l2');
+            $mol_assert_equal($bog_doodle_piece_layer_of(back, stroke).name, '');
+        },
+        'first version links still open'() {
+            const back = $bog_doodle_piece_unpack('{"v":1,"k":2,"p":[["3.AAAAgA"]]}');
+            $mol_assert_equal(back.key, 2);
+            $mol_assert_equal(back.patterns[0][0].color, 3);
+            $mol_assert_equal(back.patterns[0][0].points.length, 3);
+            $mol_assert_equal(back.layers.length, 1);
+            $mol_assert_equal($bog_doodle_piece_layer_of(back, back.patterns[0][0]).id, 'l1');
+        },
         'broken fields fall back to defaults'() {
             const back = $bog_doodle_piece_unpack('{"s":"nope","g":"x"}');
             $mol_assert_equal(back.scale, 'major_penta');
@@ -18564,6 +20102,32 @@ var $;
         },
     });
 })($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'palette colors keep their instruments'() {
+            $mol_assert_like($bog_doodle_synth_colors.map(c => $bog_doodle_synth_timbre(c.ink)), [0, 1, 2, 3, 4, 5]);
+        },
+        'any color maps to an instrument by hue'() {
+            $mol_assert_equal($bog_doodle_synth_timbre('#808080'), 0);
+            $mol_assert_equal($bog_doodle_synth_timbre('#ff0000'), 1);
+            $mol_assert_equal($bog_doodle_synth_timbre('#ffee00'), 4);
+            $mol_assert_equal($bog_doodle_synth_timbre('#00ff66'), 3);
+            $mol_assert_equal($bog_doodle_synth_timbre('#0066ff'), 2);
+            $mol_assert_equal($bog_doodle_synth_timbre('#ff00ff'), 5);
+        },
+        'stroke ink falls back to its palette color'() {
+            $mol_assert_equal($bog_doodle_synth_ink({ color: 2 }), '#2f6fd8');
+            $mol_assert_equal($bog_doodle_synth_ink({ color: 2, ink: '#123456' }), '#123456');
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
 
 ;
 "use strict";
@@ -19199,6 +20763,7 @@ var $;
             board.rect = () => ({ left: 0, top: 0, width: 100, height: 100 });
             board.notes = () => [60, 62, 64, 65, 67, 69, 71, 72];
             board.redraw = () => { };
+            board.axis = () => 'time_x';
             return board;
         };
         $mol_test({
@@ -19260,6 +20825,68 @@ var $;
                 view.pointer_down(pointer(60, 50, { pointerType: 'touch', pointerId: 2 }));
                 view.pointer_move(pointer(80, 50, { pointerType: 'touch', pointerId: 2 }));
                 $mol_assert_equal(Math.round(view.view().zoom * 10), 20);
+            },
+            'notes run across and time runs down by default'($) {
+                const view = board($);
+                view.axis = () => 'time_y';
+                view.pointer_down(pointer(90, 10));
+                view.pointer_up(pointer(90, 10));
+                const [x, y] = view.sketch().strokes()[0].points;
+                $mol_assert_equal(Math.round(x * 100), 10);
+                $mol_assert_equal(Math.round(y * 100), 10);
+                $mol_assert_equal($bog_doodle_scale_row(y, 8), 7);
+            },
+            'board zooms out past the sheet and stays centered'($) {
+                const view = board($);
+                view.zoom_out();
+                view.zoom_out();
+                view.zoom_out();
+                const zoomed = view.view();
+                $mol_assert_ok(zoomed.zoom < 1);
+                $mol_assert_equal(zoomed.x, (1 - 1 / zoomed.zoom) / 2);
+                for (let i = 0; i < 20; ++i)
+                    view.zoom_out();
+                $mol_assert_equal(view.view().zoom, view.zoom_min());
+                view.zoom_reset();
+                $mol_assert_equal(view.zoom_percent(), '100%');
+            },
+            'stroke keeps ink, brush size and active layer'($) {
+                const view = board($);
+                view.ink = () => '#0066ff';
+                view.brush = () => 3;
+                view.layer_order = () => ['l1', 'l2'];
+                view.layer_active = () => 'l2';
+                view.pointer_down(pointer(50, 50));
+                view.pointer_up(pointer(50, 50));
+                const stroke = view.sketch().strokes()[0];
+                $mol_assert_equal(stroke.ink, '#0066ff');
+                $mol_assert_equal(stroke.color, 2);
+                $mol_assert_equal(stroke.size, 3);
+                $mol_assert_equal(stroke.layer, 'l2');
+            },
+            'eraser touches only the active visible layer'($) {
+                const view = board($);
+                view.sketch().add({ id: 'a', color: 0, points: [0.1, 0.5, 0.5, 0.9, 0.5, 0.5] });
+                view.sketch().add({ id: 'b', color: 0, layer: 'l2', points: [0.1, 0.5, 0.5, 0.9, 0.5, 0.5] });
+                view.layer_order = () => ['l1', 'l2'];
+                view.layer_active = () => 'l2';
+                view.tool('erase');
+                view.pointer_down(pointer(50, 50));
+                view.pointer_up(pointer(50, 50));
+                $mol_assert_like(view.sketch().strokes().map(s => s.id), ['a']);
+            },
+            'bigger eraser reaches farther'($) {
+                const view = board($);
+                view.sketch().add({ id: 'a', color: 0, points: [0.1, 0.5, 0.5, 0.9, 0.5, 0.5] });
+                view.tool('erase');
+                view.eraser = () => 10;
+                view.pointer_down(pointer(50, 40));
+                view.pointer_up(pointer(50, 40));
+                $mol_assert_equal(view.sketch().strokes().length, 1);
+                view.eraser = () => 30;
+                view.pointer_down(pointer(50, 40));
+                view.pointer_up(pointer(50, 40));
+                $mol_assert_equal(view.sketch().strokes().length, 0);
             },
         });
     })($$ = $_1.$$ || ($_1.$$ = {}));
@@ -19359,9 +20986,6 @@ var $;
 
 ;
 "use strict";
-
-;
-"use strict";
 var $;
 (function ($_1) {
     var $$;
@@ -19425,6 +21049,77 @@ var $;
         ], $mol_locale_mock, "source", null);
         $.$mol_locale = $mol_locale_mock;
     });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    var $$;
+    (function ($$) {
+        $mol_test({
+            'slider writes the picked number'($) {
+                const slider = $bog_doodle_slider.make({ $ });
+                slider.changed({ target: { value: '42' } });
+                $mol_assert_equal(slider.value(), 42);
+                $mol_assert_equal(slider.value_text(), '42');
+            },
+        });
+    })($$ = $_1.$$ || ($_1.$$ = {}));
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    var $$;
+    (function ($$) {
+        const at = (x, y) => ({
+            pointerId: 1, clientX: x, clientY: y, preventDefault() { },
+        });
+        const picker = ($) => {
+            const view = $bog_doodle_picker.make({ $ });
+            const rect = () => ({ left: 0, top: 0, width: 100, height: 100 });
+            view.Area().dom_node().getBoundingClientRect = rect;
+            view.Hue().dom_node().getBoundingClientRect = rect;
+            return view;
+        };
+        $mol_test({
+            'hex and hsv round trip'() {
+                for (const hex of ['#000000', '#ffffff', '#ff0000', '#2f6fd8', '#8a44c8', '#e39a1b']) {
+                    const { h, s, v } = $bog_doodle_picker_hsv(hex);
+                    $mol_assert_equal($bog_doodle_picker_hex(h, s, v), hex);
+                }
+            },
+            'area picks saturation and brightness in the current hue'($) {
+                const view = picker($);
+                view.value('#0000ff');
+                view.area_down(at(100, 0));
+                $mol_assert_equal(view.value(), '#0000ff');
+                view.area_move(at(0, 0));
+                $mol_assert_equal(view.value(), '#ffffff');
+                view.area_move(at(50, 100));
+                $mol_assert_equal(view.value(), '#000000');
+                view.area_up(at(50, 100));
+                $mol_assert_equal(view.hue(), 240);
+            },
+            'hue strip turns gray into a color'($) {
+                const view = picker($);
+                view.value('#808080');
+                view.hue_down(at(0, 5));
+                view.hue_up(at(0, 5));
+                $mol_assert_equal($bog_doodle_synth_timbre(view.value()), 1);
+            },
+            'hex field accepts only valid colors'($) {
+                const view = picker($);
+                view.value('#123456');
+                view.hex('zz');
+                $mol_assert_equal(view.value(), '#123456');
+                view.hex('AABBCC');
+                $mol_assert_equal(view.value(), '#aabbcc');
+            },
+        });
+    })($$ = $_1.$$ || ($_1.$$ = {}));
 })($ || ($ = {}));
 
 ;
@@ -19932,9 +21627,49 @@ var $;
             const player = $bog_doodle_player.make({ $, piece: () => piece(false), pattern: () => 1 });
             $mol_assert_like(player.midi_notes(), [{ time: 2, length: 1, midi: 72, velocity: 1, channel: 2 }]);
         },
+        'muted layer is silent'($) {
+            const muted = {
+                ...piece(true),
+                layers: [
+                    { id: 'l1', name: '', visible: true, audible: false },
+                    { id: 'l2', name: '', visible: true, audible: true },
+                ],
+            };
+            muted.patterns = [[muted.patterns[0][0], { ...muted.patterns[1][0], layer: 'l2' }]];
+            const player = $bog_doodle_player.make({ $, piece: () => muted, pattern: () => 0 });
+            $mol_assert_like(player.midi_notes().map(n => n.midi), [72]);
+        },
         'chain plays patterns one after another'($) {
             const player = $bog_doodle_player.make({ $, piece: () => piece(true), pattern: () => 1 });
             $mol_assert_like(player.midi_notes().map(n => [n.time, n.midi]), [[0, 60], [6, 72]]);
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'vibe sets music settings and keeps the drawing'() {
+            const piece = { ...$bog_doodle_piece_empty(), title: 'x', patterns: [[{ id: 'a', color: 0, points: [0, 0, 0] }]] };
+            const blues = $bog_doodle_vibe_apply(piece, 'blues');
+            $mol_assert_equal(blues.scale, 'blues');
+            $mol_assert_equal(blues.swing, 1);
+            $mol_assert_equal(blues.title, 'x');
+            $mol_assert_equal(blues.patterns, piece.patterns);
+            $mol_assert_equal($bog_doodle_vibe_current(blues), 'blues');
+        },
+        'hand tuned settings are no vibe'() {
+            const piece = { ...$bog_doodle_vibe_apply($bog_doodle_piece_empty(), 'calm'), bpm: 73 };
+            $mol_assert_equal($bog_doodle_vibe_current(piece), '');
+        },
+        'vibe ids are unique and every ink has a voice'() {
+            const ids = new Set($bog_doodle_vibe_list.map(v => v.id));
+            $mol_assert_equal(ids.size, $bog_doodle_vibe_list.length);
+            for (const vibe of $bog_doodle_vibe_list) {
+                $mol_assert_ok($bog_doodle_synth_timbre(vibe.ink) >= 0);
+            }
         },
     });
 })($ || ($ = {}));
@@ -19965,9 +21700,9 @@ var $;
         };
         const draw = (app, y) => {
             const board = app.Board();
-            board.pointer_down(pointer(10, y));
-            board.pointer_move(pointer(40, y));
-            board.pointer_up(pointer(40, y));
+            board.pointer_down(pointer(100 - y, 10));
+            board.pointer_move(pointer(100 - y, 40));
+            board.pointer_up(pointer(100 - y, 40));
         };
         $mol_test({
             'first stroke creates a piece in the gallery'($) {
@@ -19995,7 +21730,10 @@ var $;
                 $mol_assert_equal(view.pattern_tabs().length, 3);
                 $mol_assert_equal(view.sketch().strokes().length, 0);
                 draw(view, 20);
+                $mol_assert_equal(view.pattern(), 1);
+                $mol_assert_equal(view.piece().patterns[1].length, 1);
                 view.chain(true);
+                $mol_assert_equal(view.pattern(), 1);
                 const notes = view.Player().midi_notes();
                 $mol_assert_equal(notes.length, 2);
                 $mol_assert_ok(notes[1].midi > notes[0].midi);
@@ -20047,6 +21785,75 @@ var $;
                 $mol_assert_equal(view.piece().patterns[0].length, 2);
                 view.selection_drop();
                 $mol_assert_equal(view.piece().patterns[0].length, 1);
+            },
+            'vibe tunes music and brush in one tap'($) {
+                const view = app($);
+                view.vibe_checked('blues', true);
+                $mol_assert_equal(view.piece().scale, 'blues');
+                $mol_assert_equal(view.piece().swing, 1);
+                $mol_assert_ok(view.Vibe('blues').checked());
+                $mol_assert_not(view.Vibe('calm').checked());
+                $mol_assert_equal(view.voice_name(), $bog_doodle_synth_colors[1].name);
+                view.bpm_value(93);
+                $mol_assert_not(view.Vibe('blues').checked());
+            },
+            'any color draws with the instrument of its hue'($) {
+                const view = app($);
+                view.ink('#33cc99');
+                draw(view, 50);
+                const stroke = view.piece().patterns[0][0];
+                $mol_assert_equal(stroke.ink, '#33cc99');
+                $mol_assert_equal(stroke.color, 3);
+                $mol_assert_like(view.ink_recent(), ['#33cc99']);
+            },
+            'brush size goes into the stroke and slider follows the tool'($) {
+                const view = app($);
+                view.brush_value(25);
+                draw(view, 50);
+                $mol_assert_equal(view.piece().patterns[0][0].size, 2.5);
+                $mol_assert_like(view.size_tools(), [view.Brush_size()]);
+                view.tool_erase(true);
+                $mol_assert_like(view.size_tools(), [view.Eraser_size()]);
+                view.size_step(1);
+                $mol_assert_equal(view.eraser(), 30);
+            },
+            'layers: draw on the new one, hide it, mute it, drop it'($) {
+                const view = app($);
+                draw(view, 90);
+                view.layer_add();
+                const top = view.layer_active();
+                $mol_assert_equal(view.layers().length, 2);
+                $mol_assert_equal(view.layer_rows()[0], view.Layer(top));
+                draw(view, 20);
+                $mol_assert_equal(view.piece().patterns[0][1].layer, top);
+                view.layer_audible(top, false);
+                $mol_assert_equal(view.Player().midi_notes().length, 1);
+                view.layer_visible(top, false);
+                $mol_assert_like(view.layer_order(), [view.layer_default()]);
+                view.layer_name('Мелодия');
+                $mol_assert_equal(view.layer_title(top), 'Мелодия');
+                view.layer_drop(top);
+                $mol_assert_equal(view.layers().length, 1);
+                $mol_assert_equal(view.piece().patterns[0].length, 1);
+                $mol_assert_equal(view.layer_active(), view.layer_default());
+            },
+            'moving the bottom layer up keeps its strokes'($) {
+                const view = app($);
+                draw(view, 90);
+                const bottom = view.layer_default();
+                view.layer_add();
+                view.layer_up(bottom);
+                $mol_assert_equal(view.layers()[1].id, bottom);
+                $mol_assert_equal(view.piece().patterns[0][0].layer, bottom);
+            },
+            'zoom buttons and axis setting'($) {
+                const view = app($);
+                view.zoom_out();
+                $mol_assert_equal(view.zoom_percent(), '80%');
+                view.zoom_reset();
+                $mol_assert_equal(view.axis(), 'time_y');
+                view.axis_value('time_x');
+                $mol_assert_equal(view.Board().axis(), 'time_x');
             },
         });
     })($$ = $_1.$$ || ($_1.$$ = {}));

@@ -2638,6 +2638,33 @@ var $;
             $mol_assert_equal(stroke.color, 3);
             $mol_assert_like(stroke.points.map((v) => Math.round(v * 100) / 100), [0, 0, 0, 0.5, 0.25, 1, 1, 1, 0.5]);
         },
+        'ink, size, layers and axis survive the link'() {
+            const piece = {
+                ...$bog_doodle_piece_empty(),
+                axis: 'time_x',
+                layers: [
+                    { id: 'l1', name: 'Бас', visible: true, audible: false },
+                    { id: 'l2', name: '', visible: false, audible: true },
+                ],
+                patterns: [[{ id: 'a', color: 2, ink: '#3399ff', size: 2.5, layer: 'l2', points: [0.5, 0.5, 0.5] }]],
+            };
+            const back = $bog_doodle_piece_unpack($bog_doodle_piece_pack(piece));
+            $mol_assert_equal(back.axis, 'time_x');
+            $mol_assert_like(back.layers, piece.layers);
+            const stroke = back.patterns[0][0];
+            $mol_assert_equal(stroke.ink, '#3399ff');
+            $mol_assert_equal(stroke.size, 2.5);
+            $mol_assert_equal(stroke.layer, 'l2');
+            $mol_assert_equal($bog_doodle_piece_layer_of(back, stroke).name, '');
+        },
+        'first version links still open'() {
+            const back = $bog_doodle_piece_unpack('{"v":1,"k":2,"p":[["3.AAAAgA"]]}');
+            $mol_assert_equal(back.key, 2);
+            $mol_assert_equal(back.patterns[0][0].color, 3);
+            $mol_assert_equal(back.patterns[0][0].points.length, 3);
+            $mol_assert_equal(back.layers.length, 1);
+            $mol_assert_equal($bog_doodle_piece_layer_of(back, back.patterns[0][0]).id, 'l1');
+        },
         'broken fields fall back to defaults'() {
             const back = $bog_doodle_piece_unpack('{"s":"nope","g":"x"}');
             $mol_assert_equal(back.scale, 'major_penta');
@@ -2654,6 +2681,32 @@ var $;
         },
     });
 })($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'palette colors keep their instruments'() {
+            $mol_assert_like($bog_doodle_synth_colors.map(c => $bog_doodle_synth_timbre(c.ink)), [0, 1, 2, 3, 4, 5]);
+        },
+        'any color maps to an instrument by hue'() {
+            $mol_assert_equal($bog_doodle_synth_timbre('#808080'), 0);
+            $mol_assert_equal($bog_doodle_synth_timbre('#ff0000'), 1);
+            $mol_assert_equal($bog_doodle_synth_timbre('#ffee00'), 4);
+            $mol_assert_equal($bog_doodle_synth_timbre('#00ff66'), 3);
+            $mol_assert_equal($bog_doodle_synth_timbre('#0066ff'), 2);
+            $mol_assert_equal($bog_doodle_synth_timbre('#ff00ff'), 5);
+        },
+        'stroke ink falls back to its palette color'() {
+            $mol_assert_equal($bog_doodle_synth_ink({ color: 2 }), '#2f6fd8');
+            $mol_assert_equal($bog_doodle_synth_ink({ color: 2, ink: '#123456' }), '#123456');
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
 
 ;
 "use strict";
@@ -2958,6 +3011,7 @@ var $;
             board.rect = () => ({ left: 0, top: 0, width: 100, height: 100 });
             board.notes = () => [60, 62, 64, 65, 67, 69, 71, 72];
             board.redraw = () => { };
+            board.axis = () => 'time_x';
             return board;
         };
         $mol_test({
@@ -3019,6 +3073,68 @@ var $;
                 view.pointer_down(pointer(60, 50, { pointerType: 'touch', pointerId: 2 }));
                 view.pointer_move(pointer(80, 50, { pointerType: 'touch', pointerId: 2 }));
                 $mol_assert_equal(Math.round(view.view().zoom * 10), 20);
+            },
+            'notes run across and time runs down by default'($) {
+                const view = board($);
+                view.axis = () => 'time_y';
+                view.pointer_down(pointer(90, 10));
+                view.pointer_up(pointer(90, 10));
+                const [x, y] = view.sketch().strokes()[0].points;
+                $mol_assert_equal(Math.round(x * 100), 10);
+                $mol_assert_equal(Math.round(y * 100), 10);
+                $mol_assert_equal($bog_doodle_scale_row(y, 8), 7);
+            },
+            'board zooms out past the sheet and stays centered'($) {
+                const view = board($);
+                view.zoom_out();
+                view.zoom_out();
+                view.zoom_out();
+                const zoomed = view.view();
+                $mol_assert_ok(zoomed.zoom < 1);
+                $mol_assert_equal(zoomed.x, (1 - 1 / zoomed.zoom) / 2);
+                for (let i = 0; i < 20; ++i)
+                    view.zoom_out();
+                $mol_assert_equal(view.view().zoom, view.zoom_min());
+                view.zoom_reset();
+                $mol_assert_equal(view.zoom_percent(), '100%');
+            },
+            'stroke keeps ink, brush size and active layer'($) {
+                const view = board($);
+                view.ink = () => '#0066ff';
+                view.brush = () => 3;
+                view.layer_order = () => ['l1', 'l2'];
+                view.layer_active = () => 'l2';
+                view.pointer_down(pointer(50, 50));
+                view.pointer_up(pointer(50, 50));
+                const stroke = view.sketch().strokes()[0];
+                $mol_assert_equal(stroke.ink, '#0066ff');
+                $mol_assert_equal(stroke.color, 2);
+                $mol_assert_equal(stroke.size, 3);
+                $mol_assert_equal(stroke.layer, 'l2');
+            },
+            'eraser touches only the active visible layer'($) {
+                const view = board($);
+                view.sketch().add({ id: 'a', color: 0, points: [0.1, 0.5, 0.5, 0.9, 0.5, 0.5] });
+                view.sketch().add({ id: 'b', color: 0, layer: 'l2', points: [0.1, 0.5, 0.5, 0.9, 0.5, 0.5] });
+                view.layer_order = () => ['l1', 'l2'];
+                view.layer_active = () => 'l2';
+                view.tool('erase');
+                view.pointer_down(pointer(50, 50));
+                view.pointer_up(pointer(50, 50));
+                $mol_assert_like(view.sketch().strokes().map(s => s.id), ['a']);
+            },
+            'bigger eraser reaches farther'($) {
+                const view = board($);
+                view.sketch().add({ id: 'a', color: 0, points: [0.1, 0.5, 0.5, 0.9, 0.5, 0.5] });
+                view.tool('erase');
+                view.eraser = () => 10;
+                view.pointer_down(pointer(50, 40));
+                view.pointer_up(pointer(50, 40));
+                $mol_assert_equal(view.sketch().strokes().length, 1);
+                view.eraser = () => 30;
+                view.pointer_down(pointer(50, 40));
+                view.pointer_up(pointer(50, 40));
+                $mol_assert_equal(view.sketch().strokes().length, 0);
             },
         });
     })($$ = $_1.$$ || ($_1.$$ = {}));
@@ -3112,9 +3228,6 @@ var $;
         context.$mol_state_local = $mol_state_local_mock;
     });
 })($ || ($ = {}));
-
-;
-"use strict";
 
 ;
 "use strict";
@@ -3264,6 +3377,77 @@ var $;
         ], $mol_locale_mock, "source", null);
         $.$mol_locale = $mol_locale_mock;
     });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    var $$;
+    (function ($$) {
+        $mol_test({
+            'slider writes the picked number'($) {
+                const slider = $bog_doodle_slider.make({ $ });
+                slider.changed({ target: { value: '42' } });
+                $mol_assert_equal(slider.value(), 42);
+                $mol_assert_equal(slider.value_text(), '42');
+            },
+        });
+    })($$ = $_1.$$ || ($_1.$$ = {}));
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    var $$;
+    (function ($$) {
+        const at = (x, y) => ({
+            pointerId: 1, clientX: x, clientY: y, preventDefault() { },
+        });
+        const picker = ($) => {
+            const view = $bog_doodle_picker.make({ $ });
+            const rect = () => ({ left: 0, top: 0, width: 100, height: 100 });
+            view.Area().dom_node().getBoundingClientRect = rect;
+            view.Hue().dom_node().getBoundingClientRect = rect;
+            return view;
+        };
+        $mol_test({
+            'hex and hsv round trip'() {
+                for (const hex of ['#000000', '#ffffff', '#ff0000', '#2f6fd8', '#8a44c8', '#e39a1b']) {
+                    const { h, s, v } = $bog_doodle_picker_hsv(hex);
+                    $mol_assert_equal($bog_doodle_picker_hex(h, s, v), hex);
+                }
+            },
+            'area picks saturation and brightness in the current hue'($) {
+                const view = picker($);
+                view.value('#0000ff');
+                view.area_down(at(100, 0));
+                $mol_assert_equal(view.value(), '#0000ff');
+                view.area_move(at(0, 0));
+                $mol_assert_equal(view.value(), '#ffffff');
+                view.area_move(at(50, 100));
+                $mol_assert_equal(view.value(), '#000000');
+                view.area_up(at(50, 100));
+                $mol_assert_equal(view.hue(), 240);
+            },
+            'hue strip turns gray into a color'($) {
+                const view = picker($);
+                view.value('#808080');
+                view.hue_down(at(0, 5));
+                view.hue_up(at(0, 5));
+                $mol_assert_equal($bog_doodle_synth_timbre(view.value()), 1);
+            },
+            'hex field accepts only valid colors'($) {
+                const view = picker($);
+                view.value('#123456');
+                view.hex('zz');
+                $mol_assert_equal(view.value(), '#123456');
+                view.hex('AABBCC');
+                $mol_assert_equal(view.value(), '#aabbcc');
+            },
+        });
+    })($$ = $_1.$$ || ($_1.$$ = {}));
 })($ || ($ = {}));
 
 ;
@@ -3771,9 +3955,49 @@ var $;
             const player = $bog_doodle_player.make({ $, piece: () => piece(false), pattern: () => 1 });
             $mol_assert_like(player.midi_notes(), [{ time: 2, length: 1, midi: 72, velocity: 1, channel: 2 }]);
         },
+        'muted layer is silent'($) {
+            const muted = {
+                ...piece(true),
+                layers: [
+                    { id: 'l1', name: '', visible: true, audible: false },
+                    { id: 'l2', name: '', visible: true, audible: true },
+                ],
+            };
+            muted.patterns = [[muted.patterns[0][0], { ...muted.patterns[1][0], layer: 'l2' }]];
+            const player = $bog_doodle_player.make({ $, piece: () => muted, pattern: () => 0 });
+            $mol_assert_like(player.midi_notes().map(n => n.midi), [72]);
+        },
         'chain plays patterns one after another'($) {
             const player = $bog_doodle_player.make({ $, piece: () => piece(true), pattern: () => 1 });
             $mol_assert_like(player.midi_notes().map(n => [n.time, n.midi]), [[0, 60], [6, 72]]);
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'vibe sets music settings and keeps the drawing'() {
+            const piece = { ...$bog_doodle_piece_empty(), title: 'x', patterns: [[{ id: 'a', color: 0, points: [0, 0, 0] }]] };
+            const blues = $bog_doodle_vibe_apply(piece, 'blues');
+            $mol_assert_equal(blues.scale, 'blues');
+            $mol_assert_equal(blues.swing, 1);
+            $mol_assert_equal(blues.title, 'x');
+            $mol_assert_equal(blues.patterns, piece.patterns);
+            $mol_assert_equal($bog_doodle_vibe_current(blues), 'blues');
+        },
+        'hand tuned settings are no vibe'() {
+            const piece = { ...$bog_doodle_vibe_apply($bog_doodle_piece_empty(), 'calm'), bpm: 73 };
+            $mol_assert_equal($bog_doodle_vibe_current(piece), '');
+        },
+        'vibe ids are unique and every ink has a voice'() {
+            const ids = new Set($bog_doodle_vibe_list.map(v => v.id));
+            $mol_assert_equal(ids.size, $bog_doodle_vibe_list.length);
+            for (const vibe of $bog_doodle_vibe_list) {
+                $mol_assert_ok($bog_doodle_synth_timbre(vibe.ink) >= 0);
+            }
         },
     });
 })($ || ($ = {}));
@@ -3804,9 +4028,9 @@ var $;
         };
         const draw = (app, y) => {
             const board = app.Board();
-            board.pointer_down(pointer(10, y));
-            board.pointer_move(pointer(40, y));
-            board.pointer_up(pointer(40, y));
+            board.pointer_down(pointer(100 - y, 10));
+            board.pointer_move(pointer(100 - y, 40));
+            board.pointer_up(pointer(100 - y, 40));
         };
         $mol_test({
             'first stroke creates a piece in the gallery'($) {
@@ -3834,7 +4058,10 @@ var $;
                 $mol_assert_equal(view.pattern_tabs().length, 3);
                 $mol_assert_equal(view.sketch().strokes().length, 0);
                 draw(view, 20);
+                $mol_assert_equal(view.pattern(), 1);
+                $mol_assert_equal(view.piece().patterns[1].length, 1);
                 view.chain(true);
+                $mol_assert_equal(view.pattern(), 1);
                 const notes = view.Player().midi_notes();
                 $mol_assert_equal(notes.length, 2);
                 $mol_assert_ok(notes[1].midi > notes[0].midi);
@@ -3886,6 +4113,75 @@ var $;
                 $mol_assert_equal(view.piece().patterns[0].length, 2);
                 view.selection_drop();
                 $mol_assert_equal(view.piece().patterns[0].length, 1);
+            },
+            'vibe tunes music and brush in one tap'($) {
+                const view = app($);
+                view.vibe_checked('blues', true);
+                $mol_assert_equal(view.piece().scale, 'blues');
+                $mol_assert_equal(view.piece().swing, 1);
+                $mol_assert_ok(view.Vibe('blues').checked());
+                $mol_assert_not(view.Vibe('calm').checked());
+                $mol_assert_equal(view.voice_name(), $bog_doodle_synth_colors[1].name);
+                view.bpm_value(93);
+                $mol_assert_not(view.Vibe('blues').checked());
+            },
+            'any color draws with the instrument of its hue'($) {
+                const view = app($);
+                view.ink('#33cc99');
+                draw(view, 50);
+                const stroke = view.piece().patterns[0][0];
+                $mol_assert_equal(stroke.ink, '#33cc99');
+                $mol_assert_equal(stroke.color, 3);
+                $mol_assert_like(view.ink_recent(), ['#33cc99']);
+            },
+            'brush size goes into the stroke and slider follows the tool'($) {
+                const view = app($);
+                view.brush_value(25);
+                draw(view, 50);
+                $mol_assert_equal(view.piece().patterns[0][0].size, 2.5);
+                $mol_assert_like(view.size_tools(), [view.Brush_size()]);
+                view.tool_erase(true);
+                $mol_assert_like(view.size_tools(), [view.Eraser_size()]);
+                view.size_step(1);
+                $mol_assert_equal(view.eraser(), 30);
+            },
+            'layers: draw on the new one, hide it, mute it, drop it'($) {
+                const view = app($);
+                draw(view, 90);
+                view.layer_add();
+                const top = view.layer_active();
+                $mol_assert_equal(view.layers().length, 2);
+                $mol_assert_equal(view.layer_rows()[0], view.Layer(top));
+                draw(view, 20);
+                $mol_assert_equal(view.piece().patterns[0][1].layer, top);
+                view.layer_audible(top, false);
+                $mol_assert_equal(view.Player().midi_notes().length, 1);
+                view.layer_visible(top, false);
+                $mol_assert_like(view.layer_order(), [view.layer_default()]);
+                view.layer_name('Мелодия');
+                $mol_assert_equal(view.layer_title(top), 'Мелодия');
+                view.layer_drop(top);
+                $mol_assert_equal(view.layers().length, 1);
+                $mol_assert_equal(view.piece().patterns[0].length, 1);
+                $mol_assert_equal(view.layer_active(), view.layer_default());
+            },
+            'moving the bottom layer up keeps its strokes'($) {
+                const view = app($);
+                draw(view, 90);
+                const bottom = view.layer_default();
+                view.layer_add();
+                view.layer_up(bottom);
+                $mol_assert_equal(view.layers()[1].id, bottom);
+                $mol_assert_equal(view.piece().patterns[0][0].layer, bottom);
+            },
+            'zoom buttons and axis setting'($) {
+                const view = app($);
+                view.zoom_out();
+                $mol_assert_equal(view.zoom_percent(), '80%');
+                view.zoom_reset();
+                $mol_assert_equal(view.axis(), 'time_y');
+                view.axis_value('time_x');
+                $mol_assert_equal(view.Board().axis(), 'time_x');
             },
         });
     })($$ = $_1.$$ || ($_1.$$ = {}));

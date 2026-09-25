@@ -93,9 +93,11 @@ $mol_check $mol_button_minor
 
 $mol_check_icon $mol_check
 
+$mol_icon_layers $mol_icon path \M12,16L19.36,10.27L21,9L12,2L3,9L4.63,10.27M12,18.54L4.62,12.81L3,14.07L12,21.07L21,14.07L19.37,12.8L12,18.54Z
+
 $mol_icon_tune $mol_icon path \M3,17V19H9V17H3M3,5V7H13V5H3M13,21V19H21V17H13V15H11V21H13M7,9V11H3V13H7V15H9V9H7M21,13V11H11V13H21M15,9H17V7H21V5H17V3H15V9Z
 
-$mol_icon_pencil $mol_icon path \M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z
+$mol_icon_brush $mol_icon path \M20.71,4.63L19.37,3.29C19,2.9 18.35,2.9 17.96,3.29L9,12.25L11.75,15L20.71,6.04C21.1,5.65 21.1,5 20.71,4.63M7,14A3,3 0 0,0 4,17C4,18.31 2.84,19 2,19C2.92,20.22 4.5,21 6,21A4,4 0 0,0 10,17A3,3 0 0,0 7,14Z
 
 $mol_icon_eraser $mol_icon path \M16.24,3.56L21.19,8.5C21.97,9.29 21.97,10.55 21.19,11.34L12,20.53C10.44,22.09 7.91,22.09 6.34,20.53L2.81,17C2.03,16.21 2.03,14.95 2.81,14.16L13.41,3.56C14.2,2.78 15.46,2.78 16.24,3.56M4.22,15.58L7.76,19.11C8.54,19.9 9.8,19.9 10.59,19.11L14.12,15.58L9.17,10.63L4.22,15.58Z
 
@@ -103,67 +105,26 @@ $mol_icon_cursor_default $mol_icon path \M13.64,21.97C13.14,22.21 12.54,22 12.31
 
 $mol_icon_pan $mol_icon path \M12,2.5L8,7H16L12,2.5M7,8L2.5,12L7,16V8M17,8V16L21.5,12L17,8M12,10A2,2 0 0,0 10,12A2,2 0 0,0 12,14A2,2 0 0,0 14,12A2,2 0 0,0 12,10M8,17L12,21.5L16,17H8Z
 
-$mol_icon_magnify $mol_icon path \M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z
-
-$mol_icon_magnify_minus $mol_icon path \M9,2A7,7 0 0,1 16,9C16,10.57 15.5,12 14.61,13.19L15.41,14H16L22,20L20,22L14,16V15.41L13.19,14.61C12,15.5 10.57,16 9,16A7,7 0 0,1 2,9A7,7 0 0,1 9,2M5,8V10H13V8H5Z
-
-$mol_icon_content_duplicate $mol_icon path \M11,17H4A2,2 0 0,1 2,15V3A2,2 0 0,1 4,1H16V3H4V15H11V13L15,16L11,19V17M19,21V7H8V13H6V7A2,2 0 0,1 8,5H19A2,2 0 0,1 21,7V21A2,2 0 0,1 19,23H8A2,2 0 0,1 6,21V19H8V21H19Z
-
-$mol_icon_delete $mol_icon path \M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z
-
-$mol_icon_plus $mol_icon path \M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z
-
-$bog_doodle_board $mol_view
-	dom_name \canvas
-	sketch $bog_doodle_sketch
-	notes /number
-	steps 16
-	beat_steps 2
-	bar_steps 8
-	tool? \draw
-	color 0
-	snap false
-	pen_only false
-	back \
-	selected? /string
-	playhead null
-	playing false
-	note_hover? null
+$bog_doodle_slider $mol_view
+	dom_name \input
+	value? 0
+	min 0
+	max 100
+	step 1
 	attr *
 		^
-		bog_doodle_board_tool <= tool?
-	event *
-		pointerdown? <=> pointer_down? null
-		pointermove? <=> pointer_move? null
-		pointerup? <=> pointer_up? null
-		pointercancel? <=> pointer_cancel? null
-		pointerleave? <=> pointer_leave? null
-		wheel? <=> wheel? null
-		contextmenu? <=> context_menu? null
-
-$mol_list $mol_view
-	render_visible_only true
-	render_over 0.1
-	sub <= rows /$mol_view
-		<= Gap_before $mol_view style * paddingTop <= gap_before 0
-		<= Empty $mol_view
-		<= Gap_after $mol_view style * paddingTop <= gap_after 0
-	item_height_min* 1
-	item_width_min* 1
-	view_window_shift? 0
-	view_window /
-		0
-		0
-
-$mol_scroll $mol_view
-	scroll_top? 0
-	scroll_left? 0
-	attr *
+		type \range
+		min <= min
+		max <= max
+		step <= step
+		title <= hint \
+	field *
 		^
-		tabindex <= tabindex -1
+		value <= value_text \0
 	event *
-		^
-		scroll? <=> event_scroll? null
+		input? <=> changed? null
+
+$mol_icon_palette $mol_icon path \M17.5,12A1.5,1.5 0 0,1 16,10.5A1.5,1.5 0 0,1 17.5,9A1.5,1.5 0 0,1 19,10.5A1.5,1.5 0 0,1 17.5,12M14.5,8A1.5,1.5 0 0,1 13,6.5A1.5,1.5 0 0,1 14.5,5A1.5,1.5 0 0,1 16,6.5A1.5,1.5 0 0,1 14.5,8M9.5,8A1.5,1.5 0 0,1 8,6.5A1.5,1.5 0 0,1 9.5,5A1.5,1.5 0 0,1 11,6.5A1.5,1.5 0 0,1 9.5,8M6.5,12A1.5,1.5 0 0,1 5,10.5A1.5,1.5 0 0,1 6.5,9A1.5,1.5 0 0,1 8,10.5A1.5,1.5 0 0,1 6.5,12M12,3A9,9 0 0,0 3,12A9,9 0 0,0 12,21A1.5,1.5 0 0,0 13.5,19.5C13.5,19.11 13.35,18.76 13.11,18.5C12.88,18.23 12.73,17.88 12.73,17.5A1.5,1.5 0 0,1 14.23,16H16A5,5 0 0,0 21,11C21,6.58 16.97,3 12,3Z
 
 $mol_hotkey2 $mol_plugin
 	event *
@@ -211,15 +172,52 @@ $mol_string $mol_view
 			mod_ctrl <= submit_with_ctrl false
 			key * enter? <=> submit? null
 
-$mol_labeler $mol_list
-	rows /
-		<= Label $mol_view
-			minimal_height 32
-			sub <= label /$mol_view_content
-				<= title
-		<= Content $mol_view
-			minimal_height 24
-			sub <= content /
+$bog_doodle_picker $mol_view
+	value? \#1f1d1a
+	swatches /string
+	sub /
+		<= Area $mol_view
+			style *
+				^
+				--bog_doodle_picker_hue <= hue_css \red
+			event *
+				pointerdown? <=> area_down? null
+				pointermove? <=> area_move? null
+				pointerup? <=> area_up? null
+			sub /
+				<= Area_knob $mol_view
+					style *
+						^
+						left <= area_left \0%
+						top <= area_top \0%
+		<= Hue $mol_view
+			event *
+				pointerdown? <=> hue_down? null
+				pointermove? <=> hue_move? null
+				pointerup? <=> hue_up? null
+			sub /
+				<= Hue_knob $mol_view
+					style *
+						^
+						left <= hue_left \0%
+		<= Swatches $mol_view
+			sub <= swatch_list /
+				<= Swatch* $mol_button_minor
+					hint <= swatch_color* \
+					click? <=> swatch_pick*? null
+					style *
+						^
+						--bog_doodle_picker_swatch <= swatch_color* \
+					sub /
+		<= Hex_row $mol_view
+			sub /
+				<= Preview $mol_view
+					style *
+						^
+						--bog_doodle_picker_swatch <= value? \#1f1d1a
+				<= Hex $mol_string
+					hint \#rrggbb
+					value? <=> hex? \
 
 $mol_ghost $mol_view
 	Sub $mol_view
@@ -271,6 +269,16 @@ $mol_pop_bubble $mol_view
 		tabindex 0
 		popover \manual
 
+$mol_scroll $mol_view
+	scroll_top? 0
+	scroll_left? 0
+	attr *
+		^
+		tabindex <= tabindex -1
+	event *
+		^
+		scroll? <=> event_scroll? null
+
 $mol_pick $mol_pop
 	event *
 		^
@@ -284,6 +292,91 @@ $mol_pick $mol_pop
 		sub <= trigger_content /$mol_view_content
 			<= title
 		hint <= hint \
+
+$mol_icon_magnify $mol_icon path \M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z
+
+$mol_icon_magnify_minus $mol_icon path \M9,2A7,7 0 0,1 16,9C16,10.57 15.5,12 14.61,13.19L15.41,14H16L22,20L20,22L14,16V15.41L13.19,14.61C12,15.5 10.57,16 9,16A7,7 0 0,1 2,9A7,7 0 0,1 9,2M5,8V10H13V8H5Z
+
+$mol_icon_magnify_plus $mol_icon path \M9,2A7,7 0 0,1 16,9C16,10.57 15.5,12 14.61,13.19L15.41,14H16L22,20L20,22L14,16V15.41L13.19,14.61C12,15.5 10.57,16 9,16A7,7 0 0,1 2,9A7,7 0 0,1 9,2M8,5V8H5V10H8V13H10V10H13V8H10V5H8Z
+
+$mol_icon_content_duplicate $mol_icon path \M11,17H4A2,2 0 0,1 2,15V3A2,2 0 0,1 4,1H16V3H4V15H11V13L15,16L11,19V17M19,21V7H8V13H6V7A2,2 0 0,1 8,5H19A2,2 0 0,1 21,7V21A2,2 0 0,1 19,23H8A2,2 0 0,1 6,21V19H8V21H19Z
+
+$mol_icon_delete $mol_icon path \M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z
+
+$mol_icon_plus $mol_icon path \M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z
+
+$bog_doodle_board $mol_view
+	dom_name \canvas
+	sketch $bog_doodle_sketch
+	notes /number
+	steps 16
+	beat_steps 2
+	bar_steps 8
+	axis \time_y
+	tool? \draw
+	ink \#1f1d1a
+	brush 1
+	eraser 24
+	snap false
+	pen_only false
+	back \
+	layer_order /string
+		\l1
+	layer_active \l1
+	layer_default \l1
+	layer_focus false
+	selected? /string
+	playhead null
+	playing false
+	note_hover? null
+	attr *
+		^
+		bog_doodle_board_tool <= tool?
+	event *
+		pointerdown? <=> pointer_down? null
+		pointermove? <=> pointer_move? null
+		pointerup? <=> pointer_up? null
+		pointercancel? <=> pointer_cancel? null
+		pointerleave? <=> pointer_leave? null
+		wheel? <=> wheel? null
+		contextmenu? <=> context_menu? null
+
+$mol_list $mol_view
+	render_visible_only true
+	render_over 0.1
+	sub <= rows /$mol_view
+		<= Gap_before $mol_view style * paddingTop <= gap_before 0
+		<= Empty $mol_view
+		<= Gap_after $mol_view style * paddingTop <= gap_after 0
+	item_height_min* 1
+	item_width_min* 1
+	view_window_shift? 0
+	view_window /
+		0
+		0
+
+$mol_icon_tick $mol_icon path \M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z
+
+$mol_check_box $mol_check
+	Icon $mol_icon_tick
+
+$mol_labeler $mol_list
+	rows /
+		<= Label $mol_view
+			minimal_height 32
+			sub <= label /$mol_view_content
+				<= title
+		<= Content $mol_view
+			minimal_height 24
+			sub <= content /
+
+$mol_icon_eye $mol_icon path \M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z
+
+$mol_icon_volume_high $mol_icon path \M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.84 14,18.7V20.77C18,19.86 21,16.28 21,12C21,7.72 18,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16C15.5,15.29 16.5,13.76 16.5,12M3,9V15H7L12,20V4L7,9H3Z
+
+$mol_icon_arrow_up $mol_icon path \M13,20H11V8L5.5,13.5L4.08,12.08L12,4.16L19.92,12.08L18.5,13.5L13,8V20Z
+
+$mol_icon_arrow_down $mol_icon path \M11,4H13V16L18.5,10.5L19.92,11.92L12,19.84L4.08,11.92L5.5,10.5L11,16V4Z
 
 $mol_paragraph $mol_view
 	line_height 24
@@ -465,11 +558,6 @@ $mol_number $mol_view
 			event_click? <=> event_inc? null
 			enabled <= inc_enabled <= enabled
 			sub / <= inc_icon $mol_icon_menu_up_outline
-
-$mol_icon_tick $mol_icon path \M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z
-
-$mol_check_box $mol_check
-	Icon $mol_icon_tick
 
 $mol_icon_upload $mol_icon path \M9,16V10H5L12,3L19,10H15V16H9M5,20V18H19V20H5Z
 
@@ -884,6 +972,7 @@ $mol_text_list_item $mol_paragraph
 $bog_doodle_app $mol_view
 	title @ \Doodle
 	untitled @ \Без названия
+	layer_prefix @ \Слой
 	Store $bog_doodle_gallery
 	plugins /
 		<= Theme $mol_theme_auto
@@ -918,16 +1007,20 @@ $bog_doodle_app $mol_view
 					hint @ \Мои рисунки
 					checked? <=> gallery_opened? false
 					Icon <= Gallery_open_icon $mol_icon_folder_music
+				<= Layers_open $mol_check_icon
+					hint @ \Слои
+					checked? <=> layers_opened? false
+					Icon <= Layers_open_icon $mol_icon_layers
 				<= Settings_open $mol_check_icon
-					hint @ \Настройки, экспорт и ссылка
+					hint @ \Настроение, лад, темп, экспорт и ссылка
 					checked? <=> settings_opened? false
 					Icon <= Settings_open_icon $mol_icon_tune
 				<= Tools $mol_view
 					sub /
 						<= Tool_draw $mol_check_icon
-							hint @ \Карандаш (B)
+							hint @ \Кисть (B)
 							checked? <=> tool_draw? false
-							Icon <= Tool_draw_icon $mol_icon_pencil
+							Icon <= Tool_draw_icon $mol_icon_brush
 						<= Tool_erase $mol_check_icon
 							hint @ \Ластик (E), правая кнопка или кнопка пера
 							checked? <=> tool_erase? false
@@ -937,14 +1030,21 @@ $bog_doodle_app $mol_view
 							checked? <=> tool_select? false
 							Icon <= Tool_select_icon $mol_icon_cursor_default
 						<= Tool_pan $mol_check_icon
-							hint @ \Рука (H): двигать холст, колесо с Ctrl или щипок меняют масштаб
+							hint @ \Рука (H): двигать холст
 							checked? <=> tool_pan? false
 							Icon <= Tool_pan_icon $mol_icon_pan
-						<= Zoom_reset $mol_button_minor
-							hint @ \Показать весь луп (0)
-							click? <=> zoom_reset? null
-							sub /
-								<= Zoom_reset_icon $mol_icon_magnify_minus
+				<= Size $mol_view
+					sub <= size_tools /
+						<= Brush_size $bog_doodle_slider
+							hint @ \Толщина кисти ( [ и ] )
+							value? <=> brush_value? 10
+							min 2
+							max 40
+						<= Eraser_size $bog_doodle_slider
+							hint @ \Размер ластика ( [ и ] )
+							value? <=> eraser? 24
+							min 6
+							max 120
 				<= Palette $mol_view
 					sub <= palette /
 						<= Color* $mol_check
@@ -955,6 +1055,38 @@ $bog_doodle_app $mol_view
 								--bog_doodle_app_ink <= color_ink* \
 							sub /
 								<= Color_dot* $mol_view
+						<= Ink_pick $mol_pick
+							hint @ \Любой цвет: оттенок выбирает инструмент
+							align_hor \left
+							trigger_content /
+								<= Ink_dot $mol_view
+									style *
+										^
+										--bog_doodle_app_ink <= ink? \#1f1d1a
+								<= Ink_icon $mol_icon_palette
+							bubble_content /
+								<= Picker $bog_doodle_picker
+									value? <=> ink? \#1f1d1a
+									swatches <= ink_recent /string
+						<= Voice $mol_view
+							sub /
+								<= voice_name \
+				<= Zoom $mol_view
+					sub /
+						<= Zoom_out $mol_button_minor
+							hint @ \Отдалить (−)
+							click? <=> zoom_out? null
+							sub /
+								<= Zoom_out_icon $mol_icon_magnify_minus
+						<= Zoom_level $mol_button_minor
+							hint @ \Весь луп (0)
+							click? <=> zoom_reset? null
+							title <= zoom_percent \100%
+						<= Zoom_in $mol_button_minor
+							hint @ \Приблизить (+)
+							click? <=> zoom_in? null
+							sub /
+								<= Zoom_in_icon $mol_icon_magnify_plus
 				<= Selection $mol_view
 					sub <= selection_tools /
 						<= Copy $mol_button_minor
@@ -970,7 +1102,7 @@ $bog_doodle_app $mol_view
 				<= Patterns $mol_view
 					sub <= pattern_tabs /
 						<= Pattern* $mol_check
-							hint @ \Паттерн
+							hint @ \Паттерн: отдельный луп, их можно играть цепочкой
 							checked? <=> pattern_checked*? false
 							title <= pattern_title* \
 						<= Pattern_add $mol_button_minor
@@ -986,11 +1118,18 @@ $bog_doodle_app $mol_view
 					steps <= steps 16
 					beat_steps <= beat_steps 2
 					bar_steps <= bar_steps 8
+					axis <= axis \time_y
 					tool? <=> tool? \draw
-					color <= color 0
+					ink <= ink? \#1f1d1a
+					brush <= brush 1
+					eraser <= eraser? 24
 					snap <= snap false
 					pen_only <= pen_only false
 					back <= back \
+					layer_order <= layer_order /string
+					layer_active <= layer_active? \l1
+					layer_default <= layer_default \l1
+					layer_focus <= layer_focus? false
 					selected? <=> selected? /string
 					playhead <= playhead null
 					playing <= playing false
@@ -999,8 +1138,64 @@ $bog_doodle_app $mol_view
 					sub /
 						<= Panel_content $mol_list
 							rows <= panel_rows /
+	Layers $mol_list
+		rows /
+			<= Layer_tools $mol_view
+				sub /
+					<= Layer_add $mol_button_major
+						title @ \Новый слой
+						click? <=> layer_add? null
+					<= Layer_focus $mol_check_box
+						title @ \Приглушать остальные
+						checked? <=> layer_focus? false
+			<= Layer_name_field $mol_labeler
+				title @ \Имя активного слоя
+				content /
+					<= Layer_name $mol_string
+						hint <= layer_name_hint \
+						value? <=> layer_name? \
+			<= Layer_list $mol_list
+				rows <= layer_rows /
+					<= Layer* $mol_view
+						sub /
+							<= Layer_visible* $mol_check_icon
+								hint @ \Видно
+								checked? <=> layer_visible*? true
+								Icon <= Layer_visible_icon* $mol_icon_eye
+							<= Layer_audible* $mol_check_icon
+								hint @ \Звучит
+								checked? <=> layer_audible*? true
+								Icon <= Layer_audible_icon* $mol_icon_volume_high
+							<= Layer_pick* $mol_check
+								hint @ \Рисовать на этом слое
+								checked? <=> layer_picked*? false
+								title <= layer_title* \
+							<= Layer_up* $mol_button_minor
+								hint @ \Выше
+								click? <=> layer_up*? null
+								sub /
+									<= Layer_up_icon* $mol_icon_arrow_up
+							<= Layer_down* $mol_button_minor
+								hint @ \Ниже
+								click? <=> layer_down*? null
+								sub /
+									<= Layer_down_icon* $mol_icon_arrow_down
+							<= Layer_drop* $mol_button_minor
+								hint @ \Удалить слой со всеми штрихами
+								enabled <= layer_drop_enabled false
+								click? <=> layer_drop*? null
+								sub /
+									<= Layer_drop_icon* $mol_icon_delete
 	Settings $mol_list
 		rows /
+			<= Vibe_field $mol_labeler
+				title @ \Настроение: выбери, и лад, темп и инструмент подстроятся
+				content /
+					<= Vibes $mol_view
+						sub <= vibe_list /
+							<= Vibe* $mol_check
+								title <= vibe_name* \
+								checked? <=> vibe_checked*? false
 			<= Title_field $mol_labeler
 				title @ \Название
 				content /
@@ -1030,6 +1225,14 @@ $bog_doodle_app $mol_view
 							mixolydian @ \Миксолидийский
 							blues @ \Блюз
 							chromatic @ \Хроматика
+			<= Axis_field $mol_labeler
+				title @ \Раскладка
+				content /
+					<= Axis_input $mol_switch
+						value? <=> axis_value? \time_y
+						options *
+							time_y @ \Ноты слева направо, время вниз
+							time_x @ \Ноты снизу вверх, время вправо
 			<= Range_field $mol_labeler
 				title @ \Диапазон, октав
 				content /
@@ -1181,3 +1384,7 @@ $bog_doodle_app $mol_view
 						click? <=> piece_drop*? null
 						sub /
 							<= Piece_drop_icon* $mol_icon_delete
+
+$mol_icon_eye_off $mol_icon path \M11.83,9L15,12.16C15,12.11 15,12.05 15,12A3,3 0 0,0 12,9C11.94,9 11.89,9 11.83,9M7.53,9.8L9.08,11.35C9.03,11.56 9,11.77 9,12A3,3 0 0,0 12,15C12.22,15 12.44,14.97 12.65,14.92L14.2,16.47C13.53,16.8 12.79,17 12,17A5,5 0 0,1 7,12C7,11.21 7.2,10.47 7.53,9.8M2,4.27L4.28,6.55L4.73,7C3.08,8.3 1.78,10 1,12C2.73,16.39 7,19.5 12,19.5C13.55,19.5 15.03,19.2 16.38,18.66L16.81,19.08L19.73,22L21,20.73L3.27,3M12,7A5,5 0 0,1 17,12C17,12.64 16.87,13.26 16.64,13.82L19.57,16.75C21.07,15.5 22.27,13.86 23,12C21.27,7.61 17,4.5 12,4.5C10.6,4.5 9.26,4.75 8,5.2L10.17,7.35C10.74,7.13 11.35,7 12,7Z
+
+$mol_icon_volume_off $mol_icon path \M12,4L9.91,6.09L12,8.18M4.27,3L3,4.27L7.73,9H3V15H7L12,20V13.27L16.25,17.53C15.58,18.04 14.83,18.46 14,18.7V20.77C15.38,20.45 16.63,19.82 17.68,18.96L19.73,21L21,19.73L12,10.73M19,12C19,12.94 18.8,13.82 18.46,14.64L19.97,16.15C20.62,14.91 21,13.5 21,12C21,7.72 18,4.14 14,3.23V5.29C16.89,6.15 19,8.83 19,12M16.5,12C16.5,10.23 15.5,8.71 14,7.97V10.18L16.45,12.63C16.5,12.43 16.5,12.21 16.5,12Z

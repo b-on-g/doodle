@@ -2382,6 +2382,15 @@ declare namespace $ {
 //# sourceMappingURL=icon.view.tree.d.ts.map
 declare namespace $ {
 
+	export class $mol_icon_layers extends $mol_icon {
+		path( ): string
+	}
+	
+}
+
+//# sourceMappingURL=layers.view.tree.d.ts.map
+declare namespace $ {
+
 	export class $mol_icon_tune extends $mol_icon {
 		path( ): string
 	}
@@ -2391,13 +2400,13 @@ declare namespace $ {
 //# sourceMappingURL=tune.view.tree.d.ts.map
 declare namespace $ {
 
-	export class $mol_icon_pencil extends $mol_icon {
+	export class $mol_icon_brush extends $mol_icon {
 		path( ): string
 	}
 	
 }
 
-//# sourceMappingURL=pencil.view.tree.d.ts.map
+//# sourceMappingURL=brush.view.tree.d.ts.map
 declare namespace $ {
 
 	export class $mol_icon_eraser extends $mol_icon {
@@ -2427,502 +2436,52 @@ declare namespace $ {
 //# sourceMappingURL=pan.view.tree.d.ts.map
 declare namespace $ {
 
-	export class $mol_icon_magnify extends $mol_icon {
-		path( ): string
-	}
-	
-}
-
-//# sourceMappingURL=magnify.view.tree.d.ts.map
-declare namespace $ {
-
-	export class $mol_icon_magnify_minus extends $mol_icon {
-		path( ): string
-	}
-	
-}
-
-//# sourceMappingURL=minus.view.tree.d.ts.map
-declare namespace $ {
-
-	export class $mol_icon_content_duplicate extends $mol_icon {
-		path( ): string
-	}
-	
-}
-
-//# sourceMappingURL=duplicate.view.tree.d.ts.map
-declare namespace $ {
-
-	export class $mol_icon_delete extends $mol_icon {
-		path( ): string
-	}
-	
-}
-
-//# sourceMappingURL=delete.view.tree.d.ts.map
-declare namespace $ {
-
-	export class $mol_icon_plus extends $mol_icon {
-		path( ): string
-	}
-	
-}
-
-//# sourceMappingURL=plus.view.tree.d.ts.map
-declare namespace $ {
-    type $bog_doodle_sketch_stroke = {
-        id: string;
-        color: number;
-        points: readonly number[];
-    };
-    type $bog_doodle_sketch_strokes = readonly $bog_doodle_sketch_stroke[];
-    function $bog_doodle_sketch_stroke_box(stroke: $bog_doodle_sketch_stroke): {
-        left: number;
-        right: number;
-        top: number;
-        bottom: number;
-    };
-    function $bog_doodle_sketch_stroke_near(stroke: $bog_doodle_sketch_stroke, x: number, y: number, radius: number): boolean;
-    function $bog_doodle_sketch_stroke_shift(stroke: $bog_doodle_sketch_stroke, dx: number, dy: number, id?: string): {
-        id: string;
-        points: number[];
-        color: number;
-    };
-    function $bog_doodle_sketch_stroke_id(): string;
-    class $bog_doodle_sketch extends $mol_object {
-        strokes(next?: $bog_doodle_sketch_strokes): $bog_doodle_sketch_strokes;
-        past(next?: readonly $bog_doodle_sketch_strokes[]): readonly $bog_doodle_sketch_strokes[];
-        future(next?: readonly $bog_doodle_sketch_strokes[]): readonly $bog_doodle_sketch_strokes[];
-        commit(next: $bog_doodle_sketch_strokes): void;
-        reset(next: $bog_doodle_sketch_strokes): void;
-        undo_enabled(): boolean;
-        redo_enabled(): boolean;
-        undo(): void;
-        redo(): void;
-        add(stroke: $bog_doodle_sketch_stroke): void;
-        remove(ids: readonly string[]): void;
-        shift(ids: readonly string[], dx: number, dy: number): void;
-        copy(ids: readonly string[], dx: number, dy: number): string[];
-        clear(): void;
-        hits(x: number, y: number, radius: number): string[];
-        inside(left: number, top: number, right: number, bottom: number): string[];
-    }
-}
-
-declare namespace $ {
-    const $bog_doodle_scale_steps: {
-        major_penta: number[];
-        minor_penta: number[];
-        major: number[];
-        minor: number[];
-        harmonic: number[];
-        dorian: number[];
-        phrygian: number[];
-        lydian: number[];
-        mixolydian: number[];
-        blues: number[];
-        chromatic: number[];
-    };
-    type $bog_doodle_scale_id = keyof typeof $bog_doodle_scale_steps;
-    const $bog_doodle_scale_keys: string[];
-    function $bog_doodle_scale_notes(key: number, scale: $bog_doodle_scale_id, octave: number, range: number): number[];
-    function $bog_doodle_scale_row(y: number, count: number): number;
-    function $bog_doodle_scale_row_y(row: number, count: number): number;
-    function $bog_doodle_scale_name(midi: number): string;
-    function $bog_doodle_scale_freq(midi: number): number;
-}
-
-declare namespace $ {
-    type $bog_doodle_score_event = {
-        stroke: string;
-        color: number;
-        step: number;
-        length: number;
-        midi: number;
-        velocity: number;
-    };
-    const $bog_doodle_score_grids: {
-        '4': number;
-        '8': number;
-        '8t': number;
-        '16': number;
-        '16t': number;
-        '32': number;
-        free: number;
-    };
-    type $bog_doodle_score_grid = keyof typeof $bog_doodle_score_grids;
-    function $bog_doodle_score(strokes: $bog_doodle_sketch_strokes, notes: readonly number[], steps: number): $bog_doodle_score_event[];
-    function $bog_doodle_score_time(step: number, steps_per_bar: number, bar_time: number, swing: number): number;
-}
-
-declare namespace $ {
-    function $mol_base64_encode(src: Uint8Array<ArrayBuffer>): string;
-}
-
-declare namespace $ {
-    function $mol_base64_encode_web(str: Uint8Array<ArrayBuffer>): string;
-}
-
-declare namespace $ {
-    function $mol_base64_decode(base64: string): Uint8Array<ArrayBuffer>;
-}
-
-declare namespace $ {
-    function $mol_base64_decode_web(base64Str: string): Uint8Array<ArrayBuffer>;
-}
-
-declare namespace $ {
-    type $bog_doodle_piece = {
-        title: string;
-        key: number;
-        scale: $bog_doodle_scale_id;
-        octave: number;
-        range: number;
-        bpm: number;
-        bars: number;
-        grid: $bog_doodle_score_grid;
-        swing: number;
-        patterns: readonly $bog_doodle_sketch_strokes[];
-        chain: boolean;
-        back: string;
-    };
-    function $bog_doodle_piece_empty(): $bog_doodle_piece;
-    function $bog_doodle_piece_pack(piece: $bog_doodle_piece): string;
-    function $bog_doodle_piece_unpack(str: string): $bog_doodle_piece;
-    function $bog_doodle_piece_simplify(points: readonly number[], tolerance: number): readonly number[];
-}
-
-declare namespace $ {
-    const $bog_doodle_synth_colors: {
-        ink: string;
-        name: string;
-    }[];
-    function $bog_doodle_synth_note(ctx: BaseAudioContext, dest: AudioNode, color: number, freq: number, time: number, length: number, velocity: number): void;
-    function $bog_doodle_synth_click(ctx: BaseAudioContext, dest: AudioNode, time: number, accent: boolean): void;
-    function $bog_doodle_synth_bus(ctx: BaseAudioContext): DynamicsCompressorNode;
-}
-
-declare namespace $ {
-    type $mol_style_pseudo_class = ':active' | ':any' | ':any-link' | ':checked' | ':default' | ':defined' | ':dir(rtl)' | ':dir(ltr)' | ':disabled' | ':empty' | ':enabled' | ':first' | ':first-child' | ':first-of-type' | ':fullscreen' | ':focus' | ':focus-visible' | ':focus-within' | ':hover' | ':indeterminate' | ':in-range' | ':invalid' | ':last-child' | ':last-of-type' | ':left' | ':link' | `:not(${string})` | `:nth-child(${string})` | `:nth-last-child(${string})` | `:nth-of-type(${string})` | `:nth-last-of-type(${string})` | ':only-child' | ':only-of-type' | ':optional' | ':out-of-range' | ':placeholder-shown' | ':read-only' | ':read-write' | ':required' | ':right' | ':root' | ':scope' | ':target' | ':valid' | ':visited';
-}
-
-declare namespace $ {
-    type $mol_style_pseudo_element = '::after' | '::before' | '::cue' | '::first-letter' | '::first-line' | '::selection' | '::slotted' | '::backdrop' | '::placeholder' | '::marker' | '::spelling-error' | '::grammar-error' | '::-webkit-calendar-picker-indicator' | '::-webkit-color-swatch' | '::-webkit-color-swatch-wrapper' | '::-webkit-details-marker' | '::-webkit-file-upload-button' | '::-webkit-image-inner-element' | '::-webkit-inner-spin-button' | '::-webkit-input-placeholder' | '::-webkit-input-speech-button' | '::-webkit-keygen-select' | '::-webkit-media-controls-panel' | '::-webkit-media-controls-timeline-container' | '::-webkit-media-slider-container' | '::-webkit-meter-bar' | '::-webkit-meter-even-less-good-value' | '::-webkit-meter-optimum-value' | '::-webkit-meter-suboptimal-value' | '::-webkit-progress-bar' | '::-webkit-progress-value' | '::-webkit-resizer' | '::-webkit-resizer:window-inactive' | '::-webkit-scrollbar' | '::-webkit-scrollbar-button' | '::-webkit-scrollbar-button:disabled' | '::-webkit-scrollbar-button:double-button:horizontal:end:decrement' | '::-webkit-scrollbar-button:double-button:horizontal:end:increment' | '::-webkit-scrollbar-button:double-button:horizontal:end:increment:corner-present' | '::-webkit-scrollbar-button:double-button:horizontal:start:decrement' | '::-webkit-scrollbar-button:double-button:horizontal:start:increment' | '::-webkit-scrollbar-button:double-button:vertical:end:decrement' | '::-webkit-scrollbar-button:double-button:vertical:end:increment' | '::-webkit-scrollbar-button:double-button:vertical:end:increment:corner-present' | '::-webkit-scrollbar-button:double-button:vertical:start:decrement' | '::-webkit-scrollbar-button:double-button:vertical:start:increment' | '::-webkit-scrollbar-button:end' | '::-webkit-scrollbar-button:end:decrement' | '::-webkit-scrollbar-button:end:increment' | '::-webkit-scrollbar-button:horizontal' | '::-webkit-scrollbar-button:horizontal:decrement' | '::-webkit-scrollbar-button:horizontal:decrement:active' | '::-webkit-scrollbar-button:horizontal:decrement:hover' | '::-webkit-scrollbar-button:horizontal:decrement:window-inactive' | '::-webkit-scrollbar-button:horizontal:end' | '::-webkit-scrollbar-button:horizontal:end:decrement' | '::-webkit-scrollbar-button:horizontal:end:increment' | '::-webkit-scrollbar-button:horizontal:end:increment:corner-present' | '::-webkit-scrollbar-button:horizontal:increment' | '::-webkit-scrollbar-button:horizontal:increment:active' | '::-webkit-scrollbar-button:horizontal:increment:hover' | '::-webkit-scrollbar-button:horizontal:increment:window-inactive' | '::-webkit-scrollbar-button:horizontal:start' | '::-webkit-scrollbar-button:horizontal:start:decrement' | '::-webkit-scrollbar-button:horizontal:start:increment' | '::-webkit-scrollbar-button:start' | '::-webkit-scrollbar-button:start:decrement' | '::-webkit-scrollbar-button:start:increment' | '::-webkit-scrollbar-button:vertical' | '::-webkit-scrollbar-button:vertical:decrement' | '::-webkit-scrollbar-button:vertical:decrement:active' | '::-webkit-scrollbar-button:vertical:decrement:hover' | '::-webkit-scrollbar-button:vertical:decrement:window-inactive' | '::-webkit-scrollbar-button:vertical:end' | '::-webkit-scrollbar-button:vertical:end:decrement' | '::-webkit-scrollbar-button:vertical:end:increment' | '::-webkit-scrollbar-button:vertical:end:increment:corner-present' | '::-webkit-scrollbar-button:vertical:increment' | '::-webkit-scrollbar-button:vertical:increment:active' | '::-webkit-scrollbar-button:vertical:increment:hover' | '::-webkit-scrollbar-button:vertical:increment:window-inactive' | '::-webkit-scrollbar-button:vertical:start' | '::-webkit-scrollbar-button:vertical:start:decrement' | '::-webkit-scrollbar-button:vertical:start:increment' | '::-webkit-scrollbar-corner' | '::-webkit-scrollbar-corner:window-inactive' | '::-webkit-scrollbar-thumb' | '::-webkit-scrollbar-thumb:horizontal' | '::-webkit-scrollbar-thumb:horizontal:active' | '::-webkit-scrollbar-thumb:horizontal:hover' | '::-webkit-scrollbar-thumb:horizontal:window-inactive' | '::-webkit-scrollbar-thumb:vertical' | '::-webkit-scrollbar-thumb:vertical:active' | '::-webkit-scrollbar-thumb:vertical:hover' | '::-webkit-scrollbar-thumb:vertical:window-inactive' | '::-webkit-scrollbar-track' | '::-webkit-scrollbar-track-piece' | '::-webkit-scrollbar-track-piece:disabled' | '::-webkit-scrollbar-track-piece:end' | '::-webkit-scrollbar-track-piece:horizontal:decrement' | '::-webkit-scrollbar-track-piece:horizontal:decrement:active' | '::-webkit-scrollbar-track-piece:horizontal:decrement:hover' | '::-webkit-scrollbar-track-piece:horizontal:end' | '::-webkit-scrollbar-track-piece:horizontal:end:corner-present' | '::-webkit-scrollbar-track-piece:horizontal:end:double-button' | '::-webkit-scrollbar-track-piece:horizontal:end:no-button' | '::-webkit-scrollbar-track-piece:horizontal:end:no-button:corner-present' | '::-webkit-scrollbar-track-piece:horizontal:end:single-button' | '::-webkit-scrollbar-track-piece:horizontal:increment' | '::-webkit-scrollbar-track-piece:horizontal:increment:active' | '::-webkit-scrollbar-track-piece:horizontal:increment:hover' | '::-webkit-scrollbar-track-piece:horizontal:start' | '::-webkit-scrollbar-track-piece:horizontal:start:double-button' | '::-webkit-scrollbar-track-piece:horizontal:start:no-button' | '::-webkit-scrollbar-track-piece:horizontal:start:single-button' | '::-webkit-scrollbar-track-piece:start' | '::-webkit-scrollbar-track-piece:vertical:decrement' | '::-webkit-scrollbar-track-piece:vertical:decrement:active' | '::-webkit-scrollbar-track-piece:vertical:decrement:hover' | '::-webkit-scrollbar-track-piece:vertical:end' | '::-webkit-scrollbar-track-piece:vertical:end:corner-present' | '::-webkit-scrollbar-track-piece:vertical:end:double-button' | '::-webkit-scrollbar-track-piece:vertical:end:no-button' | '::-webkit-scrollbar-track-piece:vertical:end:no-button:corner-present' | '::-webkit-scrollbar-track-piece:vertical:end:single-button' | '::-webkit-scrollbar-track-piece:vertical:increment' | '::-webkit-scrollbar-track-piece:vertical:increment:active' | '::-webkit-scrollbar-track-piece:vertical:increment:hover' | '::-webkit-scrollbar-track-piece:vertical:start' | '::-webkit-scrollbar-track-piece:vertical:start:double-button' | '::-webkit-scrollbar-track-piece:vertical:start:no-button' | '::-webkit-scrollbar-track-piece:vertical:start:single-button' | '::-webkit-scrollbar-track:disabled' | '::-webkit-scrollbar-track:horizontal' | '::-webkit-scrollbar-track:horizontal:disabled' | '::-webkit-scrollbar-track:horizontal:disabled:corner-present' | '::-webkit-scrollbar-track:vertical:disabled' | '::-webkit-scrollbar-track:vertical:disabled:corner-present' | '::-webkit-scrollbar:horizontal' | '::-webkit-scrollbar:horizontal:corner-present' | '::-webkit-scrollbar:horizontal:window-inactive' | '::-webkit-scrollbar:vertical' | '::-webkit-scrollbar:vertical:corner-present' | '::-webkit-scrollbar:vertical:window-inactive' | '::-webkit-search-cancel-button' | '::-webkit-search-decoration' | '::-webkit-search-results-button' | '::-webkit-search-results-decoration' | '::-webkit-slider-container' | '::-webkit-slider-runnable-track' | '::-webkit-slider-thumb' | '::-webkit-slider-thumb:disabled' | '::-webkit-slider-thumb:hover' | '::-webkit-textfield-decoration-container' | '::-webkit-validation-bubble' | '::-webkit-validation-bubble-arrow' | '::-webkit-validation-bubble-arrow-clipper' | '::-webkit-validation-bubble-heading' | '::-webkit-validation-bubble-message' | '::-webkit-validation-bubble-text-block';
-}
-
-declare namespace $ {
-    /** Returns error type, that don't match to normal value. */
-    type $mol_type_error<Message, Info = {}> = Message & {
-        $mol_type_error: Info;
-    };
-}
-
-declare namespace $ {
-    type Attrs<View extends $mol_view, Config, Attrs = ReturnType<View['attr']>> = {
-        [name in keyof Attrs]?: {
-            [val in keyof Config[Extract<name, keyof Config>]]: $mol_style_guard<View, Config[Extract<name, keyof Config>][val]>;
-        };
-    };
-    type Medias<View extends $mol_view, Config> = {
-        [query in keyof Config]: $mol_style_guard<View, Config[query]>;
-    };
-    type Keys<View extends $mol_view> = '>' | '@' | keyof $mol_style_properties | $mol_style_pseudo_element | $mol_style_pseudo_class | $mol_type_keys_extract<View, () => $mol_view> | `$${string}`;
-    export type $mol_style_guard<View extends $mol_view, Config> = {
-        [key in Keys<View>]?: unknown;
-    } & $mol_style_properties & {
-        [key in keyof Config]: key extends keyof $mol_style_properties ? $mol_style_properties[key] : key extends '>' | $mol_style_pseudo_class | $mol_style_pseudo_element ? $mol_style_guard<View, Config[key]> : key extends '@' ? Attrs<View, Config[key]> : key extends ('@media' | '@container') ? Medias<View, Config[key]> : key extends '@starting-style' ? $mol_style_guard<View, Config[key]> : key extends `[${string}]` ? {
-            [val in keyof Config[key]]: $mol_style_guard<View, Config[key][val]>;
-        } : key extends `--${string}` ? any : key extends keyof $ ? $mol_style_guard<InstanceType<Extract<$[key], typeof $mol_view>>, Config[key]> : key extends keyof View ? View[key] extends (id?: any) => infer Sub ? Sub extends $mol_view ? $mol_style_guard<Sub, Config[key]> : $mol_type_error<'Property returns non $mol_view', {
-            Returns: Sub;
-        }> : $mol_type_error<'Field is not a Property'> : key extends `$${string}` ? $mol_type_error<'Unknown View Class'> : $mol_type_error<'Unknown CSS Property'>;
-    };
-    export {};
-}
-
-declare namespace $ {
-    function $mol_style_sheet<Component extends $mol_view, Config extends $mol_style_guard<Component, Config>>(Component: new () => Component, config0: Config): string;
-}
-
-declare namespace $ {
-    /**
-     * CSS in TS.
-     * Statically typed CSS style sheets. Following samples show which CSS code are generated from TS code.
-     * @see https://mol.hyoo.ru/#!section=docs/=xwq9q5_f966fg
-     */
-    function $mol_style_define<Component extends $mol_view, Config extends $mol_style_guard<Component, Config>>(Component: new () => Component, config: Config): HTMLStyleElement | null;
-}
-
-declare namespace $ {
-
-	export class $bog_doodle_board extends $mol_view {
-		pointer_down( next?: any ): any
-		pointer_move( next?: any ): any
-		pointer_up( next?: any ): any
-		pointer_cancel( next?: any ): any
-		pointer_leave( next?: any ): any
-		wheel( next?: any ): any
-		context_menu( next?: any ): any
+	export class $bog_doodle_slider extends $mol_view {
+		hint( ): string
+		value_text( ): string
+		changed( next?: any ): any
 		dom_name( ): string
-		sketch( ): $bog_doodle_sketch
-		notes( ): readonly(number)[]
-		steps( ): number
-		beat_steps( ): number
-		bar_steps( ): number
-		tool( next?: string ): string
-		color( ): number
-		snap( ): boolean
-		pen_only( ): boolean
-		back( ): string
-		selected( next?: readonly(string)[] ): readonly(string)[]
-		playhead( ): any
-		playing( ): boolean
-		note_hover( next?: any ): any
+		value( next?: number ): number
+		min( ): number
+		max( ): number
+		step( ): number
 		attr( ): ({ 
-			'bog_doodle_board_tool': ReturnType< $bog_doodle_board['tool'] >,
+			'type': string,
+			'min': ReturnType< $bog_doodle_slider['min'] >,
+			'max': ReturnType< $bog_doodle_slider['max'] >,
+			'step': ReturnType< $bog_doodle_slider['step'] >,
+			'title': ReturnType< $bog_doodle_slider['hint'] >,
 		})  & ReturnType< $mol_view['attr'] >
+		field( ): ({ 
+			'value': ReturnType< $bog_doodle_slider['value_text'] >,
+		})  & ReturnType< $mol_view['field'] >
 		event( ): ({ 
-			pointerdown( next?: ReturnType< $bog_doodle_board['pointer_down'] > ): ReturnType< $bog_doodle_board['pointer_down'] >,
-			pointermove( next?: ReturnType< $bog_doodle_board['pointer_move'] > ): ReturnType< $bog_doodle_board['pointer_move'] >,
-			pointerup( next?: ReturnType< $bog_doodle_board['pointer_up'] > ): ReturnType< $bog_doodle_board['pointer_up'] >,
-			pointercancel( next?: ReturnType< $bog_doodle_board['pointer_cancel'] > ): ReturnType< $bog_doodle_board['pointer_cancel'] >,
-			pointerleave( next?: ReturnType< $bog_doodle_board['pointer_leave'] > ): ReturnType< $bog_doodle_board['pointer_leave'] >,
-			wheel( next?: ReturnType< $bog_doodle_board['wheel'] > ): ReturnType< $bog_doodle_board['wheel'] >,
-			contextmenu( next?: ReturnType< $bog_doodle_board['context_menu'] > ): ReturnType< $bog_doodle_board['context_menu'] >,
+			input( next?: ReturnType< $bog_doodle_slider['changed'] > ): ReturnType< $bog_doodle_slider['changed'] >,
 		}) 
 	}
 	
 }
 
-//# sourceMappingURL=board.view.tree.d.ts.map
+//# sourceMappingURL=slider.view.tree.d.ts.map
 declare namespace $.$$ {
-    type view = {
-        zoom: number;
-        x: number;
-        y: number;
-    };
-    type touch = {
-        x: number;
-        y: number;
-    };
-    export class $bog_doodle_board extends $.$bog_doodle_board {
-        view(next?: view): view;
-        size(): {
-            width: number;
-            height: number;
-            dpr: number;
-        };
-        rect(): DOMRect;
-        to_world(client_x: number, client_y: number): {
-            x: number;
-            y: number;
-            raw_x: number;
-            raw_y: number;
-        };
-        view_clamp(next: view): view;
-        zoom_at(factor: number, raw_x: number, raw_y: number): void;
-        zoom_reset(): void;
-        pan_by(raw_dx: number, raw_dy: number): void;
-        gesture: null | "draw" | "erase" | "select" | "move" | "pan" | "pinch";
-        touches: Map<number, touch>;
-        draft: number[];
-        smooth: null | {
-            x: number;
-            y: number;
-            p: number;
-        };
-        erased: Set<string>;
-        box: null | {
-            x1: number;
-            y1: number;
-            x2: number;
-            y2: number;
-        };
-        drag: null | {
-            x: number;
-            y: number;
-            dx: number;
-            dy: number;
-        };
-        pinch: null | {
-            dist: number;
-            x: number;
-            y: number;
-        };
-        hover: null | {
-            x: number;
-            y: number;
-        };
-        pressure(event: PointerEvent): number;
-        gesture_tool(event: PointerEvent): "draw" | "select" | "erase" | "pan";
-        pointer_down(event: PointerEvent): void;
-        pointer_move(event: PointerEvent): void;
-        pointer_up(event: PointerEvent): void;
-        pointer_cancel(event: PointerEvent): void;
-        pointer_leave(event: PointerEvent): void;
-        wheel(event: WheelEvent): void;
-        context_menu(event: Event): void;
-        pinch_state(): {
-            dist: number;
-            x: number;
-            y: number;
-        } | null;
-        hit_radius(): number;
-        snap_y(y: number): number;
-        draft_add(x: number, y: number, p: number): void;
-        draft_commit(): void;
-        note_play(y: number): void;
-        erase_at(x: number, y: number): void;
-        frame: $mol_after_frame | null;
-        redraw(): void;
-        back_image(): HTMLImageElement | null;
-        layer(): HTMLCanvasElement;
-        ink(color: number): string;
-        view_fixed: view | null;
-        view_used(): view;
-        sx(x: number, width: number): number;
-        sy(y: number, height: number): number;
-        export_canvas(): HTMLCanvasElement;
-        paint_grid(ctx: CanvasRenderingContext2D, width: number, height: number, dpr: number): void;
-        stroke_width(p: number, dpr: number): number;
-        paint_path(ctx: CanvasRenderingContext2D, points: readonly number[], color: string, width: number, height: number, dpr: number, dx?: number, dy?: number, halo?: boolean): void;
-        paint_strokes(ctx: CanvasRenderingContext2D, width: number, height: number, dpr: number, all?: boolean): void;
-        present(): void;
-        animate: $mol_after_frame | null;
-        loop(): void;
-        repaint(): null;
-        animating(): null;
-        auto(): void;
-        destructor(): void;
-    }
-    export {};
-}
-
-declare namespace $.$$ {
-}
-
-declare namespace $ {
-    function $mol_support_css_overflow_anchor(this: $): boolean;
-}
-
-declare namespace $ {
-    class $mol_dom_listener extends $mol_object {
-        _node: any;
-        _event: string;
-        _handler: (event: any) => any;
-        _config: boolean | {
-            passive: boolean;
-        };
-        constructor(_node: any, _event: string, _handler: (event: any) => any, _config?: boolean | {
-            passive: boolean;
-        });
-        destructor(): void;
+    class $bog_doodle_slider extends $.$bog_doodle_slider {
+        value_text(): string;
+        changed(event: Event): void;
     }
 }
 
 declare namespace $ {
-    class $mol_print extends $mol_object {
-        static before(): $mol_dom_listener;
-        static after(): $mol_dom_listener;
-        static active(next?: boolean): boolean;
-    }
 }
 
 declare namespace $ {
 
-	type $mol_view__style_mol_list_1 = $mol_type_enforce<
-		({ 
-			'paddingTop': ReturnType< $mol_list['gap_before'] >,
-		}) 
-		,
-		ReturnType< $mol_view['style'] >
-	>
-	type $mol_view__style_mol_list_2 = $mol_type_enforce<
-		({ 
-			'paddingTop': ReturnType< $mol_list['gap_after'] >,
-		}) 
-		,
-		ReturnType< $mol_view['style'] >
-	>
-	export class $mol_list extends $mol_view {
-		gap_before( ): number
-		Gap_before( ): $mol_view
-		Empty( ): $mol_view
-		gap_after( ): number
-		Gap_after( ): $mol_view
-		rows( ): readonly($mol_view)[]
-		render_visible_only( ): boolean
-		render_over( ): number
-		sub( ): ReturnType< $mol_list['rows'] >
-		item_height_min( id: any): number
-		item_width_min( id: any): number
-		view_window_shift( next?: number ): number
-		view_window( ): readonly(any)[]
+	export class $mol_icon_palette extends $mol_icon {
+		path( ): string
 	}
 	
 }
 
-//# sourceMappingURL=list.view.tree.d.ts.map
-declare namespace $.$$ {
-    /**
-     * The list of rows with lazy/virtual rendering support based on `minimal_height` of rows.
-     * `mol_list` should contain only components that inherits `mol_view`. You should not place raw strings or numbers in list.
-     * @see https://mol.hyoo.ru/#!section=demos/demo=mol_list_demo
-     */
-    class $mol_list extends $.$mol_list {
-        sub(): readonly $mol_view[];
-        render_visible_only(): boolean;
-        _view_window_last: number[];
-        view_window(next?: [number, number]): [number, number];
-        item_height_min(index: number): number;
-        row_width_min(index: number): number;
-        gap_before(): number;
-        gap_after(): number;
-        sub_visible(): $mol_view[];
-        minimal_height(): number;
-        minimal_width(): number;
-        force_render(path: Set<$mol_view>): void;
-    }
-}
-
-declare namespace $ {
-}
-
-declare namespace $ {
-
-	export class $mol_scroll extends $mol_view {
-		tabindex( ): number
-		event_scroll( next?: any ): any
-		scroll_top( next?: number ): number
-		scroll_left( next?: number ): number
-		attr( ): ({ 
-			'tabindex': ReturnType< $mol_scroll['tabindex'] >,
-		})  & ReturnType< $mol_view['attr'] >
-		event( ): ({ 
-			scroll( next?: ReturnType< $mol_scroll['event_scroll'] > ): ReturnType< $mol_scroll['event_scroll'] >,
-		})  & ReturnType< $mol_view['event'] >
-	}
-	
-}
-
-//# sourceMappingURL=scroll.view.tree.d.ts.map
-declare namespace $.$$ {
-    /**
-     * Scrolling pane.
-     * @see https://mol.hyoo.ru/#!section=demos/demo=mol_scroll_demo
-     */
-    class $mol_scroll extends $.$mol_scroll {
-        scroll_top(next?: number, cache?: 'cache'): number;
-        scroll_left(next?: number, cache?: 'cache'): number;
-        event_scroll(next?: Event): void;
-        minimal_height(): number;
-        minimal_width(): number;
-    }
-}
-
-declare namespace $.$$ {
-}
-
+//# sourceMappingURL=palette.view.tree.d.ts.map
 declare namespace $ {
 
 	export class $mol_hotkey2 extends $mol_plugin {
@@ -2968,6 +2527,21 @@ declare namespace $.$$ {
         action(): {
             [k: string]: any;
         };
+    }
+}
+
+declare namespace $ {
+    class $mol_dom_listener extends $mol_object {
+        _node: any;
+        _event: string;
+        _handler: (event: any) => any;
+        _config: boolean | {
+            passive: boolean;
+        };
+        constructor(_node: any, _event: string, _handler: (event: any) => any, _config?: boolean | {
+            passive: boolean;
+        });
+        destructor(): void;
     }
 }
 
@@ -3058,41 +2632,184 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    function $bog_doodle_picker_hsv(hex: string): {
+        h: number;
+        s: number;
+        v: number;
+    };
+    function $bog_doodle_picker_hex(h: number, s: number, v: number): string;
+    function $bog_doodle_picker_valid(hex: string): boolean;
 }
 
 declare namespace $ {
 
-	type $mol_view__minimal_height_mol_labeler_1 = $mol_type_enforce<
-		number
+	type $mol_view__style_bog_doodle_picker_1 = $mol_type_enforce<
+		({ 
+			'left': ReturnType< $bog_doodle_picker['area_left'] >,
+			'top': ReturnType< $bog_doodle_picker['area_top'] >,
+		})  & ReturnType< $mol_view['style'] >
 		,
-		ReturnType< $mol_view['minimal_height'] >
+		ReturnType< $mol_view['style'] >
 	>
-	type $mol_view__sub_mol_labeler_2 = $mol_type_enforce<
-		ReturnType< $mol_labeler['label'] >
+	type $mol_view__style_bog_doodle_picker_2 = $mol_type_enforce<
+		({ 
+			'--bog_doodle_picker_hue': ReturnType< $bog_doodle_picker['hue_css'] >,
+		})  & ReturnType< $mol_view['style'] >
+		,
+		ReturnType< $mol_view['style'] >
+	>
+	type $mol_view__event_bog_doodle_picker_3 = $mol_type_enforce<
+		({ 
+			pointerdown( next?: ReturnType< $bog_doodle_picker['area_down'] > ): ReturnType< $bog_doodle_picker['area_down'] >,
+			pointermove( next?: ReturnType< $bog_doodle_picker['area_move'] > ): ReturnType< $bog_doodle_picker['area_move'] >,
+			pointerup( next?: ReturnType< $bog_doodle_picker['area_up'] > ): ReturnType< $bog_doodle_picker['area_up'] >,
+		}) 
+		,
+		ReturnType< $mol_view['event'] >
+	>
+	type $mol_view__sub_bog_doodle_picker_4 = $mol_type_enforce<
+		readonly(any)[]
 		,
 		ReturnType< $mol_view['sub'] >
 	>
-	type $mol_view__minimal_height_mol_labeler_3 = $mol_type_enforce<
-		number
+	type $mol_view__style_bog_doodle_picker_5 = $mol_type_enforce<
+		({ 
+			'left': ReturnType< $bog_doodle_picker['hue_left'] >,
+		})  & ReturnType< $mol_view['style'] >
 		,
-		ReturnType< $mol_view['minimal_height'] >
+		ReturnType< $mol_view['style'] >
 	>
-	type $mol_view__sub_mol_labeler_4 = $mol_type_enforce<
-		ReturnType< $mol_labeler['content'] >
+	type $mol_view__event_bog_doodle_picker_6 = $mol_type_enforce<
+		({ 
+			pointerdown( next?: ReturnType< $bog_doodle_picker['hue_down'] > ): ReturnType< $bog_doodle_picker['hue_down'] >,
+			pointermove( next?: ReturnType< $bog_doodle_picker['hue_move'] > ): ReturnType< $bog_doodle_picker['hue_move'] >,
+			pointerup( next?: ReturnType< $bog_doodle_picker['hue_up'] > ): ReturnType< $bog_doodle_picker['hue_up'] >,
+		}) 
+		,
+		ReturnType< $mol_view['event'] >
+	>
+	type $mol_view__sub_bog_doodle_picker_7 = $mol_type_enforce<
+		readonly(any)[]
 		,
 		ReturnType< $mol_view['sub'] >
 	>
-	export class $mol_labeler extends $mol_list {
-		label( ): readonly($mol_view_content)[]
-		Label( ): $mol_view
-		content( ): readonly(any)[]
-		Content( ): $mol_view
-		rows( ): readonly(any)[]
+	type $mol_button_minor__hint_bog_doodle_picker_8 = $mol_type_enforce<
+		ReturnType< $bog_doodle_picker['swatch_color'] >
+		,
+		ReturnType< $mol_button_minor['hint'] >
+	>
+	type $mol_button_minor__click_bog_doodle_picker_9 = $mol_type_enforce<
+		ReturnType< $bog_doodle_picker['swatch_pick'] >
+		,
+		ReturnType< $mol_button_minor['click'] >
+	>
+	type $mol_button_minor__style_bog_doodle_picker_10 = $mol_type_enforce<
+		({ 
+			'--bog_doodle_picker_swatch': ReturnType< $bog_doodle_picker['swatch_color'] >,
+		})  & ReturnType< $mol_button_minor['style'] >
+		,
+		ReturnType< $mol_button_minor['style'] >
+	>
+	type $mol_button_minor__sub_bog_doodle_picker_11 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_button_minor['sub'] >
+	>
+	type $mol_view__sub_bog_doodle_picker_12 = $mol_type_enforce<
+		ReturnType< $bog_doodle_picker['swatch_list'] >
+		,
+		ReturnType< $mol_view['sub'] >
+	>
+	type $mol_view__style_bog_doodle_picker_13 = $mol_type_enforce<
+		({ 
+			'--bog_doodle_picker_swatch': ReturnType< $bog_doodle_picker['value'] >,
+		})  & ReturnType< $mol_view['style'] >
+		,
+		ReturnType< $mol_view['style'] >
+	>
+	type $mol_string__hint_bog_doodle_picker_14 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_string['hint'] >
+	>
+	type $mol_string__value_bog_doodle_picker_15 = $mol_type_enforce<
+		ReturnType< $bog_doodle_picker['hex'] >
+		,
+		ReturnType< $mol_string['value'] >
+	>
+	type $mol_view__sub_bog_doodle_picker_16 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_view['sub'] >
+	>
+	export class $bog_doodle_picker extends $mol_view {
+		hue_css( ): string
+		area_down( next?: any ): any
+		area_move( next?: any ): any
+		area_up( next?: any ): any
+		area_left( ): string
+		area_top( ): string
+		Area_knob( ): $mol_view
+		Area( ): $mol_view
+		hue_down( next?: any ): any
+		hue_move( next?: any ): any
+		hue_up( next?: any ): any
+		hue_left( ): string
+		Hue_knob( ): $mol_view
+		Hue( ): $mol_view
+		swatch_color( id: any): string
+		swatch_pick( id: any, next?: any ): any
+		Swatch( id: any): $mol_button_minor
+		swatch_list( ): readonly(any)[]
+		Swatches( ): $mol_view
+		value( next?: string ): string
+		Preview( ): $mol_view
+		hex( next?: string ): string
+		Hex( ): $mol_string
+		Hex_row( ): $mol_view
+		swatches( ): readonly(string)[]
+		sub( ): readonly(any)[]
 	}
 	
 }
 
-//# sourceMappingURL=labeler.view.tree.d.ts.map
+//# sourceMappingURL=picker.view.tree.d.ts.map
+declare namespace $.$$ {
+    class $bog_doodle_picker extends $.$bog_doodle_picker {
+        hsv(): {
+            h: number;
+            s: number;
+            v: number;
+        };
+        hue_kept: number;
+        hue(next?: number): number;
+        hue_css(): string;
+        area_left(): string;
+        area_top(): string;
+        hue_left(): string;
+        spot(event: PointerEvent, node: Element): {
+            x: number;
+            y: number;
+        };
+        dragging: string;
+        area_pick(event: PointerEvent): void;
+        area_down(event: PointerEvent): void;
+        area_move(event: PointerEvent): void;
+        area_up(event: PointerEvent): void;
+        hue_pick(event: PointerEvent): void;
+        hue_down(event: PointerEvent): void;
+        hue_move(event: PointerEvent): void;
+        hue_up(event: PointerEvent): void;
+        swatch_list(): $mol_button_minor[];
+        swatch_color(color: string): string;
+        swatch_pick(color: string): void;
+        hex(next?: string): string;
+    }
+}
+
+declare namespace $ {
+}
+
 declare namespace $ {
 
 	export class $mol_ghost extends $mol_view {
@@ -3145,6 +2862,99 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
+}
+
+declare namespace $ {
+    class $mol_print extends $mol_object {
+        static before(): $mol_dom_listener;
+        static after(): $mol_dom_listener;
+        static active(next?: boolean): boolean;
+    }
+}
+
+declare namespace $ {
+    type $mol_style_pseudo_class = ':active' | ':any' | ':any-link' | ':checked' | ':default' | ':defined' | ':dir(rtl)' | ':dir(ltr)' | ':disabled' | ':empty' | ':enabled' | ':first' | ':first-child' | ':first-of-type' | ':fullscreen' | ':focus' | ':focus-visible' | ':focus-within' | ':hover' | ':indeterminate' | ':in-range' | ':invalid' | ':last-child' | ':last-of-type' | ':left' | ':link' | `:not(${string})` | `:nth-child(${string})` | `:nth-last-child(${string})` | `:nth-of-type(${string})` | `:nth-last-of-type(${string})` | ':only-child' | ':only-of-type' | ':optional' | ':out-of-range' | ':placeholder-shown' | ':read-only' | ':read-write' | ':required' | ':right' | ':root' | ':scope' | ':target' | ':valid' | ':visited';
+}
+
+declare namespace $ {
+    type $mol_style_pseudo_element = '::after' | '::before' | '::cue' | '::first-letter' | '::first-line' | '::selection' | '::slotted' | '::backdrop' | '::placeholder' | '::marker' | '::spelling-error' | '::grammar-error' | '::-webkit-calendar-picker-indicator' | '::-webkit-color-swatch' | '::-webkit-color-swatch-wrapper' | '::-webkit-details-marker' | '::-webkit-file-upload-button' | '::-webkit-image-inner-element' | '::-webkit-inner-spin-button' | '::-webkit-input-placeholder' | '::-webkit-input-speech-button' | '::-webkit-keygen-select' | '::-webkit-media-controls-panel' | '::-webkit-media-controls-timeline-container' | '::-webkit-media-slider-container' | '::-webkit-meter-bar' | '::-webkit-meter-even-less-good-value' | '::-webkit-meter-optimum-value' | '::-webkit-meter-suboptimal-value' | '::-webkit-progress-bar' | '::-webkit-progress-value' | '::-webkit-resizer' | '::-webkit-resizer:window-inactive' | '::-webkit-scrollbar' | '::-webkit-scrollbar-button' | '::-webkit-scrollbar-button:disabled' | '::-webkit-scrollbar-button:double-button:horizontal:end:decrement' | '::-webkit-scrollbar-button:double-button:horizontal:end:increment' | '::-webkit-scrollbar-button:double-button:horizontal:end:increment:corner-present' | '::-webkit-scrollbar-button:double-button:horizontal:start:decrement' | '::-webkit-scrollbar-button:double-button:horizontal:start:increment' | '::-webkit-scrollbar-button:double-button:vertical:end:decrement' | '::-webkit-scrollbar-button:double-button:vertical:end:increment' | '::-webkit-scrollbar-button:double-button:vertical:end:increment:corner-present' | '::-webkit-scrollbar-button:double-button:vertical:start:decrement' | '::-webkit-scrollbar-button:double-button:vertical:start:increment' | '::-webkit-scrollbar-button:end' | '::-webkit-scrollbar-button:end:decrement' | '::-webkit-scrollbar-button:end:increment' | '::-webkit-scrollbar-button:horizontal' | '::-webkit-scrollbar-button:horizontal:decrement' | '::-webkit-scrollbar-button:horizontal:decrement:active' | '::-webkit-scrollbar-button:horizontal:decrement:hover' | '::-webkit-scrollbar-button:horizontal:decrement:window-inactive' | '::-webkit-scrollbar-button:horizontal:end' | '::-webkit-scrollbar-button:horizontal:end:decrement' | '::-webkit-scrollbar-button:horizontal:end:increment' | '::-webkit-scrollbar-button:horizontal:end:increment:corner-present' | '::-webkit-scrollbar-button:horizontal:increment' | '::-webkit-scrollbar-button:horizontal:increment:active' | '::-webkit-scrollbar-button:horizontal:increment:hover' | '::-webkit-scrollbar-button:horizontal:increment:window-inactive' | '::-webkit-scrollbar-button:horizontal:start' | '::-webkit-scrollbar-button:horizontal:start:decrement' | '::-webkit-scrollbar-button:horizontal:start:increment' | '::-webkit-scrollbar-button:start' | '::-webkit-scrollbar-button:start:decrement' | '::-webkit-scrollbar-button:start:increment' | '::-webkit-scrollbar-button:vertical' | '::-webkit-scrollbar-button:vertical:decrement' | '::-webkit-scrollbar-button:vertical:decrement:active' | '::-webkit-scrollbar-button:vertical:decrement:hover' | '::-webkit-scrollbar-button:vertical:decrement:window-inactive' | '::-webkit-scrollbar-button:vertical:end' | '::-webkit-scrollbar-button:vertical:end:decrement' | '::-webkit-scrollbar-button:vertical:end:increment' | '::-webkit-scrollbar-button:vertical:end:increment:corner-present' | '::-webkit-scrollbar-button:vertical:increment' | '::-webkit-scrollbar-button:vertical:increment:active' | '::-webkit-scrollbar-button:vertical:increment:hover' | '::-webkit-scrollbar-button:vertical:increment:window-inactive' | '::-webkit-scrollbar-button:vertical:start' | '::-webkit-scrollbar-button:vertical:start:decrement' | '::-webkit-scrollbar-button:vertical:start:increment' | '::-webkit-scrollbar-corner' | '::-webkit-scrollbar-corner:window-inactive' | '::-webkit-scrollbar-thumb' | '::-webkit-scrollbar-thumb:horizontal' | '::-webkit-scrollbar-thumb:horizontal:active' | '::-webkit-scrollbar-thumb:horizontal:hover' | '::-webkit-scrollbar-thumb:horizontal:window-inactive' | '::-webkit-scrollbar-thumb:vertical' | '::-webkit-scrollbar-thumb:vertical:active' | '::-webkit-scrollbar-thumb:vertical:hover' | '::-webkit-scrollbar-thumb:vertical:window-inactive' | '::-webkit-scrollbar-track' | '::-webkit-scrollbar-track-piece' | '::-webkit-scrollbar-track-piece:disabled' | '::-webkit-scrollbar-track-piece:end' | '::-webkit-scrollbar-track-piece:horizontal:decrement' | '::-webkit-scrollbar-track-piece:horizontal:decrement:active' | '::-webkit-scrollbar-track-piece:horizontal:decrement:hover' | '::-webkit-scrollbar-track-piece:horizontal:end' | '::-webkit-scrollbar-track-piece:horizontal:end:corner-present' | '::-webkit-scrollbar-track-piece:horizontal:end:double-button' | '::-webkit-scrollbar-track-piece:horizontal:end:no-button' | '::-webkit-scrollbar-track-piece:horizontal:end:no-button:corner-present' | '::-webkit-scrollbar-track-piece:horizontal:end:single-button' | '::-webkit-scrollbar-track-piece:horizontal:increment' | '::-webkit-scrollbar-track-piece:horizontal:increment:active' | '::-webkit-scrollbar-track-piece:horizontal:increment:hover' | '::-webkit-scrollbar-track-piece:horizontal:start' | '::-webkit-scrollbar-track-piece:horizontal:start:double-button' | '::-webkit-scrollbar-track-piece:horizontal:start:no-button' | '::-webkit-scrollbar-track-piece:horizontal:start:single-button' | '::-webkit-scrollbar-track-piece:start' | '::-webkit-scrollbar-track-piece:vertical:decrement' | '::-webkit-scrollbar-track-piece:vertical:decrement:active' | '::-webkit-scrollbar-track-piece:vertical:decrement:hover' | '::-webkit-scrollbar-track-piece:vertical:end' | '::-webkit-scrollbar-track-piece:vertical:end:corner-present' | '::-webkit-scrollbar-track-piece:vertical:end:double-button' | '::-webkit-scrollbar-track-piece:vertical:end:no-button' | '::-webkit-scrollbar-track-piece:vertical:end:no-button:corner-present' | '::-webkit-scrollbar-track-piece:vertical:end:single-button' | '::-webkit-scrollbar-track-piece:vertical:increment' | '::-webkit-scrollbar-track-piece:vertical:increment:active' | '::-webkit-scrollbar-track-piece:vertical:increment:hover' | '::-webkit-scrollbar-track-piece:vertical:start' | '::-webkit-scrollbar-track-piece:vertical:start:double-button' | '::-webkit-scrollbar-track-piece:vertical:start:no-button' | '::-webkit-scrollbar-track-piece:vertical:start:single-button' | '::-webkit-scrollbar-track:disabled' | '::-webkit-scrollbar-track:horizontal' | '::-webkit-scrollbar-track:horizontal:disabled' | '::-webkit-scrollbar-track:horizontal:disabled:corner-present' | '::-webkit-scrollbar-track:vertical:disabled' | '::-webkit-scrollbar-track:vertical:disabled:corner-present' | '::-webkit-scrollbar:horizontal' | '::-webkit-scrollbar:horizontal:corner-present' | '::-webkit-scrollbar:horizontal:window-inactive' | '::-webkit-scrollbar:vertical' | '::-webkit-scrollbar:vertical:corner-present' | '::-webkit-scrollbar:vertical:window-inactive' | '::-webkit-search-cancel-button' | '::-webkit-search-decoration' | '::-webkit-search-results-button' | '::-webkit-search-results-decoration' | '::-webkit-slider-container' | '::-webkit-slider-runnable-track' | '::-webkit-slider-thumb' | '::-webkit-slider-thumb:disabled' | '::-webkit-slider-thumb:hover' | '::-webkit-textfield-decoration-container' | '::-webkit-validation-bubble' | '::-webkit-validation-bubble-arrow' | '::-webkit-validation-bubble-arrow-clipper' | '::-webkit-validation-bubble-heading' | '::-webkit-validation-bubble-message' | '::-webkit-validation-bubble-text-block';
+}
+
+declare namespace $ {
+    /** Returns error type, that don't match to normal value. */
+    type $mol_type_error<Message, Info = {}> = Message & {
+        $mol_type_error: Info;
+    };
+}
+
+declare namespace $ {
+    type Attrs<View extends $mol_view, Config, Attrs = ReturnType<View['attr']>> = {
+        [name in keyof Attrs]?: {
+            [val in keyof Config[Extract<name, keyof Config>]]: $mol_style_guard<View, Config[Extract<name, keyof Config>][val]>;
+        };
+    };
+    type Medias<View extends $mol_view, Config> = {
+        [query in keyof Config]: $mol_style_guard<View, Config[query]>;
+    };
+    type Keys<View extends $mol_view> = '>' | '@' | keyof $mol_style_properties | $mol_style_pseudo_element | $mol_style_pseudo_class | $mol_type_keys_extract<View, () => $mol_view> | `$${string}`;
+    export type $mol_style_guard<View extends $mol_view, Config> = {
+        [key in Keys<View>]?: unknown;
+    } & $mol_style_properties & {
+        [key in keyof Config]: key extends keyof $mol_style_properties ? $mol_style_properties[key] : key extends '>' | $mol_style_pseudo_class | $mol_style_pseudo_element ? $mol_style_guard<View, Config[key]> : key extends '@' ? Attrs<View, Config[key]> : key extends ('@media' | '@container') ? Medias<View, Config[key]> : key extends '@starting-style' ? $mol_style_guard<View, Config[key]> : key extends `[${string}]` ? {
+            [val in keyof Config[key]]: $mol_style_guard<View, Config[key][val]>;
+        } : key extends `--${string}` ? any : key extends keyof $ ? $mol_style_guard<InstanceType<Extract<$[key], typeof $mol_view>>, Config[key]> : key extends keyof View ? View[key] extends (id?: any) => infer Sub ? Sub extends $mol_view ? $mol_style_guard<Sub, Config[key]> : $mol_type_error<'Property returns non $mol_view', {
+            Returns: Sub;
+        }> : $mol_type_error<'Field is not a Property'> : key extends `$${string}` ? $mol_type_error<'Unknown View Class'> : $mol_type_error<'Unknown CSS Property'>;
+    };
+    export {};
+}
+
+declare namespace $ {
+    function $mol_style_sheet<Component extends $mol_view, Config extends $mol_style_guard<Component, Config>>(Component: new () => Component, config0: Config): string;
+}
+
+declare namespace $ {
+    /**
+     * CSS in TS.
+     * Statically typed CSS style sheets. Following samples show which CSS code are generated from TS code.
+     * @see https://mol.hyoo.ru/#!section=docs/=xwq9q5_f966fg
+     */
+    function $mol_style_define<Component extends $mol_view, Config extends $mol_style_guard<Component, Config>>(Component: new () => Component, config: Config): HTMLStyleElement | null;
+}
+
+declare namespace $ {
+
+	export class $mol_scroll extends $mol_view {
+		tabindex( ): number
+		event_scroll( next?: any ): any
+		scroll_top( next?: number ): number
+		scroll_left( next?: number ): number
+		attr( ): ({ 
+			'tabindex': ReturnType< $mol_scroll['tabindex'] >,
+		})  & ReturnType< $mol_view['attr'] >
+		event( ): ({ 
+			scroll( next?: ReturnType< $mol_scroll['event_scroll'] > ): ReturnType< $mol_scroll['event_scroll'] >,
+		})  & ReturnType< $mol_view['event'] >
+	}
+	
+}
+
+//# sourceMappingURL=scroll.view.tree.d.ts.map
+declare namespace $.$$ {
+    /**
+     * Scrolling pane.
+     * @see https://mol.hyoo.ru/#!section=demos/demo=mol_scroll_demo
+     */
+    class $mol_scroll extends $.$mol_scroll {
+        scroll_top(next?: number, cache?: 'cache'): number;
+        scroll_left(next?: number, cache?: 'cache'): number;
+        event_scroll(next?: Event): void;
+        minimal_height(): number;
+        minimal_width(): number;
+    }
+}
+
+declare namespace $.$$ {
 }
 
 declare namespace $ {
@@ -3306,6 +3116,560 @@ declare namespace $.$$ {
 declare namespace $ {
 }
 
+declare namespace $ {
+
+	export class $mol_icon_magnify extends $mol_icon {
+		path( ): string
+	}
+	
+}
+
+//# sourceMappingURL=magnify.view.tree.d.ts.map
+declare namespace $ {
+
+	export class $mol_icon_magnify_minus extends $mol_icon {
+		path( ): string
+	}
+	
+}
+
+//# sourceMappingURL=minus.view.tree.d.ts.map
+declare namespace $ {
+
+	export class $mol_icon_magnify_plus extends $mol_icon {
+		path( ): string
+	}
+	
+}
+
+//# sourceMappingURL=plus.view.tree.d.ts.map
+declare namespace $ {
+
+	export class $mol_icon_content_duplicate extends $mol_icon {
+		path( ): string
+	}
+	
+}
+
+//# sourceMappingURL=duplicate.view.tree.d.ts.map
+declare namespace $ {
+
+	export class $mol_icon_delete extends $mol_icon {
+		path( ): string
+	}
+	
+}
+
+//# sourceMappingURL=delete.view.tree.d.ts.map
+declare namespace $ {
+
+	export class $mol_icon_plus extends $mol_icon {
+		path( ): string
+	}
+	
+}
+
+//# sourceMappingURL=plus.view.tree.d.ts.map
+declare namespace $ {
+    type $bog_doodle_sketch_stroke = {
+        id: string;
+        color: number;
+        points: readonly number[];
+        ink?: string;
+        size?: number;
+        layer?: string;
+    };
+    type $bog_doodle_sketch_strokes = readonly $bog_doodle_sketch_stroke[];
+    function $bog_doodle_sketch_stroke_box(stroke: $bog_doodle_sketch_stroke): {
+        left: number;
+        right: number;
+        top: number;
+        bottom: number;
+    };
+    function $bog_doodle_sketch_stroke_near(stroke: $bog_doodle_sketch_stroke, x: number, y: number, radius: number): boolean;
+    function $bog_doodle_sketch_stroke_shift(stroke: $bog_doodle_sketch_stroke, dx: number, dy: number, id?: string): {
+        id: string;
+        points: number[];
+        color: number;
+        ink?: string;
+        size?: number;
+        layer?: string;
+    };
+    function $bog_doodle_sketch_stroke_id(): string;
+    class $bog_doodle_sketch extends $mol_object {
+        strokes(next?: $bog_doodle_sketch_strokes): $bog_doodle_sketch_strokes;
+        past(next?: readonly $bog_doodle_sketch_strokes[]): readonly $bog_doodle_sketch_strokes[];
+        future(next?: readonly $bog_doodle_sketch_strokes[]): readonly $bog_doodle_sketch_strokes[];
+        commit(next: $bog_doodle_sketch_strokes): void;
+        reset(next: $bog_doodle_sketch_strokes): void;
+        undo_enabled(): boolean;
+        redo_enabled(): boolean;
+        undo(): void;
+        redo(): void;
+        add(stroke: $bog_doodle_sketch_stroke): void;
+        remove(ids: readonly string[]): void;
+        shift(ids: readonly string[], dx: number, dy: number): void;
+        copy(ids: readonly string[], dx: number, dy: number): string[];
+        clear(filter?: (stroke: $bog_doodle_sketch_stroke) => boolean): void;
+        hits(x: number, y: number, radius: number, filter?: (stroke: $bog_doodle_sketch_stroke) => boolean): string[];
+        inside(left: number, top: number, right: number, bottom: number, filter?: (stroke: $bog_doodle_sketch_stroke) => boolean): string[];
+    }
+}
+
+declare namespace $ {
+    const $bog_doodle_scale_steps: {
+        major_penta: number[];
+        minor_penta: number[];
+        major: number[];
+        minor: number[];
+        harmonic: number[];
+        dorian: number[];
+        phrygian: number[];
+        lydian: number[];
+        mixolydian: number[];
+        blues: number[];
+        chromatic: number[];
+    };
+    type $bog_doodle_scale_id = keyof typeof $bog_doodle_scale_steps;
+    const $bog_doodle_scale_keys: string[];
+    function $bog_doodle_scale_notes(key: number, scale: $bog_doodle_scale_id, octave: number, range: number): number[];
+    function $bog_doodle_scale_row(y: number, count: number): number;
+    function $bog_doodle_scale_row_y(row: number, count: number): number;
+    function $bog_doodle_scale_name(midi: number): string;
+    function $bog_doodle_scale_freq(midi: number): number;
+}
+
+declare namespace $ {
+    type $bog_doodle_score_event = {
+        stroke: string;
+        color: number;
+        step: number;
+        length: number;
+        midi: number;
+        velocity: number;
+    };
+    const $bog_doodle_score_grids: {
+        '4': number;
+        '8': number;
+        '8t': number;
+        '16': number;
+        '16t': number;
+        '32': number;
+        free: number;
+    };
+    type $bog_doodle_score_grid = keyof typeof $bog_doodle_score_grids;
+    function $bog_doodle_score(strokes: $bog_doodle_sketch_strokes, notes: readonly number[], steps: number): $bog_doodle_score_event[];
+    function $bog_doodle_score_time(step: number, steps_per_bar: number, bar_time: number, swing: number): number;
+}
+
+declare namespace $ {
+    function $mol_base64_encode(src: Uint8Array<ArrayBuffer>): string;
+}
+
+declare namespace $ {
+    function $mol_base64_encode_web(str: Uint8Array<ArrayBuffer>): string;
+}
+
+declare namespace $ {
+    function $mol_base64_decode(base64: string): Uint8Array<ArrayBuffer>;
+}
+
+declare namespace $ {
+    function $mol_base64_decode_web(base64Str: string): Uint8Array<ArrayBuffer>;
+}
+
+declare namespace $ {
+    type $bog_doodle_piece = {
+        title: string;
+        key: number;
+        scale: $bog_doodle_scale_id;
+        octave: number;
+        range: number;
+        bpm: number;
+        bars: number;
+        grid: $bog_doodle_score_grid;
+        swing: number;
+        patterns: readonly $bog_doodle_sketch_strokes[];
+        chain: boolean;
+        back: string;
+        layers: readonly $bog_doodle_piece_layer[];
+        axis: $bog_doodle_piece_axis;
+    };
+    type $bog_doodle_piece_layer = {
+        id: string;
+        name: string;
+        visible: boolean;
+        audible: boolean;
+    };
+    type $bog_doodle_piece_axis = 'time_x' | 'time_y';
+    function $bog_doodle_piece_layer_of(piece: $bog_doodle_piece, stroke: $bog_doodle_sketch_stroke): $bog_doodle_piece_layer;
+    function $bog_doodle_piece_empty(): $bog_doodle_piece;
+    function $bog_doodle_piece_pack(piece: $bog_doodle_piece): string;
+    function $bog_doodle_piece_unpack(str: string): $bog_doodle_piece;
+    function $bog_doodle_piece_simplify(points: readonly number[], tolerance: number): readonly number[];
+}
+
+declare namespace $ {
+    const $bog_doodle_synth_colors: {
+        ink: string;
+        name: string;
+    }[];
+    function $bog_doodle_synth_hsl(ink: string): {
+        h: number;
+        s: number;
+        l: number;
+    };
+    function $bog_doodle_synth_timbre(ink: string): 1 | 2 | 3 | 4 | 5 | 0;
+    function $bog_doodle_synth_ink(stroke: {
+        color: number;
+        ink?: string;
+    }): string;
+    function $bog_doodle_synth_note(ctx: BaseAudioContext, dest: AudioNode, color: number, freq: number, time: number, length: number, velocity: number): void;
+    function $bog_doodle_synth_click(ctx: BaseAudioContext, dest: AudioNode, time: number, accent: boolean): void;
+    function $bog_doodle_synth_bus(ctx: BaseAudioContext): DynamicsCompressorNode;
+}
+
+declare namespace $ {
+
+	type $bog_doodle_board_layer_order__1 = $mol_type_enforce<
+		`l1`
+		,
+		string
+	>
+	export class $bog_doodle_board extends $mol_view {
+		pointer_down( next?: any ): any
+		pointer_move( next?: any ): any
+		pointer_up( next?: any ): any
+		pointer_cancel( next?: any ): any
+		pointer_leave( next?: any ): any
+		wheel( next?: any ): any
+		context_menu( next?: any ): any
+		dom_name( ): string
+		sketch( ): $bog_doodle_sketch
+		notes( ): readonly(number)[]
+		steps( ): number
+		beat_steps( ): number
+		bar_steps( ): number
+		axis( ): string
+		tool( next?: string ): string
+		ink( ): string
+		brush( ): number
+		eraser( ): number
+		snap( ): boolean
+		pen_only( ): boolean
+		back( ): string
+		layer_order( ): readonly(string)[]
+		layer_active( ): string
+		layer_default( ): string
+		layer_focus( ): boolean
+		selected( next?: readonly(string)[] ): readonly(string)[]
+		playhead( ): any
+		playing( ): boolean
+		note_hover( next?: any ): any
+		attr( ): ({ 
+			'bog_doodle_board_tool': ReturnType< $bog_doodle_board['tool'] >,
+		})  & ReturnType< $mol_view['attr'] >
+		event( ): ({ 
+			pointerdown( next?: ReturnType< $bog_doodle_board['pointer_down'] > ): ReturnType< $bog_doodle_board['pointer_down'] >,
+			pointermove( next?: ReturnType< $bog_doodle_board['pointer_move'] > ): ReturnType< $bog_doodle_board['pointer_move'] >,
+			pointerup( next?: ReturnType< $bog_doodle_board['pointer_up'] > ): ReturnType< $bog_doodle_board['pointer_up'] >,
+			pointercancel( next?: ReturnType< $bog_doodle_board['pointer_cancel'] > ): ReturnType< $bog_doodle_board['pointer_cancel'] >,
+			pointerleave( next?: ReturnType< $bog_doodle_board['pointer_leave'] > ): ReturnType< $bog_doodle_board['pointer_leave'] >,
+			wheel( next?: ReturnType< $bog_doodle_board['wheel'] > ): ReturnType< $bog_doodle_board['wheel'] >,
+			contextmenu( next?: ReturnType< $bog_doodle_board['context_menu'] > ): ReturnType< $bog_doodle_board['context_menu'] >,
+		}) 
+	}
+	
+}
+
+//# sourceMappingURL=board.view.tree.d.ts.map
+declare namespace $.$$ {
+    type view = {
+        zoom: number;
+        x: number;
+        y: number;
+    };
+    type touch = {
+        x: number;
+        y: number;
+    };
+    export class $bog_doodle_board extends $.$bog_doodle_board {
+        view(next?: view): view;
+        size(): {
+            width: number;
+            height: number;
+            dpr: number;
+        };
+        rect(): DOMRect;
+        time_down(): boolean;
+        norm(x: number, y: number): {
+            u: number;
+            v: number;
+        };
+        denorm(u: number, v: number): {
+            x: number;
+            y: number;
+        };
+        pt(x: number, y: number, width: number, height: number): {
+            x: number;
+            y: number;
+        };
+        to_world(client_x: number, client_y: number): {
+            x: number;
+            y: number;
+            raw_x: number;
+            raw_y: number;
+        };
+        zoom_min(): number;
+        view_clamp(next: view): view;
+        zoom_at(factor: number, raw_x: number, raw_y: number): void;
+        zoom_in(): void;
+        zoom_out(): void;
+        zoom_reset(): void;
+        zoom_percent(): string;
+        pan_by(raw_dx: number, raw_dy: number): void;
+        gesture: null | "draw" | "erase" | "select" | "move" | "pan" | "pinch";
+        touches: Map<number, touch>;
+        draft: number[];
+        smooth: null | {
+            x: number;
+            y: number;
+            p: number;
+        };
+        erased: Set<string>;
+        box: null | {
+            x1: number;
+            y1: number;
+            x2: number;
+            y2: number;
+        };
+        drag: null | {
+            x: number;
+            y: number;
+            dx: number;
+            dy: number;
+        };
+        pinch: null | {
+            dist: number;
+            x: number;
+            y: number;
+        };
+        hover: null | {
+            x: number;
+            y: number;
+            erase: boolean;
+        };
+        pressure(event: PointerEvent): number;
+        gesture_tool(event: PointerEvent): "draw" | "select" | "erase" | "pan";
+        layer_of(stroke: $bog_doodle_sketch_stroke): string;
+        editable(stroke: $bog_doodle_sketch_stroke): boolean;
+        pointer_down(event: PointerEvent): void;
+        pointer_move(event: PointerEvent): void;
+        pointer_up(event: PointerEvent): void;
+        gesture_reset(): void;
+        pointer_cancel(event: PointerEvent): void;
+        pointer_leave(event: PointerEvent): void;
+        wheel(event: WheelEvent): void;
+        context_menu(event: Event): void;
+        pinch_state(): {
+            dist: number;
+            x: number;
+            y: number;
+        } | null;
+        world_per_px(): number;
+        hit_radius(): number;
+        erase_radius(): number;
+        snap_y(y: number): number;
+        draft_add(x: number, y: number, p: number): void;
+        draft_commit(): void;
+        erase_at(x: number, y: number): void;
+        frame: $mol_after_frame | null;
+        redraw(): void;
+        back_image(): HTMLImageElement | null;
+        layer(): HTMLCanvasElement;
+        view_fixed: view | null;
+        view_used(): view;
+        export_canvas(): HTMLCanvasElement;
+        fill_world(ctx: CanvasRenderingContext2D, x1: number, y1: number, x2: number, y2: number, width: number, height: number): void;
+        paint_grid(ctx: CanvasRenderingContext2D, width: number, height: number, dpr: number): void;
+        stroke_width(p: number, size: number, dpr: number): number;
+        paint_path(ctx: CanvasRenderingContext2D, points: readonly number[], color: string, size: number, width: number, height: number, dpr: number, dx?: number, dy?: number, halo?: boolean): void;
+        ordered(): $bog_doodle_sketch_stroke[];
+        scratch: HTMLCanvasElement | null;
+        paint_faded(ctx: CanvasRenderingContext2D, width: number, height: number, alpha: number, paint: (ctx: CanvasRenderingContext2D) => void): void;
+        paint_strokes(ctx: CanvasRenderingContext2D, width: number, height: number, dpr: number, all?: boolean): void;
+        present(): void;
+        paint_cursor(ctx: CanvasRenderingContext2D, width: number, height: number, dpr: number): void;
+        animate: $mol_after_frame | null;
+        loop(): void;
+        repaint(): null;
+        animating(): null;
+        auto(): void;
+        destructor(): void;
+    }
+    export {};
+}
+
+declare namespace $.$$ {
+}
+
+declare namespace $ {
+    function $mol_support_css_overflow_anchor(this: $): boolean;
+}
+
+declare namespace $ {
+
+	type $mol_view__style_mol_list_1 = $mol_type_enforce<
+		({ 
+			'paddingTop': ReturnType< $mol_list['gap_before'] >,
+		}) 
+		,
+		ReturnType< $mol_view['style'] >
+	>
+	type $mol_view__style_mol_list_2 = $mol_type_enforce<
+		({ 
+			'paddingTop': ReturnType< $mol_list['gap_after'] >,
+		}) 
+		,
+		ReturnType< $mol_view['style'] >
+	>
+	export class $mol_list extends $mol_view {
+		gap_before( ): number
+		Gap_before( ): $mol_view
+		Empty( ): $mol_view
+		gap_after( ): number
+		Gap_after( ): $mol_view
+		rows( ): readonly($mol_view)[]
+		render_visible_only( ): boolean
+		render_over( ): number
+		sub( ): ReturnType< $mol_list['rows'] >
+		item_height_min( id: any): number
+		item_width_min( id: any): number
+		view_window_shift( next?: number ): number
+		view_window( ): readonly(any)[]
+	}
+	
+}
+
+//# sourceMappingURL=list.view.tree.d.ts.map
+declare namespace $.$$ {
+    /**
+     * The list of rows with lazy/virtual rendering support based on `minimal_height` of rows.
+     * `mol_list` should contain only components that inherits `mol_view`. You should not place raw strings or numbers in list.
+     * @see https://mol.hyoo.ru/#!section=demos/demo=mol_list_demo
+     */
+    class $mol_list extends $.$mol_list {
+        sub(): readonly $mol_view[];
+        render_visible_only(): boolean;
+        _view_window_last: number[];
+        view_window(next?: [number, number]): [number, number];
+        item_height_min(index: number): number;
+        row_width_min(index: number): number;
+        gap_before(): number;
+        gap_after(): number;
+        sub_visible(): $mol_view[];
+        minimal_height(): number;
+        minimal_width(): number;
+        force_render(path: Set<$mol_view>): void;
+    }
+}
+
+declare namespace $ {
+}
+
+declare namespace $ {
+
+	export class $mol_icon_tick extends $mol_icon {
+		path( ): string
+	}
+	
+}
+
+//# sourceMappingURL=tick.view.tree.d.ts.map
+declare namespace $ {
+}
+
+declare namespace $ {
+
+	export class $mol_check_box extends $mol_check {
+		Icon( ): $mol_icon_tick
+	}
+	
+}
+
+//# sourceMappingURL=box.view.tree.d.ts.map
+declare namespace $ {
+}
+
+declare namespace $ {
+
+	type $mol_view__minimal_height_mol_labeler_1 = $mol_type_enforce<
+		number
+		,
+		ReturnType< $mol_view['minimal_height'] >
+	>
+	type $mol_view__sub_mol_labeler_2 = $mol_type_enforce<
+		ReturnType< $mol_labeler['label'] >
+		,
+		ReturnType< $mol_view['sub'] >
+	>
+	type $mol_view__minimal_height_mol_labeler_3 = $mol_type_enforce<
+		number
+		,
+		ReturnType< $mol_view['minimal_height'] >
+	>
+	type $mol_view__sub_mol_labeler_4 = $mol_type_enforce<
+		ReturnType< $mol_labeler['content'] >
+		,
+		ReturnType< $mol_view['sub'] >
+	>
+	export class $mol_labeler extends $mol_list {
+		label( ): readonly($mol_view_content)[]
+		Label( ): $mol_view
+		content( ): readonly(any)[]
+		Content( ): $mol_view
+		rows( ): readonly(any)[]
+	}
+	
+}
+
+//# sourceMappingURL=labeler.view.tree.d.ts.map
+declare namespace $ {
+
+	export class $mol_icon_eye extends $mol_icon {
+		path( ): string
+	}
+	
+}
+
+//# sourceMappingURL=eye.view.tree.d.ts.map
+declare namespace $ {
+
+	export class $mol_icon_volume_high extends $mol_icon {
+		path( ): string
+	}
+	
+}
+
+//# sourceMappingURL=high.view.tree.d.ts.map
+declare namespace $ {
+
+	export class $mol_icon_arrow_up extends $mol_icon {
+		path( ): string
+	}
+	
+}
+
+//# sourceMappingURL=up.view.tree.d.ts.map
+declare namespace $ {
+
+	export class $mol_icon_arrow_down extends $mol_icon {
+		path( ): string
+	}
+	
+}
+
+//# sourceMappingURL=down.view.tree.d.ts.map
 declare namespace $ {
 
 	export class $mol_paragraph extends $mol_view {
@@ -4166,27 +4530,6 @@ declare namespace $.$$ {
     }
 }
 
-declare namespace $ {
-
-	export class $mol_icon_tick extends $mol_icon {
-		path( ): string
-	}
-	
-}
-
-//# sourceMappingURL=tick.view.tree.d.ts.map
-declare namespace $ {
-}
-
-declare namespace $ {
-
-	export class $mol_check_box extends $mol_check {
-		Icon( ): $mol_icon_tick
-	}
-	
-}
-
-//# sourceMappingURL=box.view.tree.d.ts.map
 declare namespace $ {
 
 	export class $mol_icon_upload extends $mol_icon {
@@ -5918,6 +6261,36 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    type $bog_doodle_vibe = {
+        id: string;
+        name: string;
+        ink: string;
+        settings: Pick<$bog_doodle_piece, 'key' | 'scale' | 'octave' | 'range' | 'bpm' | 'bars' | 'grid' | 'swing'>;
+    };
+    const $bog_doodle_vibe_list: readonly $bog_doodle_vibe[];
+    function $bog_doodle_vibe_apply(piece: $bog_doodle_piece, id: string): $bog_doodle_piece;
+    function $bog_doodle_vibe_current(piece: $bog_doodle_piece): string;
+}
+
+declare namespace $ {
+
+	export class $mol_icon_eye_off extends $mol_icon {
+		path( ): string
+	}
+	
+}
+
+//# sourceMappingURL=off.view.tree.d.ts.map
+declare namespace $ {
+
+	export class $mol_icon_volume_off extends $mol_icon {
+		path( ): string
+	}
+	
+}
+
+//# sourceMappingURL=off.view.tree.d.ts.map
+declare namespace $ {
     function $mol_offline(): void;
 }
 
@@ -6012,12 +6385,12 @@ declare namespace $ {
 		ReturnType< $mol_check_icon['hint'] >
 	>
 	type $mol_check_icon__checked_bog_doodle_app_17 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['settings_opened'] >
+		ReturnType< $bog_doodle_app['layers_opened'] >
 		,
 		ReturnType< $mol_check_icon['checked'] >
 	>
 	type $mol_check_icon__Icon_bog_doodle_app_18 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['Settings_open_icon'] >
+		ReturnType< $bog_doodle_app['Layers_open_icon'] >
 		,
 		ReturnType< $mol_check_icon['Icon'] >
 	>
@@ -6027,12 +6400,12 @@ declare namespace $ {
 		ReturnType< $mol_check_icon['hint'] >
 	>
 	type $mol_check_icon__checked_bog_doodle_app_20 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['tool_draw'] >
+		ReturnType< $bog_doodle_app['settings_opened'] >
 		,
 		ReturnType< $mol_check_icon['checked'] >
 	>
 	type $mol_check_icon__Icon_bog_doodle_app_21 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['Tool_draw_icon'] >
+		ReturnType< $bog_doodle_app['Settings_open_icon'] >
 		,
 		ReturnType< $mol_check_icon['Icon'] >
 	>
@@ -6042,12 +6415,12 @@ declare namespace $ {
 		ReturnType< $mol_check_icon['hint'] >
 	>
 	type $mol_check_icon__checked_bog_doodle_app_23 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['tool_erase'] >
+		ReturnType< $bog_doodle_app['tool_draw'] >
 		,
 		ReturnType< $mol_check_icon['checked'] >
 	>
 	type $mol_check_icon__Icon_bog_doodle_app_24 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['Tool_erase_icon'] >
+		ReturnType< $bog_doodle_app['Tool_draw_icon'] >
 		,
 		ReturnType< $mol_check_icon['Icon'] >
 	>
@@ -6057,12 +6430,12 @@ declare namespace $ {
 		ReturnType< $mol_check_icon['hint'] >
 	>
 	type $mol_check_icon__checked_bog_doodle_app_26 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['tool_select'] >
+		ReturnType< $bog_doodle_app['tool_erase'] >
 		,
 		ReturnType< $mol_check_icon['checked'] >
 	>
 	type $mol_check_icon__Icon_bog_doodle_app_27 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['Tool_select_icon'] >
+		ReturnType< $bog_doodle_app['Tool_erase_icon'] >
 		,
 		ReturnType< $mol_check_icon['Icon'] >
 	>
@@ -6072,268 +6445,615 @@ declare namespace $ {
 		ReturnType< $mol_check_icon['hint'] >
 	>
 	type $mol_check_icon__checked_bog_doodle_app_29 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['tool_pan'] >
+		ReturnType< $bog_doodle_app['tool_select'] >
 		,
 		ReturnType< $mol_check_icon['checked'] >
 	>
 	type $mol_check_icon__Icon_bog_doodle_app_30 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['Tool_pan_icon'] >
+		ReturnType< $bog_doodle_app['Tool_select_icon'] >
 		,
 		ReturnType< $mol_check_icon['Icon'] >
 	>
-	type $mol_button_minor__hint_bog_doodle_app_31 = $mol_type_enforce<
+	type $mol_check_icon__hint_bog_doodle_app_31 = $mol_type_enforce<
 		string
 		,
-		ReturnType< $mol_button_minor['hint'] >
+		ReturnType< $mol_check_icon['hint'] >
 	>
-	type $mol_button_minor__click_bog_doodle_app_32 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['zoom_reset'] >
+	type $mol_check_icon__checked_bog_doodle_app_32 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['tool_pan'] >
 		,
-		ReturnType< $mol_button_minor['click'] >
+		ReturnType< $mol_check_icon['checked'] >
 	>
-	type $mol_button_minor__sub_bog_doodle_app_33 = $mol_type_enforce<
-		readonly(any)[]
+	type $mol_check_icon__Icon_bog_doodle_app_33 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['Tool_pan_icon'] >
 		,
-		ReturnType< $mol_button_minor['sub'] >
+		ReturnType< $mol_check_icon['Icon'] >
 	>
 	type $mol_view__sub_bog_doodle_app_34 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_view['sub'] >
 	>
-	type $mol_check__hint_bog_doodle_app_35 = $mol_type_enforce<
+	type $bog_doodle_slider__hint_bog_doodle_app_35 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $bog_doodle_slider['hint'] >
+	>
+	type $bog_doodle_slider__value_bog_doodle_app_36 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['brush_value'] >
+		,
+		ReturnType< $bog_doodle_slider['value'] >
+	>
+	type $bog_doodle_slider__min_bog_doodle_app_37 = $mol_type_enforce<
+		number
+		,
+		ReturnType< $bog_doodle_slider['min'] >
+	>
+	type $bog_doodle_slider__max_bog_doodle_app_38 = $mol_type_enforce<
+		number
+		,
+		ReturnType< $bog_doodle_slider['max'] >
+	>
+	type $bog_doodle_slider__hint_bog_doodle_app_39 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $bog_doodle_slider['hint'] >
+	>
+	type $bog_doodle_slider__value_bog_doodle_app_40 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['eraser'] >
+		,
+		ReturnType< $bog_doodle_slider['value'] >
+	>
+	type $bog_doodle_slider__min_bog_doodle_app_41 = $mol_type_enforce<
+		number
+		,
+		ReturnType< $bog_doodle_slider['min'] >
+	>
+	type $bog_doodle_slider__max_bog_doodle_app_42 = $mol_type_enforce<
+		number
+		,
+		ReturnType< $bog_doodle_slider['max'] >
+	>
+	type $mol_view__sub_bog_doodle_app_43 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['size_tools'] >
+		,
+		ReturnType< $mol_view['sub'] >
+	>
+	type $mol_check__hint_bog_doodle_app_44 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['color_name'] >
 		,
 		ReturnType< $mol_check['hint'] >
 	>
-	type $mol_check__checked_bog_doodle_app_36 = $mol_type_enforce<
+	type $mol_check__checked_bog_doodle_app_45 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['color_checked'] >
 		,
 		ReturnType< $mol_check['checked'] >
 	>
-	type $mol_check__style_bog_doodle_app_37 = $mol_type_enforce<
+	type $mol_check__style_bog_doodle_app_46 = $mol_type_enforce<
 		({ 
 			'--bog_doodle_app_ink': ReturnType< $bog_doodle_app['color_ink'] >,
 		})  & ReturnType< $mol_check['style'] >
 		,
 		ReturnType< $mol_check['style'] >
 	>
-	type $mol_check__sub_bog_doodle_app_38 = $mol_type_enforce<
+	type $mol_check__sub_bog_doodle_app_47 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_check['sub'] >
 	>
-	type $mol_view__sub_bog_doodle_app_39 = $mol_type_enforce<
+	type $mol_view__style_bog_doodle_app_48 = $mol_type_enforce<
+		({ 
+			'--bog_doodle_app_ink': ReturnType< $bog_doodle_app['ink'] >,
+		})  & ReturnType< $mol_view['style'] >
+		,
+		ReturnType< $mol_view['style'] >
+	>
+	type $bog_doodle_picker__value_bog_doodle_app_49 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['ink'] >
+		,
+		ReturnType< $bog_doodle_picker['value'] >
+	>
+	type $bog_doodle_picker__swatches_bog_doodle_app_50 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['ink_recent'] >
+		,
+		ReturnType< $bog_doodle_picker['swatches'] >
+	>
+	type $mol_pick__hint_bog_doodle_app_51 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_pick['hint'] >
+	>
+	type $mol_pick__align_hor_bog_doodle_app_52 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_pick['align_hor'] >
+	>
+	type $mol_pick__trigger_content_bog_doodle_app_53 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_pick['trigger_content'] >
+	>
+	type $mol_pick__bubble_content_bog_doodle_app_54 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_pick['bubble_content'] >
+	>
+	type $mol_view__sub_bog_doodle_app_55 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_view['sub'] >
+	>
+	type $mol_view__sub_bog_doodle_app_56 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['palette'] >
 		,
 		ReturnType< $mol_view['sub'] >
 	>
-	type $mol_button_minor__hint_bog_doodle_app_40 = $mol_type_enforce<
+	type $mol_button_minor__hint_bog_doodle_app_57 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_button_minor['hint'] >
 	>
-	type $mol_button_minor__click_bog_doodle_app_41 = $mol_type_enforce<
+	type $mol_button_minor__click_bog_doodle_app_58 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['zoom_out'] >
+		,
+		ReturnType< $mol_button_minor['click'] >
+	>
+	type $mol_button_minor__sub_bog_doodle_app_59 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_button_minor['sub'] >
+	>
+	type $mol_button_minor__hint_bog_doodle_app_60 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_button_minor['hint'] >
+	>
+	type $mol_button_minor__click_bog_doodle_app_61 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['zoom_reset'] >
+		,
+		ReturnType< $mol_button_minor['click'] >
+	>
+	type $mol_button_minor__title_bog_doodle_app_62 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['zoom_percent'] >
+		,
+		ReturnType< $mol_button_minor['title'] >
+	>
+	type $mol_button_minor__hint_bog_doodle_app_63 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_button_minor['hint'] >
+	>
+	type $mol_button_minor__click_bog_doodle_app_64 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['zoom_in'] >
+		,
+		ReturnType< $mol_button_minor['click'] >
+	>
+	type $mol_button_minor__sub_bog_doodle_app_65 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_button_minor['sub'] >
+	>
+	type $mol_view__sub_bog_doodle_app_66 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_view['sub'] >
+	>
+	type $mol_button_minor__hint_bog_doodle_app_67 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_button_minor['hint'] >
+	>
+	type $mol_button_minor__click_bog_doodle_app_68 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['selection_copy'] >
 		,
 		ReturnType< $mol_button_minor['click'] >
 	>
-	type $mol_button_minor__sub_bog_doodle_app_42 = $mol_type_enforce<
+	type $mol_button_minor__sub_bog_doodle_app_69 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_button_minor['sub'] >
 	>
-	type $mol_button_minor__hint_bog_doodle_app_43 = $mol_type_enforce<
+	type $mol_button_minor__hint_bog_doodle_app_70 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_button_minor['hint'] >
 	>
-	type $mol_button_minor__click_bog_doodle_app_44 = $mol_type_enforce<
+	type $mol_button_minor__click_bog_doodle_app_71 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['selection_drop'] >
 		,
 		ReturnType< $mol_button_minor['click'] >
 	>
-	type $mol_button_minor__sub_bog_doodle_app_45 = $mol_type_enforce<
+	type $mol_button_minor__sub_bog_doodle_app_72 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_button_minor['sub'] >
 	>
-	type $mol_view__sub_bog_doodle_app_46 = $mol_type_enforce<
+	type $mol_view__sub_bog_doodle_app_73 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['selection_tools'] >
 		,
 		ReturnType< $mol_view['sub'] >
 	>
-	type $mol_check__hint_bog_doodle_app_47 = $mol_type_enforce<
+	type $mol_check__hint_bog_doodle_app_74 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_check['hint'] >
 	>
-	type $mol_check__checked_bog_doodle_app_48 = $mol_type_enforce<
+	type $mol_check__checked_bog_doodle_app_75 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['pattern_checked'] >
 		,
 		ReturnType< $mol_check['checked'] >
 	>
-	type $mol_check__title_bog_doodle_app_49 = $mol_type_enforce<
+	type $mol_check__title_bog_doodle_app_76 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['pattern_title'] >
 		,
 		ReturnType< $mol_check['title'] >
 	>
-	type $mol_button_minor__hint_bog_doodle_app_50 = $mol_type_enforce<
+	type $mol_button_minor__hint_bog_doodle_app_77 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_button_minor['hint'] >
 	>
-	type $mol_button_minor__click_bog_doodle_app_51 = $mol_type_enforce<
+	type $mol_button_minor__click_bog_doodle_app_78 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['pattern_add'] >
 		,
 		ReturnType< $mol_button_minor['click'] >
 	>
-	type $mol_button_minor__sub_bog_doodle_app_52 = $mol_type_enforce<
+	type $mol_button_minor__sub_bog_doodle_app_79 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_button_minor['sub'] >
 	>
-	type $mol_view__sub_bog_doodle_app_53 = $mol_type_enforce<
+	type $mol_view__sub_bog_doodle_app_80 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['pattern_tabs'] >
 		,
 		ReturnType< $mol_view['sub'] >
 	>
-	type $mol_view__sub_bog_doodle_app_54 = $mol_type_enforce<
+	type $mol_view__sub_bog_doodle_app_81 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_view['sub'] >
 	>
-	type $bog_doodle_board__sketch_bog_doodle_app_55 = $mol_type_enforce<
+	type $bog_doodle_board__sketch_bog_doodle_app_82 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['sketch'] >
 		,
 		ReturnType< $bog_doodle_board['sketch'] >
 	>
-	type $bog_doodle_board__notes_bog_doodle_app_56 = $mol_type_enforce<
+	type $bog_doodle_board__notes_bog_doodle_app_83 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['notes'] >
 		,
 		ReturnType< $bog_doodle_board['notes'] >
 	>
-	type $bog_doodle_board__steps_bog_doodle_app_57 = $mol_type_enforce<
+	type $bog_doodle_board__steps_bog_doodle_app_84 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['steps'] >
 		,
 		ReturnType< $bog_doodle_board['steps'] >
 	>
-	type $bog_doodle_board__beat_steps_bog_doodle_app_58 = $mol_type_enforce<
+	type $bog_doodle_board__beat_steps_bog_doodle_app_85 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['beat_steps'] >
 		,
 		ReturnType< $bog_doodle_board['beat_steps'] >
 	>
-	type $bog_doodle_board__bar_steps_bog_doodle_app_59 = $mol_type_enforce<
+	type $bog_doodle_board__bar_steps_bog_doodle_app_86 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['bar_steps'] >
 		,
 		ReturnType< $bog_doodle_board['bar_steps'] >
 	>
-	type $bog_doodle_board__tool_bog_doodle_app_60 = $mol_type_enforce<
+	type $bog_doodle_board__axis_bog_doodle_app_87 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['axis'] >
+		,
+		ReturnType< $bog_doodle_board['axis'] >
+	>
+	type $bog_doodle_board__tool_bog_doodle_app_88 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['tool'] >
 		,
 		ReturnType< $bog_doodle_board['tool'] >
 	>
-	type $bog_doodle_board__color_bog_doodle_app_61 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['color'] >
+	type $bog_doodle_board__ink_bog_doodle_app_89 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['ink'] >
 		,
-		ReturnType< $bog_doodle_board['color'] >
+		ReturnType< $bog_doodle_board['ink'] >
 	>
-	type $bog_doodle_board__snap_bog_doodle_app_62 = $mol_type_enforce<
+	type $bog_doodle_board__brush_bog_doodle_app_90 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['brush'] >
+		,
+		ReturnType< $bog_doodle_board['brush'] >
+	>
+	type $bog_doodle_board__eraser_bog_doodle_app_91 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['eraser'] >
+		,
+		ReturnType< $bog_doodle_board['eraser'] >
+	>
+	type $bog_doodle_board__snap_bog_doodle_app_92 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['snap'] >
 		,
 		ReturnType< $bog_doodle_board['snap'] >
 	>
-	type $bog_doodle_board__pen_only_bog_doodle_app_63 = $mol_type_enforce<
+	type $bog_doodle_board__pen_only_bog_doodle_app_93 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['pen_only'] >
 		,
 		ReturnType< $bog_doodle_board['pen_only'] >
 	>
-	type $bog_doodle_board__back_bog_doodle_app_64 = $mol_type_enforce<
+	type $bog_doodle_board__back_bog_doodle_app_94 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['back'] >
 		,
 		ReturnType< $bog_doodle_board['back'] >
 	>
-	type $bog_doodle_board__selected_bog_doodle_app_65 = $mol_type_enforce<
+	type $bog_doodle_board__layer_order_bog_doodle_app_95 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['layer_order'] >
+		,
+		ReturnType< $bog_doodle_board['layer_order'] >
+	>
+	type $bog_doodle_board__layer_active_bog_doodle_app_96 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['layer_active'] >
+		,
+		ReturnType< $bog_doodle_board['layer_active'] >
+	>
+	type $bog_doodle_board__layer_default_bog_doodle_app_97 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['layer_default'] >
+		,
+		ReturnType< $bog_doodle_board['layer_default'] >
+	>
+	type $bog_doodle_board__layer_focus_bog_doodle_app_98 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['layer_focus'] >
+		,
+		ReturnType< $bog_doodle_board['layer_focus'] >
+	>
+	type $bog_doodle_board__selected_bog_doodle_app_99 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['selected'] >
 		,
 		ReturnType< $bog_doodle_board['selected'] >
 	>
-	type $bog_doodle_board__playhead_bog_doodle_app_66 = $mol_type_enforce<
+	type $bog_doodle_board__playhead_bog_doodle_app_100 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['playhead'] >
 		,
 		ReturnType< $bog_doodle_board['playhead'] >
 	>
-	type $bog_doodle_board__playing_bog_doodle_app_67 = $mol_type_enforce<
+	type $bog_doodle_board__playing_bog_doodle_app_101 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['playing'] >
 		,
 		ReturnType< $bog_doodle_board['playing'] >
 	>
-	type $bog_doodle_board__note_hover_bog_doodle_app_68 = $mol_type_enforce<
+	type $bog_doodle_board__note_hover_bog_doodle_app_102 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['note_preview'] >
 		,
 		ReturnType< $bog_doodle_board['note_hover'] >
 	>
-	type $mol_list__rows_bog_doodle_app_69 = $mol_type_enforce<
+	type $mol_list__rows_bog_doodle_app_103 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['panel_rows'] >
 		,
 		ReturnType< $mol_list['rows'] >
 	>
-	type $mol_scroll__sub_bog_doodle_app_70 = $mol_type_enforce<
+	type $mol_scroll__sub_bog_doodle_app_104 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_scroll['sub'] >
 	>
-	type $mol_view__sub_bog_doodle_app_71 = $mol_type_enforce<
+	type $mol_view__sub_bog_doodle_app_105 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['main'] >
 		,
 		ReturnType< $mol_view['sub'] >
 	>
-	type $mol_string__hint_bog_doodle_app_72 = $mol_type_enforce<
+	type $mol_button_major__title_bog_doodle_app_106 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_button_major['title'] >
+	>
+	type $mol_button_major__click_bog_doodle_app_107 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['layer_add'] >
+		,
+		ReturnType< $mol_button_major['click'] >
+	>
+	type $mol_check_box__title_bog_doodle_app_108 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_check_box['title'] >
+	>
+	type $mol_check_box__checked_bog_doodle_app_109 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['layer_focus'] >
+		,
+		ReturnType< $mol_check_box['checked'] >
+	>
+	type $mol_view__sub_bog_doodle_app_110 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_view['sub'] >
+	>
+	type $mol_string__hint_bog_doodle_app_111 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['layer_name_hint'] >
+		,
+		ReturnType< $mol_string['hint'] >
+	>
+	type $mol_string__value_bog_doodle_app_112 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['layer_name'] >
+		,
+		ReturnType< $mol_string['value'] >
+	>
+	type $mol_labeler__title_bog_doodle_app_113 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_labeler['title'] >
+	>
+	type $mol_labeler__content_bog_doodle_app_114 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_labeler['content'] >
+	>
+	type $mol_check_icon__hint_bog_doodle_app_115 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_check_icon['hint'] >
+	>
+	type $mol_check_icon__checked_bog_doodle_app_116 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['layer_visible'] >
+		,
+		ReturnType< $mol_check_icon['checked'] >
+	>
+	type $mol_check_icon__Icon_bog_doodle_app_117 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['Layer_visible_icon'] >
+		,
+		ReturnType< $mol_check_icon['Icon'] >
+	>
+	type $mol_check_icon__hint_bog_doodle_app_118 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_check_icon['hint'] >
+	>
+	type $mol_check_icon__checked_bog_doodle_app_119 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['layer_audible'] >
+		,
+		ReturnType< $mol_check_icon['checked'] >
+	>
+	type $mol_check_icon__Icon_bog_doodle_app_120 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['Layer_audible_icon'] >
+		,
+		ReturnType< $mol_check_icon['Icon'] >
+	>
+	type $mol_check__hint_bog_doodle_app_121 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_check['hint'] >
+	>
+	type $mol_check__checked_bog_doodle_app_122 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['layer_picked'] >
+		,
+		ReturnType< $mol_check['checked'] >
+	>
+	type $mol_check__title_bog_doodle_app_123 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['layer_title'] >
+		,
+		ReturnType< $mol_check['title'] >
+	>
+	type $mol_button_minor__hint_bog_doodle_app_124 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_button_minor['hint'] >
+	>
+	type $mol_button_minor__click_bog_doodle_app_125 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['layer_up'] >
+		,
+		ReturnType< $mol_button_minor['click'] >
+	>
+	type $mol_button_minor__sub_bog_doodle_app_126 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_button_minor['sub'] >
+	>
+	type $mol_button_minor__hint_bog_doodle_app_127 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_button_minor['hint'] >
+	>
+	type $mol_button_minor__click_bog_doodle_app_128 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['layer_down'] >
+		,
+		ReturnType< $mol_button_minor['click'] >
+	>
+	type $mol_button_minor__sub_bog_doodle_app_129 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_button_minor['sub'] >
+	>
+	type $mol_button_minor__hint_bog_doodle_app_130 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_button_minor['hint'] >
+	>
+	type $mol_button_minor__enabled_bog_doodle_app_131 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['layer_drop_enabled'] >
+		,
+		ReturnType< $mol_button_minor['enabled'] >
+	>
+	type $mol_button_minor__click_bog_doodle_app_132 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['layer_drop'] >
+		,
+		ReturnType< $mol_button_minor['click'] >
+	>
+	type $mol_button_minor__sub_bog_doodle_app_133 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_button_minor['sub'] >
+	>
+	type $mol_view__sub_bog_doodle_app_134 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_view['sub'] >
+	>
+	type $mol_list__rows_bog_doodle_app_135 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['layer_rows'] >
+		,
+		ReturnType< $mol_list['rows'] >
+	>
+	type $mol_check__title_bog_doodle_app_136 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['vibe_name'] >
+		,
+		ReturnType< $mol_check['title'] >
+	>
+	type $mol_check__checked_bog_doodle_app_137 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['vibe_checked'] >
+		,
+		ReturnType< $mol_check['checked'] >
+	>
+	type $mol_view__sub_bog_doodle_app_138 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['vibe_list'] >
+		,
+		ReturnType< $mol_view['sub'] >
+	>
+	type $mol_labeler__title_bog_doodle_app_139 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_labeler['title'] >
+	>
+	type $mol_labeler__content_bog_doodle_app_140 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_labeler['content'] >
+	>
+	type $mol_string__hint_bog_doodle_app_141 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_string['hint'] >
 	>
-	type $mol_string__value_bog_doodle_app_73 = $mol_type_enforce<
+	type $mol_string__value_bog_doodle_app_142 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['piece_title'] >
 		,
 		ReturnType< $mol_string['value'] >
 	>
-	type $mol_labeler__title_bog_doodle_app_74 = $mol_type_enforce<
+	type $mol_labeler__title_bog_doodle_app_143 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_labeler['title'] >
 	>
-	type $mol_labeler__content_bog_doodle_app_75 = $mol_type_enforce<
+	type $mol_labeler__content_bog_doodle_app_144 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_labeler['content'] >
 	>
-	type $mol_select__value_bog_doodle_app_76 = $mol_type_enforce<
+	type $mol_select__value_bog_doodle_app_145 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['key_value'] >
 		,
 		ReturnType< $mol_select['value'] >
 	>
-	type $mol_select__dictionary_bog_doodle_app_77 = $mol_type_enforce<
+	type $mol_select__dictionary_bog_doodle_app_146 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['key_options'] >
 		,
 		ReturnType< $mol_select['dictionary'] >
 	>
-	type $mol_labeler__title_bog_doodle_app_78 = $mol_type_enforce<
+	type $mol_labeler__title_bog_doodle_app_147 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_labeler['title'] >
 	>
-	type $mol_labeler__content_bog_doodle_app_79 = $mol_type_enforce<
+	type $mol_labeler__content_bog_doodle_app_148 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_labeler['content'] >
 	>
-	type $mol_select__value_bog_doodle_app_80 = $mol_type_enforce<
+	type $mol_select__value_bog_doodle_app_149 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['scale_value'] >
 		,
 		ReturnType< $mol_select['value'] >
 	>
-	type $mol_select__dictionary_bog_doodle_app_81 = $mol_type_enforce<
+	type $mol_select__dictionary_bog_doodle_app_150 = $mol_type_enforce<
 		({ 
 			'major_penta': string,
 			'minor_penta': string,
@@ -6350,22 +7070,45 @@ declare namespace $ {
 		,
 		ReturnType< $mol_select['dictionary'] >
 	>
-	type $mol_labeler__title_bog_doodle_app_82 = $mol_type_enforce<
+	type $mol_labeler__title_bog_doodle_app_151 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_labeler['title'] >
 	>
-	type $mol_labeler__content_bog_doodle_app_83 = $mol_type_enforce<
+	type $mol_labeler__content_bog_doodle_app_152 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_labeler['content'] >
 	>
-	type $mol_switch__value_bog_doodle_app_84 = $mol_type_enforce<
+	type $mol_switch__value_bog_doodle_app_153 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['axis_value'] >
+		,
+		ReturnType< $mol_switch['value'] >
+	>
+	type $mol_switch__options_bog_doodle_app_154 = $mol_type_enforce<
+		({ 
+			'time_y': string,
+			'time_x': string,
+		}) 
+		,
+		ReturnType< $mol_switch['options'] >
+	>
+	type $mol_labeler__title_bog_doodle_app_155 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_labeler['title'] >
+	>
+	type $mol_labeler__content_bog_doodle_app_156 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_labeler['content'] >
+	>
+	type $mol_switch__value_bog_doodle_app_157 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['range_value'] >
 		,
 		ReturnType< $mol_switch['value'] >
 	>
-	type $mol_switch__options_bog_doodle_app_85 = $mol_type_enforce<
+	type $mol_switch__options_bog_doodle_app_158 = $mol_type_enforce<
 		({ 
 			'1': string,
 			'2': string,
@@ -6374,92 +7117,92 @@ declare namespace $ {
 		,
 		ReturnType< $mol_switch['options'] >
 	>
-	type $mol_labeler__title_bog_doodle_app_86 = $mol_type_enforce<
+	type $mol_labeler__title_bog_doodle_app_159 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_labeler['title'] >
 	>
-	type $mol_labeler__content_bog_doodle_app_87 = $mol_type_enforce<
+	type $mol_labeler__content_bog_doodle_app_160 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_labeler['content'] >
 	>
-	type $mol_number__value_bog_doodle_app_88 = $mol_type_enforce<
+	type $mol_number__value_bog_doodle_app_161 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['octave_value'] >
 		,
 		ReturnType< $mol_number['value'] >
 	>
-	type $mol_number__value_min_bog_doodle_app_89 = $mol_type_enforce<
+	type $mol_number__value_min_bog_doodle_app_162 = $mol_type_enforce<
 		number
 		,
 		ReturnType< $mol_number['value_min'] >
 	>
-	type $mol_number__value_max_bog_doodle_app_90 = $mol_type_enforce<
+	type $mol_number__value_max_bog_doodle_app_163 = $mol_type_enforce<
 		number
 		,
 		ReturnType< $mol_number['value_max'] >
 	>
-	type $mol_labeler__title_bog_doodle_app_91 = $mol_type_enforce<
+	type $mol_labeler__title_bog_doodle_app_164 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_labeler['title'] >
 	>
-	type $mol_labeler__content_bog_doodle_app_92 = $mol_type_enforce<
+	type $mol_labeler__content_bog_doodle_app_165 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_labeler['content'] >
 	>
-	type $mol_number__value_bog_doodle_app_93 = $mol_type_enforce<
+	type $mol_number__value_bog_doodle_app_166 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['bpm_value'] >
 		,
 		ReturnType< $mol_number['value'] >
 	>
-	type $mol_number__value_min_bog_doodle_app_94 = $mol_type_enforce<
+	type $mol_number__value_min_bog_doodle_app_167 = $mol_type_enforce<
 		number
 		,
 		ReturnType< $mol_number['value_min'] >
 	>
-	type $mol_number__value_max_bog_doodle_app_95 = $mol_type_enforce<
+	type $mol_number__value_max_bog_doodle_app_168 = $mol_type_enforce<
 		number
 		,
 		ReturnType< $mol_number['value_max'] >
 	>
-	type $mol_button_minor__hint_bog_doodle_app_96 = $mol_type_enforce<
+	type $mol_button_minor__hint_bog_doodle_app_169 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_button_minor['hint'] >
 	>
-	type $mol_button_minor__title_bog_doodle_app_97 = $mol_type_enforce<
+	type $mol_button_minor__title_bog_doodle_app_170 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_button_minor['title'] >
 	>
-	type $mol_button_minor__click_bog_doodle_app_98 = $mol_type_enforce<
+	type $mol_button_minor__click_bog_doodle_app_171 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['tap'] >
 		,
 		ReturnType< $mol_button_minor['click'] >
 	>
-	type $mol_view__sub_bog_doodle_app_99 = $mol_type_enforce<
+	type $mol_view__sub_bog_doodle_app_172 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_view['sub'] >
 	>
-	type $mol_labeler__title_bog_doodle_app_100 = $mol_type_enforce<
+	type $mol_labeler__title_bog_doodle_app_173 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_labeler['title'] >
 	>
-	type $mol_labeler__content_bog_doodle_app_101 = $mol_type_enforce<
+	type $mol_labeler__content_bog_doodle_app_174 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_labeler['content'] >
 	>
-	type $mol_switch__value_bog_doodle_app_102 = $mol_type_enforce<
+	type $mol_switch__value_bog_doodle_app_175 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['bars_value'] >
 		,
 		ReturnType< $mol_switch['value'] >
 	>
-	type $mol_switch__options_bog_doodle_app_103 = $mol_type_enforce<
+	type $mol_switch__options_bog_doodle_app_176 = $mol_type_enforce<
 		({ 
 			'1': string,
 			'2': string,
@@ -6468,22 +7211,22 @@ declare namespace $ {
 		,
 		ReturnType< $mol_switch['options'] >
 	>
-	type $mol_labeler__title_bog_doodle_app_104 = $mol_type_enforce<
+	type $mol_labeler__title_bog_doodle_app_177 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_labeler['title'] >
 	>
-	type $mol_labeler__content_bog_doodle_app_105 = $mol_type_enforce<
+	type $mol_labeler__content_bog_doodle_app_178 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_labeler['content'] >
 	>
-	type $mol_switch__value_bog_doodle_app_106 = $mol_type_enforce<
+	type $mol_switch__value_bog_doodle_app_179 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['grid_value'] >
 		,
 		ReturnType< $mol_switch['value'] >
 	>
-	type $mol_switch__options_bog_doodle_app_107 = $mol_type_enforce<
+	type $mol_switch__options_bog_doodle_app_180 = $mol_type_enforce<
 		({ 
 			'4': string,
 			'8': string,
@@ -6496,22 +7239,22 @@ declare namespace $ {
 		,
 		ReturnType< $mol_switch['options'] >
 	>
-	type $mol_labeler__title_bog_doodle_app_108 = $mol_type_enforce<
+	type $mol_labeler__title_bog_doodle_app_181 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_labeler['title'] >
 	>
-	type $mol_labeler__content_bog_doodle_app_109 = $mol_type_enforce<
+	type $mol_labeler__content_bog_doodle_app_182 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_labeler['content'] >
 	>
-	type $mol_switch__value_bog_doodle_app_110 = $mol_type_enforce<
+	type $mol_switch__value_bog_doodle_app_183 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['swing_value'] >
 		,
 		ReturnType< $mol_switch['value'] >
 	>
-	type $mol_switch__options_bog_doodle_app_111 = $mol_type_enforce<
+	type $mol_switch__options_bog_doodle_app_184 = $mol_type_enforce<
 		({ 
 			'0': string,
 			'0.33': string,
@@ -6521,292 +7264,297 @@ declare namespace $ {
 		,
 		ReturnType< $mol_switch['options'] >
 	>
-	type $mol_labeler__title_bog_doodle_app_112 = $mol_type_enforce<
+	type $mol_labeler__title_bog_doodle_app_185 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_labeler['title'] >
 	>
-	type $mol_labeler__content_bog_doodle_app_113 = $mol_type_enforce<
+	type $mol_labeler__content_bog_doodle_app_186 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_labeler['content'] >
 	>
-	type $mol_check_box__title_bog_doodle_app_114 = $mol_type_enforce<
+	type $mol_check_box__title_bog_doodle_app_187 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_check_box['title'] >
 	>
-	type $mol_check_box__checked_bog_doodle_app_115 = $mol_type_enforce<
+	type $mol_check_box__checked_bog_doodle_app_188 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['click'] >
 		,
 		ReturnType< $mol_check_box['checked'] >
 	>
-	type $mol_check_box__title_bog_doodle_app_116 = $mol_type_enforce<
+	type $mol_check_box__title_bog_doodle_app_189 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_check_box['title'] >
 	>
-	type $mol_check_box__checked_bog_doodle_app_117 = $mol_type_enforce<
+	type $mol_check_box__checked_bog_doodle_app_190 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['snap'] >
 		,
 		ReturnType< $mol_check_box['checked'] >
 	>
-	type $mol_check_box__title_bog_doodle_app_118 = $mol_type_enforce<
+	type $mol_check_box__title_bog_doodle_app_191 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_check_box['title'] >
 	>
-	type $mol_check_box__checked_bog_doodle_app_119 = $mol_type_enforce<
+	type $mol_check_box__checked_bog_doodle_app_192 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['pen_only'] >
 		,
 		ReturnType< $mol_check_box['checked'] >
 	>
-	type $mol_check_box__title_bog_doodle_app_120 = $mol_type_enforce<
+	type $mol_check_box__title_bog_doodle_app_193 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_check_box['title'] >
 	>
-	type $mol_check_box__checked_bog_doodle_app_121 = $mol_type_enforce<
+	type $mol_check_box__checked_bog_doodle_app_194 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['chain'] >
 		,
 		ReturnType< $mol_check_box['checked'] >
 	>
-	type $mol_check_box__title_bog_doodle_app_122 = $mol_type_enforce<
+	type $mol_check_box__title_bog_doodle_app_195 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_check_box['title'] >
 	>
-	type $mol_check_box__checked_bog_doodle_app_123 = $mol_type_enforce<
+	type $mol_check_box__checked_bog_doodle_app_196 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['midi_in'] >
 		,
 		ReturnType< $mol_check_box['checked'] >
 	>
-	type $mol_view__sub_bog_doodle_app_124 = $mol_type_enforce<
+	type $mol_view__sub_bog_doodle_app_197 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_view['sub'] >
 	>
-	type $mol_button_minor__title_bog_doodle_app_125 = $mol_type_enforce<
+	type $mol_button_minor__title_bog_doodle_app_198 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_button_minor['title'] >
 	>
-	type $mol_button_minor__click_bog_doodle_app_126 = $mol_type_enforce<
+	type $mol_button_minor__click_bog_doodle_app_199 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['pattern_copy'] >
 		,
 		ReturnType< $mol_button_minor['click'] >
 	>
-	type $mol_button_minor__title_bog_doodle_app_127 = $mol_type_enforce<
+	type $mol_button_minor__title_bog_doodle_app_200 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_button_minor['title'] >
 	>
-	type $mol_button_minor__click_bog_doodle_app_128 = $mol_type_enforce<
+	type $mol_button_minor__click_bog_doodle_app_201 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['pattern_clear'] >
 		,
 		ReturnType< $mol_button_minor['click'] >
 	>
-	type $mol_button_minor__title_bog_doodle_app_129 = $mol_type_enforce<
+	type $mol_button_minor__title_bog_doodle_app_202 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_button_minor['title'] >
 	>
-	type $mol_button_minor__enabled_bog_doodle_app_130 = $mol_type_enforce<
+	type $mol_button_minor__enabled_bog_doodle_app_203 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['pattern_drop_enabled'] >
 		,
 		ReturnType< $mol_button_minor['enabled'] >
 	>
-	type $mol_button_minor__click_bog_doodle_app_131 = $mol_type_enforce<
+	type $mol_button_minor__click_bog_doodle_app_204 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['pattern_drop'] >
 		,
 		ReturnType< $mol_button_minor['click'] >
 	>
-	type $mol_view__sub_bog_doodle_app_132 = $mol_type_enforce<
+	type $mol_view__sub_bog_doodle_app_205 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_view['sub'] >
 	>
-	type $mol_labeler__title_bog_doodle_app_133 = $mol_type_enforce<
+	type $mol_labeler__title_bog_doodle_app_206 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_labeler['title'] >
 	>
-	type $mol_labeler__content_bog_doodle_app_134 = $mol_type_enforce<
+	type $mol_labeler__content_bog_doodle_app_207 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_labeler['content'] >
 	>
-	type $mol_button_open__title_bog_doodle_app_135 = $mol_type_enforce<
+	type $mol_button_open__title_bog_doodle_app_208 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_button_open['title'] >
 	>
-	type $mol_button_open__accept_bog_doodle_app_136 = $mol_type_enforce<
+	type $mol_button_open__accept_bog_doodle_app_209 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_button_open['accept'] >
 	>
-	type $mol_button_open__multiple_bog_doodle_app_137 = $mol_type_enforce<
+	type $mol_button_open__multiple_bog_doodle_app_210 = $mol_type_enforce<
 		boolean
 		,
 		ReturnType< $mol_button_open['multiple'] >
 	>
-	type $mol_button_open__files_bog_doodle_app_138 = $mol_type_enforce<
+	type $mol_button_open__files_bog_doodle_app_211 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['back_files'] >
 		,
 		ReturnType< $mol_button_open['files'] >
 	>
-	type $mol_button_minor__title_bog_doodle_app_139 = $mol_type_enforce<
+	type $mol_button_minor__title_bog_doodle_app_212 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_button_minor['title'] >
 	>
-	type $mol_button_minor__enabled_bog_doodle_app_140 = $mol_type_enforce<
+	type $mol_button_minor__enabled_bog_doodle_app_213 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['back_enabled'] >
 		,
 		ReturnType< $mol_button_minor['enabled'] >
 	>
-	type $mol_button_minor__click_bog_doodle_app_141 = $mol_type_enforce<
+	type $mol_button_minor__click_bog_doodle_app_214 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['back_drop'] >
 		,
 		ReturnType< $mol_button_minor['click'] >
 	>
-	type $mol_view__sub_bog_doodle_app_142 = $mol_type_enforce<
+	type $mol_view__sub_bog_doodle_app_215 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_view['sub'] >
 	>
-	type $mol_labeler__title_bog_doodle_app_143 = $mol_type_enforce<
+	type $mol_labeler__title_bog_doodle_app_216 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_labeler['title'] >
 	>
-	type $mol_labeler__content_bog_doodle_app_144 = $mol_type_enforce<
+	type $mol_labeler__content_bog_doodle_app_217 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_labeler['content'] >
 	>
-	type $mol_button_copy__title_bog_doodle_app_145 = $mol_type_enforce<
+	type $mol_button_copy__title_bog_doodle_app_218 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_button_copy['title'] >
 	>
-	type $mol_button_copy__hint_bog_doodle_app_146 = $mol_type_enforce<
+	type $mol_button_copy__hint_bog_doodle_app_219 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_button_copy['hint'] >
 	>
-	type $mol_button_copy__text_bog_doodle_app_147 = $mol_type_enforce<
+	type $mol_button_copy__text_bog_doodle_app_220 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['share_link'] >
 		,
 		ReturnType< $mol_button_copy['text'] >
 	>
-	type $mol_button_minor__title_bog_doodle_app_148 = $mol_type_enforce<
+	type $mol_button_minor__title_bog_doodle_app_221 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_button_minor['title'] >
 	>
-	type $mol_button_minor__click_bog_doodle_app_149 = $mol_type_enforce<
+	type $mol_button_minor__click_bog_doodle_app_222 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['export_png'] >
 		,
 		ReturnType< $mol_button_minor['click'] >
 	>
-	type $mol_button_minor__title_bog_doodle_app_150 = $mol_type_enforce<
+	type $mol_button_minor__title_bog_doodle_app_223 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_button_minor['title'] >
 	>
-	type $mol_button_minor__click_bog_doodle_app_151 = $mol_type_enforce<
+	type $mol_button_minor__click_bog_doodle_app_224 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['export_wav'] >
 		,
 		ReturnType< $mol_button_minor['click'] >
 	>
-	type $mol_button_minor__title_bog_doodle_app_152 = $mol_type_enforce<
+	type $mol_button_minor__title_bog_doodle_app_225 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_button_minor['title'] >
 	>
-	type $mol_button_minor__click_bog_doodle_app_153 = $mol_type_enforce<
+	type $mol_button_minor__click_bog_doodle_app_226 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['export_midi'] >
 		,
 		ReturnType< $mol_button_minor['click'] >
 	>
-	type $mol_view__sub_bog_doodle_app_154 = $mol_type_enforce<
+	type $mol_view__sub_bog_doodle_app_227 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_view['sub'] >
 	>
-	type $mol_labeler__title_bog_doodle_app_155 = $mol_type_enforce<
+	type $mol_labeler__title_bog_doodle_app_228 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_labeler['title'] >
 	>
-	type $mol_labeler__content_bog_doodle_app_156 = $mol_type_enforce<
+	type $mol_labeler__content_bog_doodle_app_229 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_labeler['content'] >
 	>
-	type $mol_text__text_bog_doodle_app_157 = $mol_type_enforce<
+	type $mol_text__text_bog_doodle_app_230 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_text['text'] >
 	>
-	type $mol_button_major__title_bog_doodle_app_158 = $mol_type_enforce<
+	type $mol_button_major__title_bog_doodle_app_231 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_button_major['title'] >
 	>
-	type $mol_button_major__click_bog_doodle_app_159 = $mol_type_enforce<
+	type $mol_button_major__click_bog_doodle_app_232 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['piece_new'] >
 		,
 		ReturnType< $mol_button_major['click'] >
 	>
-	type $mol_view__sub_bog_doodle_app_160 = $mol_type_enforce<
+	type $mol_view__sub_bog_doodle_app_233 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_view['sub'] >
 	>
-	type $mol_view__sub_bog_doodle_app_161 = $mol_type_enforce<
+	type $mol_view__sub_bog_doodle_app_234 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_view['sub'] >
 	>
-	type $mol_button_minor__click_bog_doodle_app_162 = $mol_type_enforce<
+	type $mol_button_minor__click_bog_doodle_app_235 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['piece_open'] >
 		,
 		ReturnType< $mol_button_minor['click'] >
 	>
-	type $mol_button_minor__sub_bog_doodle_app_163 = $mol_type_enforce<
+	type $mol_button_minor__sub_bog_doodle_app_236 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_button_minor['sub'] >
 	>
-	type $mol_button_minor__hint_bog_doodle_app_164 = $mol_type_enforce<
+	type $mol_button_minor__hint_bog_doodle_app_237 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_button_minor['hint'] >
 	>
-	type $mol_button_minor__click_bog_doodle_app_165 = $mol_type_enforce<
+	type $mol_button_minor__click_bog_doodle_app_238 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['piece_drop'] >
 		,
 		ReturnType< $mol_button_minor['click'] >
 	>
-	type $mol_button_minor__sub_bog_doodle_app_166 = $mol_type_enforce<
+	type $mol_button_minor__sub_bog_doodle_app_239 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_button_minor['sub'] >
 	>
-	type $mol_view__sub_bog_doodle_app_167 = $mol_type_enforce<
+	type $mol_view__sub_bog_doodle_app_240 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_view['sub'] >
 	>
-	type $mol_list__rows_bog_doodle_app_168 = $mol_type_enforce<
+	type $mol_list__rows_bog_doodle_app_241 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_list['rows'] >
 	>
-	type $mol_list__rows_bog_doodle_app_169 = $mol_type_enforce<
+	type $mol_list__rows_bog_doodle_app_242 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_list['rows'] >
+	>
+	type $mol_list__rows_bog_doodle_app_243 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['gallery_rows'] >
 		,
 		ReturnType< $mol_list['rows'] >
@@ -6832,11 +7580,14 @@ declare namespace $ {
 		gallery_opened( next?: boolean ): boolean
 		Gallery_open_icon( ): $mol_icon_folder_music
 		Gallery_open( ): $mol_check_icon
+		layers_opened( next?: boolean ): boolean
+		Layers_open_icon( ): $mol_icon_layers
+		Layers_open( ): $mol_check_icon
 		settings_opened( next?: boolean ): boolean
 		Settings_open_icon( ): $mol_icon_tune
 		Settings_open( ): $mol_check_icon
 		tool_draw( next?: boolean ): boolean
-		Tool_draw_icon( ): $mol_icon_pencil
+		Tool_draw_icon( ): $mol_icon_brush
 		Tool_draw( ): $mol_check_icon
 		tool_erase( next?: boolean ): boolean
 		Tool_erase_icon( ): $mol_icon_eraser
@@ -6847,17 +7598,38 @@ declare namespace $ {
 		tool_pan( next?: boolean ): boolean
 		Tool_pan_icon( ): $mol_icon_pan
 		Tool_pan( ): $mol_check_icon
-		zoom_reset( next?: any ): any
-		Zoom_reset_icon( ): $mol_icon_magnify_minus
-		Zoom_reset( ): $mol_button_minor
 		Tools( ): $mol_view
+		brush_value( next?: number ): number
+		Brush_size( ): $bog_doodle_slider
+		eraser( next?: number ): number
+		Eraser_size( ): $bog_doodle_slider
+		size_tools( ): readonly(any)[]
+		Size( ): $mol_view
 		color_name( id: any): string
 		color_checked( id: any, next?: boolean ): boolean
 		color_ink( id: any): string
 		Color_dot( id: any): $mol_view
 		Color( id: any): $mol_check
+		ink( next?: string ): string
+		Ink_dot( ): $mol_view
+		Ink_icon( ): $mol_icon_palette
+		ink_recent( ): readonly(string)[]
+		Picker( ): $bog_doodle_picker
+		Ink_pick( ): $mol_pick
+		voice_name( ): string
+		Voice( ): $mol_view
 		palette( ): readonly(any)[]
 		Palette( ): $mol_view
+		zoom_out( next?: any ): any
+		Zoom_out_icon( ): $mol_icon_magnify_minus
+		Zoom_out( ): $mol_button_minor
+		zoom_reset( next?: any ): any
+		zoom_percent( ): string
+		Zoom_level( ): $mol_button_minor
+		zoom_in( next?: any ): any
+		Zoom_in_icon( ): $mol_icon_magnify_plus
+		Zoom_in( ): $mol_button_minor
+		Zoom( ): $mol_view
 		selection_copy( next?: any ): any
 		Copy_icon( ): $mol_icon_content_duplicate
 		Copy( ): $mol_button_minor
@@ -6880,11 +7652,16 @@ declare namespace $ {
 		steps( ): number
 		beat_steps( ): number
 		bar_steps( ): number
+		axis( ): string
 		tool( next?: string ): string
-		color( ): number
+		brush( ): number
 		snap( next?: boolean ): boolean
 		pen_only( next?: boolean ): boolean
 		back( ): string
+		layer_order( ): readonly(string)[]
+		layer_active( next?: string ): string
+		layer_default( ): string
+		layer_focus( next?: boolean ): boolean
 		selected( next?: readonly(string)[] ): readonly(string)[]
 		playhead( ): any
 		playing( ): boolean
@@ -6895,6 +7672,42 @@ declare namespace $ {
 		Panel( ): $mol_scroll
 		main( ): readonly(any)[]
 		Main( ): $mol_view
+		layer_add( next?: any ): any
+		Layer_add( ): $mol_button_major
+		Layer_focus( ): $mol_check_box
+		Layer_tools( ): $mol_view
+		layer_name_hint( ): string
+		layer_name( next?: string ): string
+		Layer_name( ): $mol_string
+		Layer_name_field( ): $mol_labeler
+		layer_visible( id: any, next?: boolean ): boolean
+		Layer_visible_icon( id: any): $mol_icon_eye
+		Layer_visible( id: any): $mol_check_icon
+		layer_audible( id: any, next?: boolean ): boolean
+		Layer_audible_icon( id: any): $mol_icon_volume_high
+		Layer_audible( id: any): $mol_check_icon
+		layer_picked( id: any, next?: boolean ): boolean
+		layer_title( id: any): string
+		Layer_pick( id: any): $mol_check
+		layer_up( id: any, next?: any ): any
+		Layer_up_icon( id: any): $mol_icon_arrow_up
+		Layer_up( id: any): $mol_button_minor
+		layer_down( id: any, next?: any ): any
+		Layer_down_icon( id: any): $mol_icon_arrow_down
+		Layer_down( id: any): $mol_button_minor
+		layer_drop_enabled( ): boolean
+		layer_drop( id: any, next?: any ): any
+		Layer_drop_icon( id: any): $mol_icon_delete
+		Layer_drop( id: any): $mol_button_minor
+		Layer( id: any): $mol_view
+		layer_rows( ): readonly(any)[]
+		Layer_list( ): $mol_list
+		vibe_name( id: any): string
+		vibe_checked( id: any, next?: boolean ): boolean
+		Vibe( id: any): $mol_check
+		vibe_list( ): readonly(any)[]
+		Vibes( ): $mol_view
+		Vibe_field( ): $mol_labeler
 		piece_title( next?: string ): string
 		Title_input( ): $mol_string
 		Title_field( ): $mol_labeler
@@ -6905,6 +7718,9 @@ declare namespace $ {
 		scale_value( next?: string ): string
 		Scale_input( ): $mol_select
 		Scale_field( ): $mol_labeler
+		axis_value( next?: string ): string
+		Axis_input( ): $mol_switch
+		Axis_field( ): $mol_labeler
 		range_value( next?: string ): string
 		Range_input( ): $mol_switch
 		Range_field( ): $mol_labeler
@@ -6977,10 +7793,12 @@ declare namespace $ {
 		gallery_rows( ): readonly(any)[]
 		title( ): string
 		untitled( ): string
+		layer_prefix( ): string
 		Store( ): $bog_doodle_gallery
 		plugins( ): readonly(any)[]
 		auto( ): readonly(any)[]
 		sub( ): readonly(any)[]
+		Layers( ): $mol_list
 		Settings( ): $mol_list
 		Gallery( ): $mol_list
 	}
@@ -6995,6 +7813,7 @@ declare namespace $.$$ {
         piece(next?: $bog_doodle_piece): $bog_doodle_piece;
         piece_patch(patch: Partial<$bog_doodle_piece>): void;
         pattern(next?: number): number;
+        pattern_kept: number;
         strokes(pattern: number, next?: $bog_doodle_sketch_strokes): $bog_doodle_sketch_strokes;
         session(next?: number): number;
         sketch_key(): string;
@@ -7019,13 +7838,26 @@ declare namespace $.$$ {
         tool_erase(next?: boolean): boolean;
         tool_select(next?: boolean): boolean;
         tool_pan(next?: boolean): boolean;
+        board(): $bog_doodle_board;
         zoom_reset(): void;
-        color(next?: number): number;
-        palette(): $.$mol_check[];
+        zoom_in(): void;
+        zoom_out(): void;
+        zoom_percent(): string;
+        ink(next?: string): string;
+        ink_recent(next?: readonly string[]): readonly string[];
+        ink_remember(ink: string): void;
+        color(): 1 | 2 | 3 | 4 | 5 | 0;
+        voice_name(): string;
+        palette(): ($mol_view | $.$mol_pick)[];
         color_name(index: number): string;
         color_ink(index: number): string;
         color_checked(index: number, next?: boolean): boolean;
-        recolor(ids: readonly string[], color: number): void;
+        recolor(ids: readonly string[], ink: string): void;
+        brush_value(next?: number): number;
+        brush(): number;
+        eraser(next?: number): number;
+        size_tools(): $.$bog_doodle_slider[];
+        size_step(dir: number): void;
         selected(next?: readonly string[]): readonly string[];
         selection_tools(): $mol_button_minor[];
         selection_copy(): void;
@@ -7042,7 +7874,37 @@ declare namespace $.$$ {
         settings_opened(next?: boolean): boolean;
         gallery_opened(next?: boolean): boolean;
         main(): ($.$bog_doodle_board | $.$mol_scroll)[];
+        layers_opened(next?: boolean): boolean;
         panel_rows(): $.$mol_list[];
+        axis(): $bog_doodle_piece_axis;
+        axis_value(next?: string): $bog_doodle_piece_axis;
+        vibe_list(): $.$mol_check[];
+        vibe_name(id: string): string;
+        vibe_checked(id: string, next?: boolean): boolean;
+        layers(): readonly $bog_doodle_piece_layer[];
+        layer_default(): string;
+        layer_order(): string[];
+        layer_kept: string;
+        layer_active(next?: string): string;
+        layer_focus(next?: boolean): boolean;
+        layer_rows(): $mol_view[];
+        layer_index(id: string): number;
+        layer_patch(id: string, patch: Partial<$bog_doodle_piece_layer>): void;
+        layer_title(id: string): string;
+        layer_name_default(id: string): string;
+        layer_name_hint(): string;
+        layer_name(next?: string): string;
+        layer_visible(id: string, next?: boolean): boolean;
+        layer_audible(id: string, next?: boolean): boolean;
+        Layer_visible_icon(id: string): $mol_icon_eye | $mol_icon_eye_off;
+        Layer_audible_icon(id: string): $mol_icon_volume_high | $mol_icon_volume_off;
+        layer_picked(id: string, next?: boolean): boolean;
+        layer_add(): void;
+        layer_move(id: string, dir: number): void;
+        layer_up(id: string): void;
+        layer_down(id: string): void;
+        layer_drop_enabled(): boolean;
+        layer_drop(id: string): void;
         piece_title(next?: string): string;
         key_options(): {
             [k: string]: string;

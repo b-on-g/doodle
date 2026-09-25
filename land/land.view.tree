@@ -113,7 +113,7 @@ $bog_doodle_land $mol_view
 				<= Moods_lead $mol_view
 					dom_name \p
 					sub /
-						<= moods_lead @ \Twenty nine presets, from a lullaby to the avant-garde. One tap and you are in the right key.
+						<= moods_lead @ \Thirty presets, from a lullaby to the avant-garde. One tap and you are in the right key.
 				<= Mood_list $mol_view
 					sub /
 						<= Mood_calm $mol_view
@@ -137,6 +137,9 @@ $bog_doodle_land $mol_view
 						<= Mood_tango $mol_view
 							sub /
 								<= mood_tango @ \Tango
+						<= Mood_medieval $mol_view
+							sub /
+								<= mood_medieval @ \Medieval
 						<= Mood_celtic $mol_view
 							sub /
 								<= mood_celtic @ \Celtic

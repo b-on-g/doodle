@@ -26,6 +26,7 @@ namespace $ {
 		{ id: 'rock', ink: '#e8b020', settings: { key: 4, scale: 'minor_penta', octave: 2, range: 2, bpm: 136, bars: 2, grid: '8', swing: 0 } },
 		{ id: 'tango', ink: '#c8302a', settings: { key: 7, scale: 'harmonic', octave: 3, range: 2, bpm: 120, bars: 2, grid: '16', swing: 0 } },
 		{ id: 'march', ink: '#333333', settings: { key: 10, scale: 'major', octave: 3, range: 2, bpm: 112, bars: 2, grid: '8', swing: 0 } },
+		{ id: 'medieval', ink: '#a8402a', settings: { key: 2, scale: 'dorian', octave: 3, range: 2, bpm: 84, bars: 2, grid: '8t', swing: 0 } },
 		{ id: 'celtic', ink: '#3aa860', settings: { key: 2, scale: 'mixolydian', octave: 3, range: 2, bpm: 132, bars: 2, grid: '8t', swing: 0 } },
 		{ id: 'east', ink: '#e39a1b', settings: { key: 4, scale: 'harmonic', octave: 3, range: 2, bpm: 96, bars: 2, grid: '16', swing: 0 } },
 		{ id: 'anxiety', ink: '#b8201a', settings: { key: 1, scale: 'phrygian', octave: 2, range: 2, bpm: 108, bars: 1, grid: '16t', swing: 0 } },

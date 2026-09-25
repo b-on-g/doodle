@@ -40,6 +40,18 @@ namespace $.$$ {
 			minWidth: '7rem',
 		},
 
+		Tempo_quick: {
+			alignItems: 'center',
+		},
+
+		Tempo_value: {
+			minWidth: '4.5rem',
+			color: $mol_theme.shade,
+			font: {
+				size: '.875rem',
+			},
+		},
+
 		Tools: {
 			border: {
 				radius: $mol_gap.round,

@@ -67,57 +67,72 @@ namespace $ {
 		switch( color ) {
 
 			case 1: {
-				const env = envelope( ctx, dest, time, 0.004, level * 1.2, Math.min( length, 0.25 ), 0.4 )
+				const env = envelope( ctx, dest, time, 0.003, level * 1.3, Math.min( length, 0.12 ), 0.9 )
 				const filter = ctx.createBiquadFilter()
 				filter.type = 'lowpass'
-				filter.frequency.setValueAtTime( freq * 8, time )
-				filter.frequency.exponentialRampToValueAtTime( freq * 1.5, time + 0.3 )
+				filter.Q.setValueAtTime( 0.5, time )
+				filter.frequency.setValueAtTime( Math.min( 9000, freq * ( 3 + 5 * velocity ) ), time )
+				filter.frequency.exponentialRampToValueAtTime( Math.min( 9000, freq * 1.2 ), time + 0.35 )
 				filter.connect( env.gain )
 				osc( ctx, 'sawtooth', freq, filter, time, env.end )
 				return
 			}
 
 			case 2: {
-				const env = envelope( ctx, dest, time, Math.min( 0.25, length / 2 ), level * 0.8, length, 0.6 )
-				osc( ctx, 'triangle', freq, env.gain, time, env.end, -6 )
-				osc( ctx, 'sine', freq * 2, env.gain, time, env.end, 5 )
+				const env = envelope( ctx, dest, time, Math.min( 0.3, Math.max( 0.08, length / 2 ) ), level * 0.9, length, 1.2 )
+				const filter = ctx.createBiquadFilter()
+				filter.type = 'lowpass'
+				filter.Q.setValueAtTime( 0.3, time )
+				filter.frequency.setValueAtTime( Math.min( 6000, freq * 2.5 ), time )
+				filter.connect( env.gain )
+				osc( ctx, 'sawtooth', freq, filter, time, env.end, -7 )
+				osc( ctx, 'sawtooth', freq, filter, time, env.end, 7 )
 				return
 			}
 
 			case 3: {
-				const env = envelope( ctx, dest, time, 0.003, level * 1.4, 0.05, 0.5 )
+				const env = envelope( ctx, dest, time, 0.002, level * 1.5, 0.03, 0.7 )
 				osc( ctx, 'sine', freq, env.gain, time, env.end )
-				const over = envelope( ctx, dest, time, 0.002, level * 0.4, 0.01, 0.12 )
-				osc( ctx, 'sine', freq * 4, over.gain, time, over.end )
+				const over = envelope( ctx, dest, time, 0.001, level * 0.18, 0.005, 0.08 )
+				osc( ctx, 'sine', freq * 3.99, over.gain, time, over.end )
 				return
 			}
 
 			case 4: {
-				const env = envelope( ctx, dest, time, 0.01, level * 0.6, length, 0.12 )
+				const env = envelope( ctx, dest, time, 0.02, level * 0.7, length, 0.25 )
 				const filter = ctx.createBiquadFilter()
 				filter.type = 'lowpass'
-				filter.frequency.setValueAtTime( Math.min( 12000, freq * 6 ), time )
-				filter.Q.setValueAtTime( 4, time )
+				filter.Q.setValueAtTime( 0.8, time )
+				filter.frequency.setValueAtTime( Math.min( 7000, freq * 3 ), time )
 				filter.connect( env.gain )
-				osc( ctx, 'sawtooth', freq, filter, time, env.end )
+				const voice = osc( ctx, 'square', freq, filter, time, env.end )
+				const wobble = ctx.createGain()
+				wobble.gain.setValueAtTime( 0, time )
+				wobble.gain.linearRampToValueAtTime( 6, time + 0.3 )
+				wobble.connect( voice.detune )
+				osc( ctx, 'sine', 5.5, wobble, time, env.end )
 				return
 			}
 
 			case 5: {
-				const env = envelope( ctx, dest, time, 0.002, level * 1.1, 0.02, 1.6 )
+				const env = envelope( ctx, dest, time, 0.002, level * 1.1, 0.02, 2 )
 				const carrier = osc( ctx, 'sine', freq, env.gain, time, env.end )
 				const depth = ctx.createGain()
-				depth.gain.setValueAtTime( freq * 2.5, time )
-				depth.gain.exponentialRampToValueAtTime( 1, time + 1.2 )
+				depth.gain.setValueAtTime( freq * 1.4, time )
+				depth.gain.exponentialRampToValueAtTime( Math.max( 1, freq * 0.05 ), time + 1 )
 				depth.connect( carrier.frequency )
 				osc( ctx, 'sine', freq * 3.5, depth, time, env.end )
 				return
 			}
 
 			default: {
-				const env = envelope( ctx, dest, time, 0.005, level * 1.3, Math.min( length, 0.4 ), 0.8 )
-				osc( ctx, 'triangle', freq, env.gain, time, env.end )
-				osc( ctx, 'sine', freq * 2, env.gain, time, env.end )
+				const env = envelope( ctx, dest, time, 0.004, level * 1.4, Math.min( length, 0.5 ), 1 )
+				const carrier = osc( ctx, 'sine', freq, env.gain, time, env.end )
+				const depth = ctx.createGain()
+				depth.gain.setValueAtTime( freq * ( 0.6 + velocity ), time )
+				depth.gain.exponentialRampToValueAtTime( Math.max( 1, freq * 0.08 ), time + 0.7 )
+				depth.connect( carrier.frequency )
+				osc( ctx, 'sine', freq, depth, time, env.end )
 			}
 
 		}
@@ -128,9 +143,25 @@ namespace $ {
 		osc( ctx, 'square', accent ? 1760 : 1320, env.gain, time, env.end )
 	}
 
-	export function $bog_doodle_synth_bus( ctx: BaseAudioContext ) {
+	export function $bog_doodle_synth_room( ctx: BaseAudioContext, seconds: number ) {
+		const rate = ctx.sampleRate
+		const frames = Math.round( rate * seconds )
+		const buffer = ctx.createBuffer( 2, frames, rate )
+		let seed = 1
+		const noise = ()=> ( seed = ( seed * 16807 ) % 2147483647 ) / 1073741823.5 - 1
+		for( let channel = 0; channel < 2; ++channel ) {
+			const data = buffer.getChannelData( channel )
+			for( let i = 0; i < frames; ++i ) {
+				const t = i / frames
+				data[ i ] = noise() * ( 1 - t ) ** 3 * Math.min( 1, i / ( rate * 0.01 ) )
+			}
+		}
+		return buffer
+	}
+
+	export function $bog_doodle_synth_bus( ctx: BaseAudioContext, room = 2 ) {
 		const master = ctx.createGain()
-		master.gain.setValueAtTime( 0.6, 0 )
+		master.gain.setValueAtTime( 0.55, 0 )
 		const limit = ctx.createDynamicsCompressor()
 		limit.threshold.setValueAtTime( -6, 0 )
 		limit.knee.setValueAtTime( 6, 0 )
@@ -138,6 +169,15 @@ namespace $ {
 		limit.attack.setValueAtTime( 0.002, 0 )
 		limit.release.setValueAtTime( 0.15, 0 )
 		master.connect( limit )
+		if( room > 0 ) {
+			const reverb = ctx.createConvolver()
+			reverb.buffer = $bog_doodle_synth_room( ctx, room )
+			const wet = ctx.createGain()
+			wet.gain.setValueAtTime( 0.22, 0 )
+			master.connect( reverb )
+			reverb.connect( wet )
+			wet.connect( limit )
+		}
 		limit.connect( ctx.destination )
 		return master
 	}

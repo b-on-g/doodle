@@ -61,6 +61,16 @@ $bog_doodle_app $mol_view
 					sub <= play_icon /
 						<= Play_icon $mol_icon_play
 						<= Stop_icon $mol_icon_stop
+				<= Tempo_quick $mol_view
+					sub /
+						<= Tempo_slider $bog_doodle_slider
+							hint @ \Tempo: playback speed
+							value? <=> bpm_value? 100
+							min 40
+							max 220
+						<= Tempo_value $mol_view
+							sub /
+								<= bpm_label \
 				<= Undo $mol_button_minor
 					hint @ \Undo (Ctrl+Z)
 					enabled <= undo_enabled false

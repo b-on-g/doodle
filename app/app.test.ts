@@ -260,6 +260,14 @@ namespace $.$$ {
 			$mol_assert_equal( view.piece().patterns[ 0 ].length, 0 )
 		},
 
+		'tempo slider in the bar changes playback speed'( $ ) {
+			const view = app( $ )
+			view.Tempo_slider().value( 150 )
+			$mol_assert_equal( view.piece().bpm, 150 )
+			$mol_assert_equal( view.bpm_label(), '150 bpm' )
+			$mol_assert_equal( view.Player().bar_time(), 1.6 )
+		},
+
 		'layer opacity is stored per layer'( $ ) {
 			const view = app( $ )
 			const id = view.layer_default()

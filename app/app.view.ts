@@ -573,6 +573,10 @@ namespace $.$$ {
 			return this.piece().bpm
 		}
 
+		bpm_label() {
+			return this.piece().bpm + ' bpm'
+		}
+
 		bars_value( next?: string ) {
 			if( next !== undefined ) this.piece_patch( { bars: Number( next ) } )
 			return String( this.piece().bars )

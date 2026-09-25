@@ -101,7 +101,7 @@ namespace $ {
 			if( this.audio ) return this.audio
 			const Context = ( this.$.$mol_dom_context as any ).AudioContext as typeof AudioContext
 			this.audio = new Context( { latencyHint: 'playback' } )
-			this.bus = $bog_doodle_synth_bus( this.audio )
+			this.bus = $bog_doodle_synth_bus( this.audio, this.weak() ? 1.2 : 2 )
 			return this.audio
 		}
 

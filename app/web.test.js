@@ -4128,6 +4128,29 @@ var $;
             const player = $bog_doodle_player.make({ $, piece: () => piece(true), pattern: () => 1 });
             $mol_assert_like(player.midi_notes().map(n => [n.time, n.midi]), [[0, 60], [6, 72]]);
         },
+        'voice budget refuses notes beyond the limit and frees ended ones'($) {
+            const player = $bog_doodle_player.make({ $, piece: () => piece(false) });
+            player.max_voices = () => 2;
+            $mol_assert_ok(player.voice_take(0, 1));
+            $mol_assert_ok(player.voice_take(0, 2));
+            $mol_assert_not(player.voice_take(0.5, 3));
+            $mol_assert_ok(player.voice_take(1.5, 3));
+        },
+        'after a stall missed steps are skipped, not played in a burst'($) {
+            const player = $bog_doodle_player.make({ $, piece: () => ({ ...piece(false), bpm: 120, bars: 1, grid: '8' }) });
+            player.base = 1;
+            player.step = 0;
+            $mol_assert_equal(player.catch_up(0.5), 0);
+            $mol_assert_equal(player.catch_up(1.6), 3);
+            $mol_assert_equal(player.step, 3);
+            $mol_assert_ok(player.base > 1.6);
+        },
+        'weak devices get fewer voices'($) {
+            const player = $bog_doodle_player.make({ $, piece: () => piece(false) });
+            player.weak = () => true;
+            $mol_assert_equal(player.step_voices(), 6);
+            $mol_assert_equal(player.max_voices(), 16);
+        },
     });
 })($ || ($ = {}));
 

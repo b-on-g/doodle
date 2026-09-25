@@ -6316,6 +6316,13 @@ declare namespace $ {
         events(pattern: number): Map<number, $bog_doodle_score_event[]>;
         from: number;
         order(from?: number): number[];
+        weak(): boolean;
+        step_voices(): number;
+        max_voices(): number;
+        voices: number[];
+        voice_take(start: number, end: number): boolean;
+        lookahead(): number;
+        catch_up(now: number): number;
         audio: AudioContext | null;
         bus: AudioNode | null;
         timer: $mol_after_timeout | null;

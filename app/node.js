@@ -8359,9 +8359,8 @@ var $;
             }
             case 2: {
                 const env = envelope(ctx, dest, time, Math.min(0.25, length / 2), level * 0.8, length, 0.6);
-                osc(ctx, 'sine', freq, env.gain, time, env.end, -7);
-                osc(ctx, 'triangle', freq, env.gain, time, env.end, 7);
-                osc(ctx, 'sine', freq * 2, env.gain, time, env.end, 3);
+                osc(ctx, 'triangle', freq, env.gain, time, env.end, -6);
+                osc(ctx, 'sine', freq * 2, env.gain, time, env.end, 5);
                 return;
             }
             case 3: {
@@ -8378,8 +8377,7 @@ var $;
                 filter.frequency.setValueAtTime(Math.min(12000, freq * 6), time);
                 filter.Q.setValueAtTime(4, time);
                 filter.connect(env.gain);
-                osc(ctx, 'square', freq, filter, time, env.end);
-                osc(ctx, 'sawtooth', freq, filter, time, env.end, 9);
+                osc(ctx, 'sawtooth', freq, filter, time, env.end);
                 return;
             }
             case 5: {
@@ -8395,8 +8393,7 @@ var $;
             default: {
                 const env = envelope(ctx, dest, time, 0.005, level * 1.3, Math.min(length, 0.4), 0.8);
                 osc(ctx, 'triangle', freq, env.gain, time, env.end);
-                const over = envelope(ctx, dest, time, 0.003, level * 0.35, 0.05, 0.3);
-                osc(ctx, 'sine', freq * 2, over.gain, time, over.end);
+                osc(ctx, 'sine', freq * 2, env.gain, time, env.end);
             }
         }
     }
@@ -8408,21 +8405,14 @@ var $;
     $.$bog_doodle_synth_click = $bog_doodle_synth_click;
     function $bog_doodle_synth_bus(ctx) {
         const master = ctx.createGain();
-        master.gain.setValueAtTime(0.7, 0);
-        const comp = ctx.createDynamicsCompressor();
-        comp.threshold.setValueAtTime(-18, 0);
-        comp.knee.setValueAtTime(12, 0);
-        comp.ratio.setValueAtTime(4, 0);
-        comp.attack.setValueAtTime(0.005, 0);
-        comp.release.setValueAtTime(0.2, 0);
+        master.gain.setValueAtTime(0.6, 0);
         const limit = ctx.createDynamicsCompressor();
-        limit.threshold.setValueAtTime(-3, 0);
-        limit.knee.setValueAtTime(0, 0);
-        limit.ratio.setValueAtTime(20, 0);
-        limit.attack.setValueAtTime(0.001, 0);
-        limit.release.setValueAtTime(0.1, 0);
-        master.connect(comp);
-        comp.connect(limit);
+        limit.threshold.setValueAtTime(-6, 0);
+        limit.knee.setValueAtTime(6, 0);
+        limit.ratio.setValueAtTime(12, 0);
+        limit.attack.setValueAtTime(0.002, 0);
+        limit.release.setValueAtTime(0.15, 0);
+        master.connect(limit);
         limit.connect(ctx.destination);
         return master;
     }
@@ -16353,7 +16343,7 @@ var $;
             return $bog_doodle_scale_notes(piece.key, piece.scale, piece.octave, piece.range);
         }
         events(pattern) {
-            const events = $bog_doodle_score_thin($bog_doodle_score(this.piece().patterns[pattern] ?? [], this.notes(), this.steps()), 10);
+            const events = $bog_doodle_score_thin($bog_doodle_score(this.piece().patterns[pattern] ?? [], this.notes(), this.steps()), this.step_voices());
             const by_step = new Map();
             for (const event of events) {
                 const list = by_step.get(event.step) ?? [];
@@ -16370,6 +16360,36 @@ var $;
                 return [Math.min(this.pattern(), count - 1)];
             return piece.patterns.map((_, index) => (Math.min(from, count - 1) + index) % count);
         }
+        weak() {
+            const nav = this.$.$mol_dom_context.navigator;
+            return (nav?.hardwareConcurrency ?? 8) <= 4 || (nav?.deviceMemory ?? 8) <= 4;
+        }
+        step_voices() {
+            return this.weak() ? 6 : 10;
+        }
+        max_voices() {
+            return this.weak() ? 16 : 32;
+        }
+        voices = [];
+        voice_take(start, end) {
+            this.voices = this.voices.filter(until => until > start);
+            if (this.voices.length >= this.max_voices())
+                return false;
+            this.voices.push(end);
+            return true;
+        }
+        lookahead() {
+            return 0.4;
+        }
+        catch_up(now) {
+            if (this.base >= now + 0.02)
+                return 0;
+            const duration = this.bar_time() / this.steps_per_bar();
+            const skipped = Math.ceil((now + 0.05 - this.base) / duration);
+            this.base += skipped * duration;
+            this.step = (this.step + skipped) % (this.steps() * this.order().length);
+            return skipped;
+        }
         audio = null;
         bus = null;
         timer = null;
@@ -16380,7 +16400,7 @@ var $;
             if (this.audio)
                 return this.audio;
             const Context = this.$.$mol_dom_context.AudioContext;
-            this.audio = new Context;
+            this.audio = new Context({ latencyHint: 'playback' });
             this.bus = $bog_doodle_synth_bus(this.audio);
             return this.audio;
         }
@@ -16392,8 +16412,9 @@ var $;
             ctx.resume();
             this.step = 0;
             this.from = this.pattern();
-            this.base = ctx.currentTime + 0.08;
+            this.base = ctx.currentTime + 0.1;
             this.marks = [];
+            this.voices = [];
             this.playing(true);
             this.tick();
         }
@@ -16411,10 +16432,11 @@ var $;
         }
         tick() {
             const ctx = this.context();
-            const ahead = ctx.currentTime + 0.2;
+            this.catch_up(ctx.currentTime);
+            const ahead = ctx.currentTime + this.lookahead();
             while (this.base < ahead)
                 this.schedule(ctx);
-            this.timer = new this.$.$mol_after_timeout(25, () => this.tick());
+            this.timer = new this.$.$mol_after_timeout(50, () => this.tick());
         }
         schedule(ctx) {
             const steps = this.steps();
@@ -16425,7 +16447,10 @@ var $;
             const duration = this.bar_time() / per_bar;
             const time = this.base + $bog_doodle_score_time(local, per_bar, this.bar_time(), this.piece().swing) - local * duration;
             for (const event of this.events(pattern).get(local) ?? []) {
-                $bog_doodle_synth_note(ctx, this.bus, event.color, $bog_doodle_scale_freq(event.midi), time, event.length * duration * 0.95, event.velocity);
+                const length = event.length * duration * 0.95;
+                if (!this.voice_take(time, time + length + 0.8))
+                    continue;
+                $bog_doodle_synth_note(ctx, this.bus, event.color, $bog_doodle_scale_freq(event.midi), time, length, event.velocity);
             }
             const beat = per_bar / 4;
             if (this.click() && local % beat === 0) {

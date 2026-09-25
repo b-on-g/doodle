@@ -22,17 +22,25 @@ namespace $ {
 			$mol_assert_like( player.midi_notes(), [ { time: 2, length: 1, midi: 72, velocity: 1, channel: 2 } ] )
 		},
 
-		'muted layer is silent'( $ ) {
-			const muted = {
+		'every layer sounds, hidden too'( $ ) {
+			const layered = {
 				... piece( true ),
 				layers: [
-					{ id: 'l1', name: '', visible: true, audible: false },
-					{ id: 'l2', name: '', visible: true, audible: true },
+					{ id: 'l1', name: '', visible: true },
+					{ id: 'l2', name: '', visible: false },
 				],
 			}
-			muted.patterns = [ [ muted.patterns[ 0 ][ 0 ], { ... muted.patterns[ 1 ][ 0 ], layer: 'l2' } ] ]
-			const player = $bog_doodle_player.make({ $, piece: ()=> muted, pattern: ()=> 0 })
-			$mol_assert_like( player.midi_notes().map( n => n.midi ), [ 72 ] )
+			layered.patterns = [ [ layered.patterns[ 0 ][ 0 ], { ... layered.patterns[ 1 ][ 0 ], layer: 'l2' } ] ]
+			const player = $bog_doodle_player.make({ $, piece: ()=> layered, pattern: ()=> 0 })
+			$mol_assert_like( player.midi_notes().map( n => n.midi ), [ 60, 72 ] )
+		},
+
+		'chain starts from the active pattern and wraps around'( $ ) {
+			const three = { ... piece( true ), patterns: [ ... piece( true ).patterns, [] ] }
+			const player = $bog_doodle_player.make({ $, piece: ()=> three, pattern: ()=> 1 })
+			player.from = 1
+			$mol_assert_like( player.order(), [ 1, 2, 0 ] )
+			$mol_assert_like( player.order( 0 ), [ 0, 1, 2 ] )
 		},
 
 		'chain plays patterns one after another'( $ ) {

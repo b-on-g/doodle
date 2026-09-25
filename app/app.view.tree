@@ -14,6 +14,9 @@ $bog_doodle_app $mol_view
 				<= Brand $mol_view
 					sub /
 						<= title
+				<= Title_input $mol_string
+					hint @ \Без названия
+					value? <=> piece_title? \
 				<= Play $mol_button_major
 					hint @ \Играть или стоп (пробел)
 					click? <=> play_toggle? null
@@ -191,10 +194,6 @@ $bog_doodle_app $mol_view
 								hint @ \Видно
 								checked? <=> layer_visible*? true
 								Icon <= Layer_visible_icon* $mol_icon_eye
-							<= Layer_audible* $mol_check_icon
-								hint @ \Звучит
-								checked? <=> layer_audible*? true
-								Icon <= Layer_audible_icon* $mol_icon_volume_high
 							<= Layer_pick* $mol_check
 								hint @ \Рисовать на этом слое
 								checked? <=> layer_picked*? false
@@ -225,12 +224,6 @@ $bog_doodle_app $mol_view
 							<= Vibe* $mol_check
 								title <= vibe_name* \
 								checked? <=> vibe_checked*? false
-			<= Title_field $mol_labeler
-				title @ \Название
-				content /
-					<= Title_input $mol_string
-						hint @ \Без названия
-						value? <=> piece_title? \
 			<= Key_field $mol_labeler
 				title @ \Тональность
 				content /

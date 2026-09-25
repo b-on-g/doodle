@@ -36,9 +36,7 @@ namespace $ {
 
 		@ $mol_mem_key
 		events( pattern: number ) {
-			const piece = this.piece()
-			const strokes = ( piece.patterns[ pattern ] ?? [] ).filter( s => $bog_doodle_piece_layer_of( piece, s )?.audible !== false )
-			const events = $bog_doodle_score( strokes, this.notes(), this.steps() )
+			const events = $bog_doodle_score( this.piece().patterns[ pattern ] ?? [], this.notes(), this.steps() )
 			const by_step = new Map< number, $bog_doodle_score_event[] >()
 			for( const event of events ) {
 				const list = by_step.get( event.step ) ?? []
@@ -48,10 +46,13 @@ namespace $ {
 			return by_step
 		}
 
-		order() {
+		from = 0
+
+		order( from = this.from ) {
 			const piece = this.piece()
-			if( !piece.chain ) return [ Math.min( this.pattern(), piece.patterns.length - 1 ) ]
-			return piece.patterns.map( ( _, index ) => index )
+			const count = piece.patterns.length
+			if( !piece.chain ) return [ Math.min( this.pattern(), count - 1 ) ]
+			return piece.patterns.map( ( _, index ) => ( Math.min( from, count - 1 ) + index ) % count )
 		}
 
 		audio = null as AudioContext | null
@@ -78,6 +79,7 @@ namespace $ {
 			const ctx = this.context()
 			ctx.resume()
 			this.step = 0
+			this.from = this.pattern()
 			this.base = ctx.currentTime + 0.08
 			this.marks = []
 			this.playing( true )
@@ -150,7 +152,7 @@ namespace $ {
 
 		async render( loops: number ) {
 			const steps = this.steps()
-			const order = this.order()
+			const order = this.order( 0 )
 			const per_bar = this.steps_per_bar()
 			const bar_time = this.bar_time()
 			const duration = bar_time / per_bar
@@ -177,7 +179,7 @@ namespace $ {
 			const steps = this.steps()
 			const beat_steps = this.steps_per_bar() / 4
 			const notes = [] as $bog_doodle_midi_note[]
-			this.order().forEach( ( pattern, index ) => {
+			this.order( 0 ).forEach( ( pattern, index ) => {
 				for( const events of this.events( pattern ).values() ) {
 					for( const event of events ) notes.push( {
 						time: ( index * steps + event.step ) / beat_steps,

@@ -31,6 +31,15 @@ namespace $.$$ {
 			},
 		},
 
+		Title_input: {
+			flex: {
+				grow: 0,
+				shrink: 1,
+				basis: '12rem',
+			},
+			minWidth: '7rem',
+		},
+
 		Tools: {
 			border: {
 				radius: $mol_gap.round,

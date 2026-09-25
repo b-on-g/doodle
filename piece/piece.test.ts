@@ -34,8 +34,8 @@ namespace $ {
 				... $bog_doodle_piece_empty(),
 				axis: 'time_x' as const,
 				layers: [
-					{ id: 'l1', name: 'Бас', visible: true, audible: false },
-					{ id: 'l2', name: '', visible: false, audible: true },
+					{ id: 'l1', name: 'Бас', visible: true },
+					{ id: 'l2', name: '', visible: false },
 				],
 				patterns: [ [ { id: 'a', color: 2, ink: '#3399ff', size: 2.5, layer: 'l2', points: [ 0.5, 0.5, 0.5 ] } ] ],
 			}

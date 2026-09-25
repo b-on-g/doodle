@@ -166,10 +166,9 @@ namespace $.$$ {
 			draw( view, 20 )
 			$mol_assert_equal( view.piece().patterns[ 0 ][ 1 ].layer, top )
 
-			view.layer_audible( top, false )
-			$mol_assert_equal( view.Player().midi_notes().length, 1 )
 			view.layer_visible( top, false )
 			$mol_assert_like( view.layer_order(), [ view.layer_default() ] )
+			$mol_assert_equal( view.Player().midi_notes().length, 2 )
 
 			view.layer_name( 'Мелодия' )
 			$mol_assert_equal( view.layer_title( top ), 'Мелодия' )
@@ -208,6 +207,26 @@ namespace $.$$ {
 			view.draw_sound( true )
 			draw( view, 50 )
 			$mol_assert_ok( sounded.length > 0 )
+		},
+
+		'chain playback drags the editor to the playing pattern'( $ ) {
+			const view = app( $ )
+			draw( view, 90 )
+			view.pattern_add()
+			view.pattern_checked( 0, true )
+			view.Player().playhead = ()=> ( { pattern: 1, x: 0.5 } )
+			$mol_assert_equal( view.playhead(), null )
+			$mol_assert_equal( view.pattern(), 0 )
+			view.chain( true )
+			$mol_assert_equal( view.playhead(), 0.5 )
+			$mol_assert_equal( view.pattern(), 1 )
+		},
+
+		'title lives in the top bar'( $ ) {
+			const view = app( $ )
+			$mol_assert_ok( view.Bar().sub().includes( view.Title_input() ) )
+			view.Title_input().value( 'Дождь' )
+			$mol_assert_equal( view.piece().title, 'Дождь' )
 		},
 
 	})

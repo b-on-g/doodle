@@ -653,7 +653,7 @@ namespace $.$$ {
 
 		@ $mol_mem
 		animating() {
-			if( this.playing() && !this.animate ) this.loop()
+			if( this.playing() && !this.animate ) this.animate = new this.$.$mol_after_frame( ()=> this.loop() )
 			return null
 		}
 

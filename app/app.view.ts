@@ -124,7 +124,14 @@ namespace $.$$ {
 
 		playhead() {
 			const head = this.Player().playhead()
-			return head && head.pattern === this.pattern() ? head.x : null
+			if( !head ) return null
+			if( head.pattern !== this.pattern() && this.piece().chain ) this.pattern_follow( head.pattern )
+			return head.pattern === this.pattern() ? head.x : null
+		}
+
+		pattern_follow( index: number ) {
+			this.pattern( index )
+			this.selected( [] )
 		}
 
 		play_toggle() {
@@ -452,19 +459,9 @@ namespace $.$$ {
 			return this.layers()[ this.layer_index( id ) ]?.visible ?? true
 		}
 
-		layer_audible( id: string, next?: boolean ) {
-			if( next !== undefined ) this.layer_patch( id, { audible: next } )
-			return this.layers()[ this.layer_index( id ) ]?.audible ?? true
-		}
-
 		@ $mol_mem_key
 		Layer_visible_icon( id: string ) {
 			return this.layer_visible( id ) ? new this.$.$mol_icon_eye : new this.$.$mol_icon_eye_off
-		}
-
-		@ $mol_mem_key
-		Layer_audible_icon( id: string ) {
-			return this.layer_audible( id ) ? new this.$.$mol_icon_volume_high : new this.$.$mol_icon_volume_off
 		}
 
 		layer_picked( id: string, next?: boolean ) {
@@ -478,7 +475,7 @@ namespace $.$$ {
 
 		layer_add() {
 			const id = 'l' + $bog_doodle_sketch_stroke_id()
-			this.piece_patch( { layers: [ ... this.layers(), { id, name: '', visible: true, audible: true } ] } )
+			this.piece_patch( { layers: [ ... this.layers(), { id, name: '', visible: true } ] } )
 			this.layer_active( id )
 			this.selected( [] )
 		}

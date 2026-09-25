@@ -21,7 +21,6 @@ namespace $ {
 		id: string
 		name: string
 		visible: boolean
-		audible: boolean
 	}
 
 	export type $bog_doodle_piece_axis = 'time_x' | 'time_y'
@@ -45,7 +44,7 @@ namespace $ {
 			patterns: [ [] ],
 			chain: false,
 			back: '',
-			layers: [ { id: 'l1', name: '', visible: true, audible: true } ],
+			layers: [ { id: 'l1', name: '', visible: true } ],
 			axis: 'time_y',
 		}
 	}
@@ -90,7 +89,7 @@ namespace $ {
 			w: piece.swing,
 			c: piece.chain ? 1 : 0,
 			a: piece.axis,
-			l: piece.layers.map( l => [ l.id, l.name, l.visible ? 1 : 0, l.audible ? 1 : 0 ] ),
+			l: piece.layers.map( l => [ l.id, l.name, l.visible ? 1 : 0 ] ),
 			p: piece.patterns.map( strokes => strokes.map( s => [
 				s.color,
 				points_pack( s.points ),
@@ -121,11 +120,10 @@ namespace $ {
 		const raw = JSON.parse( str )
 		const empty = $bog_doodle_piece_empty()
 		const patterns = ( raw.p as ( string | unknown[] )[][] ?? [ [] ] ).map( strokes => strokes.map( stroke_unpack ) )
-		const layers = ( raw.l as unknown[][] ?? [] ).map( ( [ id, name, visible, audible ] ) => ( {
+		const layers = ( raw.l as unknown[][] ?? [] ).map( ( [ id, name, visible ] ) => ( {
 			id: String( id ),
 			name: String( name ?? '' ),
 			visible: Boolean( visible ),
-			audible: Boolean( audible ),
 		} ) )
 		return {
 			... empty,

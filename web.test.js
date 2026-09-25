@@ -2643,8 +2643,8 @@ var $;
                 ...$bog_doodle_piece_empty(),
                 axis: 'time_x',
                 layers: [
-                    { id: 'l1', name: 'Бас', visible: true, audible: false },
-                    { id: 'l2', name: '', visible: false, audible: true },
+                    { id: 'l1', name: 'Бас', visible: true },
+                    { id: 'l2', name: '', visible: false },
                 ],
                 patterns: [[{ id: 'a', color: 2, ink: '#3399ff', size: 2.5, layer: 'l2', points: [0.5, 0.5, 0.5] }]],
             };
@@ -3232,52 +3232,6 @@ var $;
 ;
 "use strict";
 var $;
-(function ($_1) {
-    var $$;
-    (function ($$) {
-        $mol_test({
-            'handle clicks by default'($) {
-                let clicked = false;
-                const clicker = $mol_button.make({
-                    $,
-                    click: (event) => { clicked = true; },
-                });
-                const element = clicker.dom_tree();
-                const event = $mol_dom_context.document.createEvent('mouseevent');
-                event.initEvent('click', true, true);
-                element.dispatchEvent(event);
-                $mol_assert_ok(clicked);
-            },
-            'no handle clicks if disabled'($) {
-                let clicked = false;
-                const clicker = $mol_button.make({
-                    $,
-                    click: (event) => { clicked = true; },
-                    enabled: () => false,
-                });
-                const element = clicker.dom_tree();
-                const event = $mol_dom_context.document.createEvent('mouseevent');
-                event.initEvent('click', true, true);
-                element.dispatchEvent(event);
-                $mol_assert_not(clicked);
-            },
-            async 'Store error'($) {
-                const clicker = $mol_button.make({
-                    $,
-                    click: (event) => $.$mol_fail(new Error('Test error')),
-                });
-                const event = $mol_dom_context.document.createEvent('mouseevent');
-                $mol_assert_fail(() => clicker.event_activate(event), 'Test error');
-                await Promise.resolve();
-                $mol_assert_equal(clicker.status()[0].message, 'Test error');
-            },
-        });
-    })($$ = $_1.$$ || ($_1.$$ = {}));
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
 (function ($) {
     class TestClass extends Uint8Array {
     }
@@ -3377,6 +3331,52 @@ var $;
         ], $mol_locale_mock, "source", null);
         $.$mol_locale = $mol_locale_mock;
     });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    var $$;
+    (function ($$) {
+        $mol_test({
+            'handle clicks by default'($) {
+                let clicked = false;
+                const clicker = $mol_button.make({
+                    $,
+                    click: (event) => { clicked = true; },
+                });
+                const element = clicker.dom_tree();
+                const event = $mol_dom_context.document.createEvent('mouseevent');
+                event.initEvent('click', true, true);
+                element.dispatchEvent(event);
+                $mol_assert_ok(clicked);
+            },
+            'no handle clicks if disabled'($) {
+                let clicked = false;
+                const clicker = $mol_button.make({
+                    $,
+                    click: (event) => { clicked = true; },
+                    enabled: () => false,
+                });
+                const element = clicker.dom_tree();
+                const event = $mol_dom_context.document.createEvent('mouseevent');
+                event.initEvent('click', true, true);
+                element.dispatchEvent(event);
+                $mol_assert_not(clicked);
+            },
+            async 'Store error'($) {
+                const clicker = $mol_button.make({
+                    $,
+                    click: (event) => $.$mol_fail(new Error('Test error')),
+                });
+                const event = $mol_dom_context.document.createEvent('mouseevent');
+                $mol_assert_fail(() => clicker.event_activate(event), 'Test error');
+                await Promise.resolve();
+                $mol_assert_equal(clicker.status()[0].message, 'Test error');
+            },
+        });
+    })($$ = $_1.$$ || ($_1.$$ = {}));
 })($ || ($ = {}));
 
 ;
@@ -3955,17 +3955,24 @@ var $;
             const player = $bog_doodle_player.make({ $, piece: () => piece(false), pattern: () => 1 });
             $mol_assert_like(player.midi_notes(), [{ time: 2, length: 1, midi: 72, velocity: 1, channel: 2 }]);
         },
-        'muted layer is silent'($) {
-            const muted = {
+        'every layer sounds, hidden too'($) {
+            const layered = {
                 ...piece(true),
                 layers: [
-                    { id: 'l1', name: '', visible: true, audible: false },
-                    { id: 'l2', name: '', visible: true, audible: true },
+                    { id: 'l1', name: '', visible: true },
+                    { id: 'l2', name: '', visible: false },
                 ],
             };
-            muted.patterns = [[muted.patterns[0][0], { ...muted.patterns[1][0], layer: 'l2' }]];
-            const player = $bog_doodle_player.make({ $, piece: () => muted, pattern: () => 0 });
-            $mol_assert_like(player.midi_notes().map(n => n.midi), [72]);
+            layered.patterns = [[layered.patterns[0][0], { ...layered.patterns[1][0], layer: 'l2' }]];
+            const player = $bog_doodle_player.make({ $, piece: () => layered, pattern: () => 0 });
+            $mol_assert_like(player.midi_notes().map(n => n.midi), [60, 72]);
+        },
+        'chain starts from the active pattern and wraps around'($) {
+            const three = { ...piece(true), patterns: [...piece(true).patterns, []] };
+            const player = $bog_doodle_player.make({ $, piece: () => three, pattern: () => 1 });
+            player.from = 1;
+            $mol_assert_like(player.order(), [1, 2, 0]);
+            $mol_assert_like(player.order(0), [0, 1, 2]);
         },
         'chain plays patterns one after another'($) {
             const player = $bog_doodle_player.make({ $, piece: () => piece(true), pattern: () => 1 });
@@ -4156,10 +4163,9 @@ var $;
                 $mol_assert_equal(view.layer_rows()[0], view.Layer(top));
                 draw(view, 20);
                 $mol_assert_equal(view.piece().patterns[0][1].layer, top);
-                view.layer_audible(top, false);
-                $mol_assert_equal(view.Player().midi_notes().length, 1);
                 view.layer_visible(top, false);
                 $mol_assert_like(view.layer_order(), [view.layer_default()]);
+                $mol_assert_equal(view.Player().midi_notes().length, 2);
                 view.layer_name('Мелодия');
                 $mol_assert_equal(view.layer_title(top), 'Мелодия');
                 view.layer_drop(top);
@@ -4193,6 +4199,24 @@ var $;
                 view.draw_sound(true);
                 draw(view, 50);
                 $mol_assert_ok(sounded.length > 0);
+            },
+            'chain playback drags the editor to the playing pattern'($) {
+                const view = app($);
+                draw(view, 90);
+                view.pattern_add();
+                view.pattern_checked(0, true);
+                view.Player().playhead = () => ({ pattern: 1, x: 0.5 });
+                $mol_assert_equal(view.playhead(), null);
+                $mol_assert_equal(view.pattern(), 0);
+                view.chain(true);
+                $mol_assert_equal(view.playhead(), 0.5);
+                $mol_assert_equal(view.pattern(), 1);
+            },
+            'title lives in the top bar'($) {
+                const view = app($);
+                $mol_assert_ok(view.Bar().sub().includes(view.Title_input()));
+                view.Title_input().value('Дождь');
+                $mol_assert_equal(view.piece().title, 'Дождь');
             },
         });
     })($$ = $_1.$$ || ($_1.$$ = {}));

@@ -4018,12 +4018,14 @@ var $;
             clientY: y,
             preventDefault() { },
         });
+        let sounded = [];
         const app = ($) => {
+            sounded = [];
             const app = $bog_doodle_app.make({ $ });
             const board = app.Board();
             board.rect = () => ({ left: 0, top: 0, width: 100, height: 100 });
             board.redraw = () => { };
-            app.note_preview = (next) => next ?? null;
+            app.note_sound = (midi) => { sounded.push(midi); };
             return app;
         };
         const draw = (app, y) => {
@@ -4182,6 +4184,15 @@ var $;
                 $mol_assert_equal(view.axis(), 'time_y');
                 view.axis_value('time_x');
                 $mol_assert_equal(view.Board().axis(), 'time_x');
+            },
+            'drawing is silent until the setting is on'($) {
+                const view = app($);
+                $mol_assert_not(view.draw_sound());
+                draw(view, 50);
+                $mol_assert_equal(sounded.length, 0);
+                view.draw_sound(true);
+                draw(view, 50);
+                $mol_assert_ok(sounded.length > 0);
             },
         });
     })($$ = $_1.$$ || ($_1.$$ = {}));

@@ -15458,6 +15458,16 @@ var $;
 			(obj.content) = () => ([(this.Swing_input())]);
 			return obj;
 		}
+		draw_sound(next){
+			if(next !== undefined) return next;
+			return false;
+		}
+		Draw_sound_input(){
+			const obj = new this.$.$mol_check_box();
+			(obj.title) = () => ((this.$.$mol_locale.text("$bog_doodle_app_Draw_sound_input_title")));
+			(obj.checked) = (next) => ((this.draw_sound(next)));
+			return obj;
+		}
 		click(next){
 			if(next !== undefined) return next;
 			return false;
@@ -15503,6 +15513,7 @@ var $;
 		Flags(){
 			const obj = new this.$.$mol_view();
 			(obj.sub) = () => ([
+				(this.Draw_sound_input()), 
 				(this.Click_input()), 
 				(this.Snap_input()), 
 				(this.Pen_input()), 
@@ -15923,6 +15934,8 @@ var $;
 	($mol_mem(($.$bog_doodle_app.prototype), "swing_value"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Swing_input"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Swing_field"));
+	($mol_mem(($.$bog_doodle_app.prototype), "draw_sound"));
+	($mol_mem(($.$bog_doodle_app.prototype), "Draw_sound_input"));
 	($mol_mem(($.$bog_doodle_app.prototype), "click"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Click_input"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Snap_input"));
@@ -16865,11 +16878,17 @@ var $;
             last_note = null;
             note_preview(next) {
                 if (next !== undefined) {
-                    if (next !== null && next !== this.last_note && !this.playing())
-                        this.Player().live(this.color(), next, 0.5, 0.25);
+                    if (next !== null && next !== this.last_note && this.draw_sound() && !this.playing())
+                        this.note_sound(next);
                     this.last_note = next;
                 }
                 return this.last_note;
+            }
+            note_sound(midi) {
+                this.Player().live(this.color(), midi, 0.5, 0.25);
+            }
+            draw_sound(next) {
+                return this.pref('draw_sound', next, false);
             }
             back_id() {
                 return this.share() ? '' : this.Store().current();
@@ -17119,6 +17138,9 @@ var $;
         __decorate([
             $mol_mem
         ], $bog_doodle_app.prototype, "midi_in", null);
+        __decorate([
+            $mol_mem
+        ], $bog_doodle_app.prototype, "draw_sound", null);
         __decorate([
             $mol_mem
         ], $bog_doodle_app.prototype, "hotkeys", null);
@@ -21690,12 +21712,14 @@ var $;
             clientY: y,
             preventDefault() { },
         });
+        let sounded = [];
         const app = ($) => {
+            sounded = [];
             const app = $bog_doodle_app.make({ $ });
             const board = app.Board();
             board.rect = () => ({ left: 0, top: 0, width: 100, height: 100 });
             board.redraw = () => { };
-            app.note_preview = (next) => next ?? null;
+            app.note_sound = (midi) => { sounded.push(midi); };
             return app;
         };
         const draw = (app, y) => {
@@ -21854,6 +21878,15 @@ var $;
                 $mol_assert_equal(view.axis(), 'time_y');
                 view.axis_value('time_x');
                 $mol_assert_equal(view.Board().axis(), 'time_x');
+            },
+            'drawing is silent until the setting is on'($) {
+                const view = app($);
+                $mol_assert_not(view.draw_sound());
+                draw(view, 50);
+                $mol_assert_equal(sounded.length, 0);
+                view.draw_sound(true);
+                draw(view, 50);
+                $mol_assert_ok(sounded.length > 0);
             },
         });
     })($$ = $_1.$$ || ($_1.$$ = {}));

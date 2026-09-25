@@ -4006,6 +4006,13 @@ var $;
                 $mol_assert_ok($bog_doodle_synth_timbre(vibe.ink) >= 0);
             }
         },
+        'every vibe has its own settings'() {
+            const seen = new Set($bog_doodle_vibe_list.map(v => JSON.stringify(v.settings)));
+            $mol_assert_equal(seen.size, $bog_doodle_vibe_list.length);
+            for (const vibe of $bog_doodle_vibe_list) {
+                $mol_assert_equal($bog_doodle_vibe_current($bog_doodle_vibe_apply($bog_doodle_piece_empty(), vibe.id)), vibe.id);
+            }
+        },
     });
 })($ || ($ = {}));
 
@@ -4130,7 +4137,8 @@ var $;
                 $mol_assert_equal(view.piece().swing, 1);
                 $mol_assert_ok(view.Vibe('blues').checked());
                 $mol_assert_not(view.Vibe('calm').checked());
-                $mol_assert_equal(view.voice_name(), $bog_doodle_synth_colors[1].name);
+                $mol_assert_equal(view.voice_name(), view.color_name(1));
+                $mol_assert_ok(view.voice_name());
                 view.bpm_value(93);
                 $mol_assert_not(view.Vibe('blues').checked());
             },

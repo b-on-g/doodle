@@ -1,16 +1,21 @@
 <!doctype html>
-<html lang="ru" mol_view_root>
+<html mol_view_root>
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1" />
 		<meta name="mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-title" content="Doodle" />
+		<meta name="theme-color" content="#fbfaf6" />
 		<title>Doodle</title>
-		<link href="bog/doodle/assets/logo.svg" rel="icon" />
-		<meta name="description" content="Рисуй линии и слушай музыку. Бесплатно, без подписки, офлайн." />
+		<link rel="manifest" href="manifest.json" />
+		<link rel="icon" href="bog/doodle/assets/logo.svg" type="image/svg+xml" />
+		<link rel="apple-touch-icon" href="bog/doodle/assets/apple-touch-icon.png" />
+		<meta name="description" content="Draw lines and hear music. Free, no subscription, works offline." />
 		<meta property="og:title" content="Doodle" />
 		<meta property="og:type" content="website" />
 		<meta property="og:url" content="https://b-on-g.github.io/doodle/" />
+		<meta property="og:image" content="https://b-on-g.github.io/doodle/bog/doodle/assets/logo-512.png" />
 	</head>
 	<body mol_view_root>
 		<div mol_view_root="$bog_doodle_app"></div>

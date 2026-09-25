@@ -3311,7 +3311,6 @@ declare namespace $ {
 declare namespace $ {
     const $bog_doodle_synth_colors: {
         ink: string;
-        name: string;
     }[];
     function $bog_doodle_synth_hsl(ink: string): {
         h: number;
@@ -6254,7 +6253,6 @@ declare namespace $ {
 declare namespace $ {
     type $bog_doodle_vibe = {
         id: string;
-        name: string;
         ink: string;
         settings: Pick<$bog_doodle_piece, 'key' | 'scale' | 'octave' | 'range' | 'bpm' | 'bars' | 'grid' | 'swing'>;
     };
@@ -7759,6 +7757,45 @@ declare namespace $ {
 		title( ): string
 		untitled( ): string
 		layer_prefix( ): string
+		voice_names( ): ({ 
+			'0': string,
+			'1': string,
+			'2': string,
+			'3': string,
+			'4': string,
+			'5': string,
+		}) 
+		vibe_names( ): ({ 
+			'calm': string,
+			'sad': string,
+			'dream': string,
+			'lullaby': string,
+			'meditation': string,
+			'rain': string,
+			'sunrise': string,
+			'space': string,
+			'fairy': string,
+			'epic': string,
+			'blues': string,
+			'jazz': string,
+			'noir': string,
+			'lofi': string,
+			'funk': string,
+			'dance': string,
+			'rock': string,
+			'tango': string,
+			'march': string,
+			'celtic': string,
+			'east': string,
+			'anxiety': string,
+			'horror': string,
+			'cyber': string,
+			'game': string,
+			'impressionism': string,
+			'minimalism': string,
+			'baroque': string,
+			'avantgarde': string,
+		}) 
 		Store( ): $bog_doodle_gallery
 		plugins( ): readonly(any)[]
 		auto( ): readonly(any)[]

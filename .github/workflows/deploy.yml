@@ -1,4 +1,4 @@
-name: $bog_doodle_app
+name: $bog_doodle
 
 permissions: write-all
 
@@ -21,9 +21,38 @@ jobs:
     - uses: hyoo-ru/mam_build@master2
       with:
         package: 'bog/doodle'
-        modules: 'app'
+        modules: 'app land'
+
+    - name: Assemble site
+      run: |
+        set -euo pipefail
+        rm -rf site
+        mkdir -p site/app
+        cp -R bog/doodle/land/-/. site/
+        cp -R bog/doodle/app/-/. site/app/
+
+    - uses: b-on-g/mol-prerender-action@main
+      with:
+        folder: 'site'
+        base-url: 'https://b-on-g.github.io/doodle/'
+        viewport: '1280x800'
+
+    - name: Verify snapshot keeps the bundle
+      run: |
+        set -euo pipefail
+        grep -q '<script src="web.js"' site/index.html
+        grep -q 'bog_doodle_land_hero_title' site/index.html
+        grep -q '<script src="web.js"' site/app/index.html
 
     - uses: hyoo-ru/gh-deploy@v4.4.1
       if: github.ref == 'refs/heads/main'
       with:
-        folder: 'bog/doodle/app/-'
+        folder: 'site'
+
+    - name: URLs
+      if: github.ref == 'refs/heads/main'
+      run: |
+        {
+          echo "- landing: https://b-on-g.github.io/doodle/"
+          echo "- app: https://b-on-g.github.io/doodle/app/"
+        } >> "$GITHUB_STEP_SUMMARY"

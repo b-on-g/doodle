@@ -1,0 +1,300 @@
+$bog_doodle_land $mol_view
+	title @ \Doodle: draw music
+	app_uri \app/
+	plugins /
+		<= Theme $mol_theme_auto
+	sub /
+		<= Nav $mol_view
+			sub /
+				<= Nav_brand $mol_view
+					sub /
+						<= Nav_logo $mol_image
+							uri \bog/doodle/assets/logo.svg
+						<= Nav_name $mol_view
+							sub /
+								\Doodle
+				<= Nav_source $mol_link
+					uri \https://github.com/b-on-g/doodle
+					target \_blank
+					title @ \Source code
+				<= Nav_open $mol_link
+					uri <= app_uri
+					title @ \Open the app
+		<= Hero $mol_view
+			sub /
+				<= Hero_text $mol_view
+					sub /
+						<= Hero_badge $mol_view
+							sub /
+								<= hero_badge @ \Free forever · no account · works offline
+						<= Hero_title $mol_view
+							dom_name \h1
+							sub /
+								<= hero_title @ \Draw a line. Hear a melody.
+						<= Hero_lead $mol_view
+							dom_name \p
+							sub /
+								<= hero_lead @ \Doodle turns drawings into music. Every stroke snaps to a scale, every color is an instrument, pen pressure is volume. No notes to learn, no wrong notes to play.
+						<= Hero_actions $mol_view
+							sub /
+								<= Hero_open $mol_link
+									uri <= app_uri
+									title @ \Start drawing
+								<= Hero_how $mol_link
+									uri \#how
+									title @ \How it works
+				<= Art $mol_svg_root
+					view_box \0 0 400 300
+					aspect \xMidYMid meet
+					sub /
+						<= Art_sheet $mol_svg_rect
+							pos_x \0
+							pos_y \0
+							width \400
+							height \300
+						<= Art_grid $mol_svg_path
+							geometry \M50 0V300M100 0V300M150 0V300M200 0V300M250 0V300M300 0V300M350 0V300
+						<= Art_blue $mol_svg_path
+							geometry \M20 230 C 80 230 100 70 170 70 S 260 190 380 170
+						<= Art_violet $mol_svg_path
+							geometry \M40 110 C 90 60 130 150 190 120 S 280 60 330 100
+						<= Art_green $mol_svg_path
+							geometry \M30 270 L 370 270
+						<= Art_red $mol_svg_path
+							geometry \M300 40 l 0 0
+						<= Art_head $mol_svg_path
+							geometry \M0 0V300
+		<= Features $mol_view
+			sub /
+				<= Features_title $mol_view
+					dom_name \h2
+					sub /
+						<= features_title @ \Everything a paid app has, and then some
+				<= Feature_grid $mol_view
+					sub /
+						<= Feature_music $bog_doodle_land_card
+							Icon <= Feature_music_icon $mol_icon_music_note
+							head @ \Drawing is music
+							text @ \One axis is time, the other is pitch. Lines snap to the notes of the key you picked, so everything sounds right.
+						<= Feature_color $bog_doodle_land_card
+							Icon <= Feature_color_icon $mol_icon_palette
+							head @ \Any color, any voice
+							text @ \Pick any color from a full picker. Its hue chooses the instrument: piano, pluck, pad, marimba, lead or bell.
+						<= Feature_pen $bog_doodle_land_card
+							Icon <= Feature_pen_icon $mol_icon_brush
+							head @ \Real drawing tools
+							text @ \Pen pressure, smooth strokes, brush and eraser sizes, selection, undo, zoom and pan, palm rejection for tablets.
+						<= Feature_layers $bog_doodle_land_card
+							Icon <= Feature_layers_icon $mol_icon_layers
+							head @ \Layers and patterns
+							text @ \Keep bass and melody on separate layers. Chain patterns into verse and chorus and let the editor follow the music.
+						<= Feature_moods $bog_doodle_land_card
+							Icon <= Feature_moods_icon $mol_icon_tune
+							head @ \Moods instead of theory
+							text @ \Pick a mood from calm to cyberpunk and the scale, tempo, swing and instrument are set for you.
+						<= Feature_offline $bog_doodle_land_card
+							Icon <= Feature_offline_icon $mol_icon_cloud_off_outline
+							head @ \Works offline
+							text @ \Install it to your home screen. Drawings stay on your device, the app runs without a network.
+						<= Feature_export $bog_doodle_land_card
+							Icon <= Feature_export_icon $mol_icon_download
+							head @ \Export for free
+							text @ \Save your piece as WAV audio, a MIDI file for your DAW, or a PNG picture. No watermark, no paywall.
+						<= Feature_share $bog_doodle_land_card
+							Icon <= Feature_share_icon $mol_icon_share_variant
+							head @ \Share a link
+							text @ \The whole drawing fits into a link. Send it and your friend hears and edits it, no server and no sign up.
+		<= Moods $mol_view
+			sub /
+				<= Moods_title $mol_view
+					dom_name \h2
+					sub /
+						<= moods_title @ \Art comes in every mood
+				<= Moods_lead $mol_view
+					dom_name \p
+					sub /
+						<= moods_lead @ \Twenty nine presets, from a lullaby to the avant-garde. One tap and you are in the right key.
+				<= Mood_list $mol_view
+					sub /
+						<= Mood_calm $mol_view
+							sub /
+								<= mood_calm @ \Calm
+						<= Mood_rain $mol_view
+							sub /
+								<= mood_rain @ \Rain
+						<= Mood_space $mol_view
+							sub /
+								<= mood_space @ \Space
+						<= Mood_noir $mol_view
+							sub /
+								<= mood_noir @ \Noir
+						<= Mood_lofi $mol_view
+							sub /
+								<= mood_lofi @ \Lo-fi
+						<= Mood_jazz $mol_view
+							sub /
+								<= mood_jazz @ \Jazz
+						<= Mood_tango $mol_view
+							sub /
+								<= mood_tango @ \Tango
+						<= Mood_celtic $mol_view
+							sub /
+								<= mood_celtic @ \Celtic
+						<= Mood_horror $mol_view
+							sub /
+								<= mood_horror @ \Horror
+						<= Mood_cyber $mol_view
+							sub /
+								<= mood_cyber @ \Cyberpunk
+						<= Mood_impressionism $mol_view
+							sub /
+								<= mood_impressionism @ \Impressionism
+						<= Mood_baroque $mol_view
+							sub /
+								<= mood_baroque @ \Baroque
+						<= Mood_avantgarde $mol_view
+							sub /
+								<= mood_avantgarde @ \Avant-garde
+		<= How $mol_view
+			attr *
+				^
+				id \how
+			sub /
+				<= How_title $mol_view
+					dom_name \h2
+					sub /
+						<= how_title @ \Three steps to your first song
+				<= Steps $mol_view
+					sub /
+						<= Step_mood $bog_doodle_land_step
+							num \1
+							head @ \Pick a mood
+							text @ \Calm, blues, pixel game or baroque. It sets the key, scale and tempo.
+						<= Step_draw $bog_doodle_land_step
+							num \2
+							head @ \Draw
+							text @ \Waves, dots, zigzags. Press harder for louder, change color for a new instrument.
+						<= Step_play $bog_doodle_land_step
+							num \3
+							head @ \Play and share
+							text @ \Hit play, stack patterns into a song, export WAV or MIDI, or send a link.
+		<= Compare $mol_view
+			sub /
+				<= Compare_title $mol_view
+					dom_name \h2
+					sub /
+						<= compare_title @ \No subscription. Really.
+				<= Compare_table $mol_view
+					sub /
+						<= Compare_head $bog_doodle_land_row
+							name \
+							ours @ \Doodle
+							theirs @ \Typical paid app
+						<= Compare_price $bog_doodle_land_row
+							name @ \Price
+							ours @ \Free
+							theirs @ \Subscription or unlock
+						<= Compare_export $bog_doodle_land_row
+							name @ \WAV and MIDI export
+							ours @ \Yes
+							theirs @ \Paid
+						<= Compare_colors $bog_doodle_land_row
+							name @ \Any color as an instrument
+							ours @ \Yes
+							theirs @ \Fixed palette
+						<= Compare_layers $bog_doodle_land_row
+							name @ \Layers, undo, eraser size
+							ours @ \Yes
+							theirs @ \Rarely
+						<= Compare_offline $bog_doodle_land_row
+							name @ \Works offline
+							ours @ \Yes
+							theirs @ \Often not
+						<= Compare_account $bog_doodle_land_row
+							name @ \Account needed
+							ours @ \No
+							theirs @ \Often
+		<= Faq $mol_view
+			sub /
+				<= Faq_title $mol_view
+					dom_name \h2
+					sub /
+						<= faq_title @ \Questions
+				<= Faq_free $bog_doodle_land_faq
+					head @ \Is it really free?
+					text @ \Yes. No ads, no subscription, no locked features. The code is open under the MIT license.
+				<= Faq_music $bog_doodle_land_faq
+					head @ \Do I need to know music theory?
+					text @ \No. Pick a mood and draw. The notes always come from the chosen scale, so nothing sounds off.
+				<= Faq_devices $bog_doodle_land_faq
+					head @ \Which devices does it run on?
+					text @ \Any modern browser: phone, tablet with a pen, laptop. Install it from the browser menu to use it like an app.
+				<= Faq_data $bog_doodle_land_faq
+					head @ \Where are my drawings stored?
+					text @ \Only on your device. Nothing is uploaded unless you share a link yourself.
+		<= Final $mol_view
+			sub /
+				<= Final_title $mol_view
+					dom_name \h2
+					sub /
+						<= final_title @ \Your next melody is one line away
+				<= Final_open $mol_link
+					uri <= app_uri
+					title @ \Open Doodle
+		<= Foot $mol_view
+			sub /
+				<= foot_text @ \Doodle is free and open source. MIT license.
+				<= Foot_source $mol_link
+					uri \https://github.com/b-on-g/doodle
+					target \_blank
+					title \GitHub
+
+$bog_doodle_land_card $mol_view
+	sub /
+		<= Icon $mol_icon
+		<= Head $mol_view
+			dom_name \h3
+			sub /
+				<= head \
+		<= Text $mol_view
+			dom_name \p
+			sub /
+				<= text \
+
+$bog_doodle_land_step $mol_view
+	sub /
+		<= Num $mol_view
+			sub /
+				<= num \
+		<= Head $mol_view
+			dom_name \h3
+			sub /
+				<= head \
+		<= Text $mol_view
+			dom_name \p
+			sub /
+				<= text \
+
+$bog_doodle_land_row $mol_view
+	sub /
+		<= Name $mol_view
+			sub /
+				<= name \
+		<= Ours $mol_view
+			sub /
+				<= ours \
+		<= Theirs $mol_view
+			sub /
+				<= theirs \
+
+$bog_doodle_land_faq $mol_view
+	dom_name \details
+	sub /
+		<= Head $mol_view
+			dom_name \summary
+			sub /
+				<= head \
+		<= Text $mol_view
+			dom_name \p
+			sub /
+				<= text \

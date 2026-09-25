@@ -56,6 +56,85 @@ namespace $ {
 		return Math.random().toString( 36 ).slice( 2, 10 )
 	}
 
+	export function $bog_doodle_sketch_simplify( points: readonly number[], tolerance: number ) {
+		const count = points.length / 3
+		if( count < 3 ) return points
+		const keep = new Uint8Array( count )
+		keep[ 0 ] = keep[ count - 1 ] = 1
+		const stack = [ [ 0, count - 1 ] ]
+		while( stack.length ) {
+			const [ from, to ] = stack.pop()!
+			const ax = points[ from * 3 ], ay = points[ from * 3 + 1 ]
+			const bx = points[ to * 3 ], by = points[ to * 3 + 1 ]
+			const len = Math.hypot( bx - ax, by - ay ) || 1e-9
+			let far = -1, dist = tolerance
+			for( let i = from + 1; i < to; ++i ) {
+				const px = points[ i * 3 ], py = points[ i * 3 + 1 ]
+				const d = Math.abs( ( bx - ax ) * ( ay - py ) - ( ax - px ) * ( by - ay ) ) / len
+				const dp = Math.abs( points[ i * 3 + 2 ] - points[ from * 3 + 2 ] )
+				const score = Math.max( d, dp * tolerance * 4 )
+				if( score > dist ) {
+					dist = score
+					far = i
+				}
+			}
+			if( far < 0 ) continue
+			keep[ far ] = 1
+			stack.push( [ from, far ], [ far, to ] )
+		}
+		const result = [] as number[]
+		for( let i = 0; i < count; ++i ) {
+			if( keep[ i ] ) result.push( points[ i * 3 ], points[ i * 3 + 1 ], points[ i * 3 + 2 ] )
+		}
+		return result
+	}
+
+	export function $bog_doodle_sketch_resample( points: readonly number[], step: number ) {
+		if( points.length <= 3 ) return points.slice()
+		const result = [ points[ 0 ], points[ 1 ], points[ 2 ] ]
+		for( let i = 3; i < points.length; i += 3 ) {
+			const x0 = points[ i - 3 ], y0 = points[ i - 2 ], p0 = points[ i - 1 ]
+			const x1 = points[ i ], y1 = points[ i + 1 ], p1 = points[ i + 2 ]
+			const parts = Math.max( 1, Math.ceil( Math.hypot( x1 - x0, y1 - y0 ) / step ) )
+			for( let k = 1; k <= parts; ++k ) {
+				const t = k / parts
+				result.push( x0 + ( x1 - x0 ) * t, y0 + ( y1 - y0 ) * t, p0 + ( p1 - p0 ) * t )
+			}
+		}
+		return result
+	}
+
+	export function $bog_doodle_sketch_cut( stroke: $bog_doodle_sketch_stroke, inside: ( x: number, y: number )=> boolean, step: number ) {
+		const points = $bog_doodle_sketch_resample( stroke.points, step )
+		const runs = [] as { inside: boolean, points: number[] }[]
+		for( let i = 0; i < points.length; i += 3 ) {
+			const flag = inside( points[ i ], points[ i + 1 ] )
+			const last = runs[ runs.length - 1 ]
+			if( last && last.inside === flag ) last.points.push( points[ i ], points[ i + 1 ], points[ i + 2 ] )
+			else runs.push( { inside: flag, points: [ points[ i ], points[ i + 1 ], points[ i + 2 ] ] } )
+		}
+		if( runs.length === 1 ) return runs[ 0 ].inside ? { inside: [ stroke ], outside: [] } : { inside: [], outside: [ stroke ] }
+		const piece = ( run: { points: number[] } ) => ( {
+			... stroke,
+			id: $bog_doodle_sketch_stroke_id(),
+			points: $bog_doodle_sketch_simplify( run.points, step / 4 ),
+		} )
+		const single = stroke.points.length <= 3
+		return {
+			inside: runs.filter( run => run.inside && ( single || run.points.length > 3 ) ).map( piece ),
+			outside: runs.filter( run => !run.inside && ( single || run.points.length > 3 ) ).map( piece ),
+		}
+	}
+
+	export function $bog_doodle_sketch_polygon_has( polygon: readonly number[], x: number, y: number ) {
+		let has = false
+		for( let i = 0, j = polygon.length - 2; i < polygon.length; j = i, i += 2 ) {
+			const xi = polygon[ i ], yi = polygon[ i + 1 ], xj = polygon[ j ], yj = polygon[ j + 1 ]
+			if( ( yi > y ) !== ( yj > y ) && x < ( xj - xi ) * ( y - yi ) / ( yj - yi ) + xi ) has = !has
+		}
+		return has
+	}
+
 	export class $bog_doodle_sketch extends $mol_object {
 
 		@ $mol_mem
@@ -141,6 +220,40 @@ namespace $ {
 			const rest = this.strokes().filter( s => !filter( s ) )
 			if( rest.length === this.strokes().length ) return
 			this.commit( rest )
+		}
+
+		erased( x: number, y: number, radius: number, filter: ( stroke: $bog_doodle_sketch_stroke )=> boolean, strokes = this.strokes() ) {
+			const r2 = radius * radius
+			const inside = ( px: number, py: number ) => ( px - x ) ** 2 + ( py - y ) ** 2 <= r2
+			let changed = false
+			const next = [] as $bog_doodle_sketch_stroke[]
+			for( const stroke of strokes ) {
+				if( !filter( stroke ) || !$bog_doodle_sketch_stroke_near( stroke, x, y, radius ) ) {
+					next.push( stroke )
+					continue
+				}
+				changed = true
+				next.push( ... $bog_doodle_sketch_cut( stroke, inside, radius / 3 ).outside )
+			}
+			return changed ? next : strokes
+		}
+
+		lasso( polygon: readonly number[], filter: ( stroke: $bog_doodle_sketch_stroke )=> boolean ) {
+			if( polygon.length < 6 ) return []
+			const inside = ( x: number, y: number ) => $bog_doodle_sketch_polygon_has( polygon, x, y )
+			const picked = [] as string[]
+			const next = [] as $bog_doodle_sketch_stroke[]
+			for( const stroke of this.strokes() ) {
+				if( !filter( stroke ) ) {
+					next.push( stroke )
+					continue
+				}
+				const cut = $bog_doodle_sketch_cut( stroke, inside, 0.004 )
+				next.push( ... cut.outside, ... cut.inside )
+				picked.push( ... cut.inside.map( s => s.id ) )
+			}
+			if( picked.length ) this.commit( next )
+			return picked
 		}
 
 		hits( x: number, y: number, radius: number, filter: ( stroke: $bog_doodle_sketch_stroke )=> boolean = ()=> true ) {

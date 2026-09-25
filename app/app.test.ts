@@ -83,13 +83,17 @@ namespace $.$$ {
 			$mol_assert_equal( view.notes().length, 7 )
 		},
 
-		'share link opens the same piece'( $ ) {
+		async 'share link is short and opens the same piece'( $ ) {
 			const view = app( $ )
 			view.piece_title( 'Ручей' )
 			draw( view, 60 )
-			const link = view.share_link()
-			const share = link.match( /share=([^/]*)/ )![ 1 ]
-			$mol_assert_equal( $bog_doodle_piece_unpack( decodeURIComponent( share ) ).title, 'Ручей' )
+			const link = await $mol_wire_async( view ).share_link()
+			const code = decodeURIComponent( link.match( /share=([^/]*)/ )![ 1 ] )
+			$mol_assert_ok( code.startsWith( 'z' ) )
+			$mol_assert_ok( link.length < 400 )
+			const back = await $bog_doodle_share.decode( code )
+			$mol_assert_equal( back.title, 'Ручей' )
+			$mol_assert_equal( back.patterns[ 0 ].length, 1 )
 			$.$mol_state_arg.dict( {} )
 		},
 
@@ -113,9 +117,11 @@ namespace $.$$ {
 			view.tool_select( true )
 			const board = view.Board()
 			board.pointer_down( pointer( 0, 0 ) )
+			board.pointer_move( pointer( 100, 0 ) )
 			board.pointer_move( pointer( 100, 100 ) )
-			board.pointer_up( pointer( 100, 100 ) )
-			$mol_assert_equal( view.selection_tools().length, 2 )
+			board.pointer_move( pointer( 0, 100 ) )
+			board.pointer_up( pointer( 0, 100 ) )
+			$mol_assert_equal( view.selection_tools().length, 3 )
 			view.selection_copy()
 			$mol_assert_equal( view.piece().patterns[ 0 ].length, 2 )
 			view.selection_drop()
@@ -228,6 +234,39 @@ namespace $.$$ {
 			$mol_assert_ok( view.Bar().sub().includes( view.Title_input() ) )
 			view.Title_input().value( 'Дождь' )
 			$mol_assert_equal( view.piece().title, 'Дождь' )
+		},
+
+		'select all then move the whole picture'( $ ) {
+			const view = app( $ )
+			draw( view, 90 )
+			draw( view, 30 )
+			view.select_all()
+			$mol_assert_equal( view.selected().length, 2 )
+			const board = view.Board() as $bog_doodle_board
+			const before = view.piece().patterns[ 0 ].map( s => s.points[ 0 ] )
+			const [ x, y ] = [ view.piece().patterns[ 0 ][ 0 ].points[ 0 ], view.piece().patterns[ 0 ][ 0 ].points[ 1 ] ]
+			board.pointer_down( pointer( ( 1 - y ) * 100, x * 100 ) )
+			board.pointer_move( pointer( ( 1 - y ) * 100, x * 100 + 10 ) )
+			board.pointer_up( pointer( ( 1 - y ) * 100, x * 100 + 10 ) )
+			const after = view.piece().patterns[ 0 ].map( s => s.points[ 0 ] )
+			$mol_assert_ok( after.every( ( value, index ) => Math.abs( value - before[ index ] - 0.1 ) < 0.001 ) )
+		},
+
+		'tap on the board closes an open panel without drawing'( $ ) {
+			const view = app( $ )
+			view.layers_opened( true )
+			draw( view, 50 )
+			$mol_assert_equal( view.panel(), '' )
+			$mol_assert_equal( view.piece().patterns[ 0 ].length, 0 )
+		},
+
+		'layer opacity is stored per layer'( $ ) {
+			const view = app( $ )
+			const id = view.layer_default()
+			$mol_assert_equal( view.layer_opacity( id ), 100 )
+			view.layer_opacity( id, 40 )
+			$mol_assert_equal( view.layer_alpha( id ), 0.4 )
+			$mol_assert_equal( view.layers()[ 0 ].opacity, 0.4 )
 		},
 
 	})

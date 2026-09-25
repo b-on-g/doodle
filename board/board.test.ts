@@ -44,27 +44,38 @@ namespace $.$$ {
 			$mol_assert_equal( view.sketch().strokes()[ 0 ].points[ 1 ], $bog_doodle_scale_row_y( 0, 8 ) )
 		},
 
-		'eraser removes touched strokes in one undo step'( $ ) {
+		'eraser cuts only where it passes, in one undo step'( $ ) {
 			const view = board( $ )
 			view.sketch().add( { id: 'a', color: 0, points: [ 0.1, 0.5, 0.5, 0.9, 0.5, 0.5 ] } )
 			view.sketch().add( { id: 'b', color: 0, points: [ 0.1, 0.2, 0.5, 0.9, 0.2, 0.5 ] } )
 			view.tool( 'erase' )
+			view.eraser = ()=> 10
 			view.pointer_down( pointer( 50, 50 ) )
+			view.pointer_move( pointer( 50, 35 ) )
 			view.pointer_move( pointer( 50, 20 ) )
 			view.pointer_up( pointer( 50, 20 ) )
-			$mol_assert_equal( view.sketch().strokes().length, 0 )
+			const strokes = view.sketch().strokes()
+			$mol_assert_equal( strokes.length, 4 )
+			for( const stroke of strokes ) {
+				for( let i = 0; i < stroke.points.length; i += 3 ) {
+					$mol_assert_ok( Math.abs( stroke.points[ i ] - 0.5 ) > 0.04 )
+				}
+			}
+			$mol_assert_equal( view.preview(), null )
 			view.sketch().undo()
 			$mol_assert_equal( view.sketch().strokes().length, 2 )
 		},
 
-		'select by box and drag moves strokes'( $ ) {
+		'lasso selects and drag moves strokes'( $ ) {
 			const view = board( $ )
 			view.sketch().add( { id: 'a', color: 0, points: [ 0.1, 0.5, 0.5, 0.2, 0.5, 0.5 ] } )
 			view.sketch().add( { id: 'b', color: 0, points: [ 0.7, 0.5, 0.5, 0.8, 0.5, 0.5 ] } )
 			view.tool( 'select' )
 			view.pointer_down( pointer( 0, 0 ) )
+			view.pointer_move( pointer( 30, 0 ) )
 			view.pointer_move( pointer( 30, 100 ) )
-			view.pointer_up( pointer( 30, 100 ) )
+			view.pointer_move( pointer( 0, 100 ) )
+			view.pointer_up( pointer( 0, 100 ) )
 			$mol_assert_like( view.selected(), [ 'a' ] )
 
 			view.pointer_down( pointer( 15, 50 ) )
@@ -73,6 +84,30 @@ namespace $.$$ {
 			const moved = view.sketch().strokes()[ 0 ].points
 			$mol_assert_equal( Math.round( moved[ 0 ] * 100 ), 20 )
 			$mol_assert_equal( Math.round( moved[ 1 ] * 100 ), 40 )
+		},
+
+		'lasso cuts a piece out of a long line'( $ ) {
+			const view = board( $ )
+			view.sketch().add( { id: 'a', color: 0, points: [ 0.1, 0.5, 0.5, 0.9, 0.5, 0.5 ] } )
+			view.tool( 'select' )
+			view.pointer_down( pointer( 40, 25 ) )
+			view.pointer_move( pointer( 60, 25 ) )
+			view.pointer_move( pointer( 60, 75 ) )
+			view.pointer_move( pointer( 40, 75 ) )
+			view.pointer_up( pointer( 40, 75 ) )
+			$mol_assert_equal( view.selected().length, 1 )
+			$mol_assert_equal( view.sketch().strokes().length, 3 )
+		},
+
+		'tap on the board while a panel is open only closes it'( $ ) {
+			const view = board( $ )
+			let closed = 0
+			view.blocked = ()=> true
+			view.unblock = ()=> ++closed
+			view.pointer_down( pointer( 50, 50 ) )
+			view.pointer_up( pointer( 50, 50 ) )
+			$mol_assert_equal( closed, 1 )
+			$mol_assert_equal( view.sketch().strokes().length, 0 )
 		},
 
 		'touch pans in pen only mode and pinch zooms'( $ ) {
@@ -138,7 +173,10 @@ namespace $.$$ {
 			view.tool( 'erase' )
 			view.pointer_down( pointer( 50, 50 ) )
 			view.pointer_up( pointer( 50, 50 ) )
-			$mol_assert_like( view.sketch().strokes().map( s => s.id ), [ 'a' ] )
+			const strokes = view.sketch().strokes()
+			$mol_assert_equal( strokes[ 0 ].id, 'a' )
+			$mol_assert_equal( strokes.length, 3 )
+			$mol_assert_ok( strokes.slice( 1 ).every( s => s.layer === 'l2' ) )
 		},
 
 		'bigger eraser reaches farther'( $ ) {
@@ -152,7 +190,7 @@ namespace $.$$ {
 			view.eraser = ()=> 30
 			view.pointer_down( pointer( 50, 40 ) )
 			view.pointer_up( pointer( 50, 40 ) )
-			$mol_assert_equal( view.sketch().strokes().length, 0 )
+			$mol_assert_equal( view.sketch().strokes().length, 2 )
 		},
 
 	})

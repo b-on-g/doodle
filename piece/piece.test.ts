@@ -35,7 +35,7 @@ namespace $ {
 				axis: 'time_x' as const,
 				layers: [
 					{ id: 'l1', name: 'Бас', visible: true },
-					{ id: 'l2', name: '', visible: false },
+					{ id: 'l2', name: '', visible: false, opacity: 0.4 },
 				],
 				patterns: [ [ { id: 'a', color: 2, ink: '#3399ff', size: 2.5, layer: 'l2', points: [ 0.5, 0.5, 0.5 ] } ] ],
 			}
@@ -67,12 +67,17 @@ namespace $ {
 
 		'straight line keeps only its ends'() {
 			const points = [ 0, 0, 0.5, 0.25, 0.25, 0.5, 0.5, 0.5, 0.5, 1, 1, 0.5 ]
-			$mol_assert_like( $bog_doodle_piece_simplify( points, 0.001 ), [ 0, 0, 0.5, 1, 1, 0.5 ] )
+			$mol_assert_like( $bog_doodle_sketch_simplify( points, 0.001 ), [ 0, 0, 0.5, 1, 1, 0.5 ] )
 		},
 
 		'corner survives simplification'() {
 			const points = [ 0, 0, 0.5, 0.5, 0, 0.5, 0.5, 0.5, 0.5 ]
-			$mol_assert_equal( $bog_doodle_piece_simplify( points, 0.001 ).length, 9 )
+			$mol_assert_equal( $bog_doodle_sketch_simplify( points, 0.001 ).length, 9 )
+		},
+
+		'second version layers ignore the old sound flag'() {
+			const back = $bog_doodle_piece_unpack( '{"v":2,"l":[["l1","",1,0]],"p":[[]]}' )
+			$mol_assert_equal( back.layers[ 0 ].opacity, undefined )
 		},
 
 	})

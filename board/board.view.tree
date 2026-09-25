@@ -18,6 +18,9 @@ $bog_doodle_board $mol_view
 	layer_active \l1
 	layer_default \l1
 	layer_focus false
+	layer_alpha* 1
+	blocked false
+	unblock? null
 	selected? /string
 	playhead null
 	playing false

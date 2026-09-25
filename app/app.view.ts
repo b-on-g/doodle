@@ -22,13 +22,7 @@ namespace $.$$ {
 			const store = this.Store()
 			const share = this.share()
 			if( next === undefined ) {
-				if( share ) {
-					try {
-						return $bog_doodle_piece_unpack( share )
-					} catch {
-						return $bog_doodle_piece_empty()
-					}
-				}
+				if( share ) return this.share_piece()
 				const id = store.current()
 				return id ? store.piece( id ) : $bog_doodle_piece_empty()
 			}
@@ -282,7 +276,33 @@ namespace $.$$ {
 		}
 
 		selection_tools() {
-			return this.selected().length ? [ this.Copy(), this.Drop() ] : []
+			return [
+				... this.tool() === 'select' ? [ this.Select_all() ] : [],
+				... this.selected().length ? [ this.Copy(), this.Drop() ] : [],
+			]
+		}
+
+		select_all() {
+			const board = this.board()
+			if( this.tool() !== 'select' ) this.tool( 'select' )
+			this.selected( this.sketch().strokes().filter( s => board.editable( s ) ).map( s => s.id ) )
+		}
+
+		panel_open() {
+			return this.panel() !== ''
+		}
+
+		panel_close() {
+			this.panel( '' )
+		}
+
+		layer_opacity( id: string, next?: number ) {
+			if( next !== undefined ) this.layer_patch( id, { opacity: Math.max( 0, Math.min( 100, next ) ) / 100 } )
+			return Math.round( ( this.layers()[ this.layer_index( id ) ]?.opacity ?? 1 ) * 100 )
+		}
+
+		layer_alpha( id: string ) {
+			return this.layer_opacity( id ) / 100
 		}
 
 		selection_copy() {
@@ -663,8 +683,23 @@ namespace $.$$ {
 			image.src = url
 		}
 
+		@ $mol_mem
+		share_piece() {
+			try {
+				return $mol_wire_sync( this.$.$bog_doodle_share ).decode( this.share() )
+			} catch( error ) {
+				if( $mol_promise_like( error ) ) $mol_fail_hidden( error )
+				return $bog_doodle_piece_empty()
+			}
+		}
+
+		@ $mol_mem
+		share_code() {
+			return $mol_wire_sync( this.$.$bog_doodle_share ).encode( this.piece() )
+		}
+
 		share_link() {
-			const link = this.$.$mol_state_arg.link( { share: $bog_doodle_piece_pack( this.piece() ) } )
+			const link = this.$.$mol_state_arg.link( { share: this.share_code() } )
 			return new URL( link, this.$.$mol_dom_context.location.href ).toString()
 		}
 
@@ -745,7 +780,7 @@ namespace $.$$ {
 			if( target?.closest?.( 'input, textarea, [contenteditable]' ) ) return
 			const mod = event.ctrlKey || event.metaKey
 			const action = mod
-				? { KeyZ: event.shiftKey ? 'redo' : 'undo', KeyY: 'redo' }[ event.code ]
+				? { KeyZ: event.shiftKey ? 'redo' : 'undo', KeyY: 'redo', KeyA: 'all' }[ event.code ]
 				: {
 					Space: 'play', KeyB: 'draw', KeyP: 'draw', KeyE: 'erase', KeyV: 'select', KeyH: 'pan',
 					Digit0: 'zoom', Equal: 'zoom_in', NumpadAdd: 'zoom_in', Minus: 'zoom_out', NumpadSubtract: 'zoom_out',
@@ -765,7 +800,8 @@ namespace $.$$ {
 				case 'bigger': return this.size_step( 1 )
 				case 'copy': return this.selected().length && this.selection_copy()
 				case 'drop': return this.selected().length && this.selection_drop()
-				case 'escape': return this.selected( [] )
+				case 'all': return this.select_all()
+				case 'escape': return this.panel_open() ? this.panel_close() : this.selected( [] )
 				default: this.tool_set( action, true )
 			}
 		}

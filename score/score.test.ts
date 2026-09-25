@@ -32,6 +32,18 @@ namespace $ {
 			$mol_assert_equal( $bog_doodle_score_time( 1, 12, 3, 1 ), 0.25 )
 		},
 
+		'thinning merges twins and caps voices per step'() {
+			const event = ( step: number, midi: number, velocity: number, color = 0 ) => ( { stroke: 'a', color, step, length: 1, midi, velocity } )
+			const thin = $bog_doodle_score_thin( [
+				event( 0, 60, 0.5 ), event( 0, 60, 0.9 ), event( 0, 60, 0.4, 2 ),
+				event( 1, 60, 0.1 ), event( 1, 62, 0.2 ), event( 1, 64, 0.3 ),
+			], 2 )
+			$mol_assert_like( thin.map( e => [ e.step, e.midi, e.velocity, e.color ] ), [
+				[ 0, 60, 0.9, 0 ], [ 0, 60, 0.4, 2 ],
+				[ 1, 62, 0.2, 0 ], [ 1, 64, 0.3, 0 ],
+			] )
+		},
+
 	})
 
 }

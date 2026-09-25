@@ -36,7 +36,7 @@ namespace $ {
 
 		@ $mol_mem_key
 		events( pattern: number ) {
-			const events = $bog_doodle_score( this.piece().patterns[ pattern ] ?? [], this.notes(), this.steps() )
+			const events = $bog_doodle_score_thin( $bog_doodle_score( this.piece().patterns[ pattern ] ?? [], this.notes(), this.steps() ), 10 )
 			const by_step = new Map< number, $bog_doodle_score_event[] >()
 			for( const event of events ) {
 				const list = by_step.get( event.step ) ?? []

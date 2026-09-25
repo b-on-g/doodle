@@ -101,8 +101,7 @@ namespace $.$$ {
 		touches = new Map< number, touch >()
 		draft = [] as number[]
 		smooth = null as null | { x: number, y: number, p: number }
-		erased = new Set< string >()
-		box = null as null | { x1: number, y1: number, x2: number, y2: number }
+		loop_path = null as null | number[]
 		drag = null as null | { x: number, y: number, dx: number, dy: number }
 		pinch = null as null | { dist: number, x: number, y: number }
 		hover = null as null | { x: number, y: number, erase: boolean }
@@ -141,6 +140,12 @@ namespace $.$$ {
 			}
 			if( this.touches.size > 2 ) return
 
+			if( this.blocked() ) {
+				this.touches.delete( event.pointerId )
+				this.unblock( event )
+				return
+			}
+
 			const point = this.to_world( event.clientX, event.clientY )
 			const gesture = this.gesture_tool( event )
 
@@ -151,7 +156,6 @@ namespace $.$$ {
 				this.draft_add( point.x, point.y, this.pressure( event ) )
 			} else if( gesture === 'erase' ) {
 				this.gesture = 'erase'
-				this.erased = new Set
 				this.erase_at( point.x, point.y )
 			} else if( gesture === 'select' ) {
 				const hit = this.sketch().hits( point.x, point.y, this.hit_radius(), s => this.editable( s ) )
@@ -165,7 +169,7 @@ namespace $.$$ {
 					this.drag = { x: point.x, y: point.y, dx: 0, dy: 0 }
 				} else {
 					this.gesture = 'select'
-					this.box = { x1: point.x, y1: point.y, x2: point.x, y2: point.y }
+					this.loop_path = [ point.x, point.y ]
 				}
 			} else {
 				this.gesture = 'pan'
@@ -204,8 +208,8 @@ namespace $.$$ {
 				}
 			} else if( this.gesture === 'erase' ) {
 				this.erase_at( point.x, point.y )
-			} else if( this.gesture === 'select' && this.box ) {
-				this.box = { ... this.box, x2: point.x, y2: point.y }
+			} else if( this.gesture === 'select' && this.loop_path ) {
+				this.loop_path.push( point.x, point.y )
 			} else if( this.gesture === 'move' && this.drag ) {
 				this.drag = { ... this.drag, dx: point.x - this.drag.x, dy: point.y - this.drag.y }
 			}
@@ -221,14 +225,8 @@ namespace $.$$ {
 				return
 			}
 			if( this.gesture === 'draw' ) this.draft_commit()
-			if( this.gesture === 'erase' ) this.sketch().remove( [ ... this.erased ] )
-			if( this.gesture === 'select' && this.box ) {
-				const { x1, y1, x2, y2 } = this.box
-				this.selected( this.sketch().inside(
-					Math.min( x1, x2 ), Math.min( y1, y2 ), Math.max( x1, x2 ), Math.max( y1, y2 ),
-					s => this.editable( s ),
-				) )
-			}
+			if( this.gesture === 'erase' ) this.erase_commit()
+			if( this.gesture === 'select' && this.loop_path ) this.loop_commit( this.loop_path )
 			if( this.gesture === 'move' && this.drag && ( this.drag.dx || this.drag.dy ) ) {
 				this.sketch().shift( this.selected(), this.drag.dx, this.drag.dy )
 			}
@@ -237,8 +235,8 @@ namespace $.$$ {
 
 		gesture_reset() {
 			this.gesture = null
-			this.erased = new Set
-			this.box = null
+			this.loop_path = null
+			this.preview( null )
 			this.drag = null
 			this.draft = []
 			this.note_hover( null )
@@ -317,7 +315,7 @@ namespace $.$$ {
 		draft_commit() {
 			const draft = this.draft
 			if( !draft.length ) return
-			const points = $bog_doodle_piece_simplify( draft, 0.0012 / this.view().zoom )
+			const points = $bog_doodle_sketch_simplify( draft, 0.0012 / this.view().zoom )
 			const ink = this.ink()
 			const size = this.brush()
 			this.sketch().add( {
@@ -331,7 +329,37 @@ namespace $.$$ {
 		}
 
 		erase_at( x: number, y: number ) {
-			for( const id of this.sketch().hits( x, y, this.erase_radius(), s => this.editable( s ) ) ) this.erased.add( id )
+			const sketch = this.sketch()
+			const next = sketch.erased( x, y, this.erase_radius(), s => this.editable( s ), this.preview() ?? sketch.strokes() )
+			if( next !== ( this.preview() ?? sketch.strokes() ) ) this.preview( next )
+		}
+
+		@ $mol_mem
+		preview( next?: $bog_doodle_sketch_strokes | null ): $bog_doodle_sketch_strokes | null {
+			return next ?? null
+		}
+
+		erase_commit() {
+			const next = this.preview()
+			if( next ) this.sketch().commit( next )
+			this.preview( null )
+		}
+
+		loop_commit( path: readonly number[] ) {
+			let left = Infinity, right = -Infinity, top = Infinity, bottom = -Infinity
+			for( let i = 0; i < path.length; i += 2 ) {
+				left = Math.min( left, path[ i ] )
+				right = Math.max( right, path[ i ] )
+				top = Math.min( top, path[ i + 1 ] )
+				bottom = Math.max( bottom, path[ i + 1 ] )
+			}
+			const tiny = Math.max( right - left, bottom - top ) < this.hit_radius()
+			if( tiny ) {
+				const hit = this.sketch().hits( path[ 0 ], path[ 1 ], this.hit_radius(), s => this.editable( s ) )
+				this.selected( hit.slice( -1 ) )
+				return
+			}
+			this.selected( this.sketch().lasso( path, s => this.editable( s ) ) )
 		}
 
 		frame = null as $mol_after_frame | null
@@ -499,7 +527,7 @@ namespace $.$$ {
 
 		ordered() {
 			const order = this.layer_order()
-			const strokes = this.sketch().strokes()
+			const strokes = this.preview() ?? this.sketch().strokes()
 			const list = [] as $bog_doodle_sketch_stroke[]
 			for( const id of order ) {
 				for( const stroke of strokes ) if( this.layer_of( stroke ) === id ) list.push( stroke )
@@ -535,7 +563,8 @@ namespace $.$$ {
 						this.paint_path( target, stroke.points, $bog_doodle_synth_ink( stroke ), stroke.size ?? 1, width, height, dpr )
 					}
 				}
-				if( focus && id !== active ) this.paint_faded( ctx, width, height, 0.3, paint )
+				const alpha = this.layer_alpha( id ) * ( focus && id !== active ? 0.3 : 1 )
+				if( alpha < 1 ) this.paint_faded( ctx, width, height, alpha, paint )
 				else paint( ctx )
 			}
 		}
@@ -564,25 +593,23 @@ namespace $.$$ {
 				}
 			}
 
-			if( this.erased.size ) {
-				const erased = this.sketch().strokes().filter( stroke => this.erased.has( stroke.id ) )
-				this.paint_faded( ctx, width, height, 0.8, target => {
-					for( const stroke of erased ) {
-						this.paint_path( target, stroke.points, '#fbfaf6', stroke.size ?? 1, width, height, dpr, 0, 0, true )
-					}
-				} )
-			}
-
 			if( this.draft.length ) this.paint_path( ctx, this.draft, this.ink(), this.brush(), width, height, dpr )
 
-			if( this.box ) {
-				const { x1, y1, x2, y2 } = this.box
-				const a = this.pt( x1, y1, width, height )
-				const b = this.pt( x2, y2, width, height )
+			const path = this.loop_path
+			if( path && path.length >= 4 ) {
 				ctx.setLineDash( [ 6 * dpr, 4 * dpr ] )
 				ctx.strokeStyle = '#2f6fd8'
+				ctx.fillStyle = '#2f6fd812'
 				ctx.lineWidth = dpr
-				ctx.strokeRect( a.x, a.y, b.x - a.x, b.y - a.y )
+				ctx.beginPath()
+				for( let i = 0; i < path.length; i += 2 ) {
+					const at = this.pt( path[ i ], path[ i + 1 ], width, height )
+					if( i ) ctx.lineTo( at.x, at.y )
+					else ctx.moveTo( at.x, at.y )
+				}
+				ctx.closePath()
+				ctx.fill()
+				ctx.stroke()
 				ctx.setLineDash( [] )
 			}
 

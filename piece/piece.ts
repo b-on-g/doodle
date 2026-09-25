@@ -21,6 +21,7 @@ namespace $ {
 		id: string
 		name: string
 		visible: boolean
+		opacity?: number
 	}
 
 	export type $bog_doodle_piece_axis = 'time_x' | 'time_y'
@@ -77,7 +78,7 @@ namespace $ {
 
 	export function $bog_doodle_piece_pack( piece: $bog_doodle_piece ) {
 		return JSON.stringify( {
-			v: 2,
+			v: 3,
 			t: piece.title,
 			k: piece.key,
 			s: piece.scale,
@@ -89,7 +90,7 @@ namespace $ {
 			w: piece.swing,
 			c: piece.chain ? 1 : 0,
 			a: piece.axis,
-			l: piece.layers.map( l => [ l.id, l.name, l.visible ? 1 : 0 ] ),
+			l: piece.layers.map( l => [ l.id, l.name, l.visible ? 1 : 0, Math.round( ( l.opacity ?? 1 ) * 100 ) / 100 ] ),
 			p: piece.patterns.map( strokes => strokes.map( s => [
 				s.color,
 				points_pack( s.points ),
@@ -120,10 +121,11 @@ namespace $ {
 		const raw = JSON.parse( str )
 		const empty = $bog_doodle_piece_empty()
 		const patterns = ( raw.p as ( string | unknown[] )[][] ?? [ [] ] ).map( strokes => strokes.map( stroke_unpack ) )
-		const layers = ( raw.l as unknown[][] ?? [] ).map( ( [ id, name, visible ] ) => ( {
+		const layers = ( raw.l as unknown[][] ?? [] ).map( ( [ id, name, visible, opacity ] ) => ( {
 			id: String( id ),
 			name: String( name ?? '' ),
 			visible: Boolean( visible ),
+			... raw.v >= 3 && Number( opacity ) < 1 ? { opacity: Math.max( 0, Number( opacity ) ) } : {},
 		} ) )
 		return {
 			... empty,
@@ -141,39 +143,6 @@ namespace $ {
 			layers: layers.length ? layers : empty.layers,
 			patterns: patterns.length ? patterns : [ [] ],
 		}
-	}
-
-	export function $bog_doodle_piece_simplify( points: readonly number[], tolerance: number ) {
-		const count = points.length / 3
-		if( count < 3 ) return points
-		const keep = new Uint8Array( count )
-		keep[ 0 ] = keep[ count - 1 ] = 1
-		const stack = [ [ 0, count - 1 ] ]
-		while( stack.length ) {
-			const [ from, to ] = stack.pop()!
-			const ax = points[ from * 3 ], ay = points[ from * 3 + 1 ]
-			const bx = points[ to * 3 ], by = points[ to * 3 + 1 ]
-			const len = Math.hypot( bx - ax, by - ay ) || 1e-9
-			let far = -1, dist = tolerance
-			for( let i = from + 1; i < to; ++i ) {
-				const px = points[ i * 3 ], py = points[ i * 3 + 1 ]
-				const d = Math.abs( ( bx - ax ) * ( ay - py ) - ( ax - px ) * ( by - ay ) ) / len
-				const dp = Math.abs( points[ i * 3 + 2 ] - points[ from * 3 + 2 ] )
-				const score = Math.max( d, dp * tolerance * 4 )
-				if( score > dist ) {
-					dist = score
-					far = i
-				}
-			}
-			if( far < 0 ) continue
-			keep[ far ] = 1
-			stack.push( [ from, far ], [ far, to ] )
-		}
-		const result = [] as number[]
-		for( let i = 0; i < count; ++i ) {
-			if( keep[ i ] ) result.push( points[ i * 3 ], points[ i * 3 + 1 ], points[ i * 3 + 2 ] )
-		}
-		return result
 	}
 
 }

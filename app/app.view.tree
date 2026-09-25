@@ -158,6 +158,11 @@ $bog_doodle_app $mol_view
 								<= Zoom_in_icon $mol_icon_magnify_plus
 				<= Selection $mol_view
 					sub <= selection_tools /
+						<= Select_all $mol_button_minor
+							hint @ \Select everything on the layer (Ctrl+A)
+							click? <=> select_all? null
+							sub /
+								<= Select_all_icon $mol_icon_select_all
 						<= Copy $mol_button_minor
 							hint @ \Duplicate selection (D)
 							click? <=> selection_copy? null
@@ -199,6 +204,9 @@ $bog_doodle_app $mol_view
 					layer_active <= layer_active? \l1
 					layer_default <= layer_default \l1
 					layer_focus <= layer_focus? false
+					layer_alpha* <= layer_alpha* 1
+					blocked <= panel_open false
+					unblock? <=> panel_close? null
 					selected? <=> selected? /string
 					playhead <= playhead null
 					playing <= playing false
@@ -235,6 +243,12 @@ $bog_doodle_app $mol_view
 								hint @ \Draw on this layer
 								checked? <=> layer_picked*? false
 								title <= layer_title* \
+							<= Layer_opacity* $bog_doodle_slider
+								hint @ \Layer opacity
+								value? <=> layer_opacity*? 100
+								min 0
+								max 100
+								step 5
 							<= Layer_up* $mol_button_minor
 								hint @ \Up
 								click? <=> layer_up*? null

@@ -80,6 +80,22 @@ namespace $ {
 		return events.sort( ( a, b ) => a.step - b.step || a.midi - b.midi )
 	}
 
+	export function $bog_doodle_score_thin( events: readonly $bog_doodle_score_event[], limit: number ) {
+		const by_step = new Map< number, Map< string, $bog_doodle_score_event > >()
+		for( const event of events ) {
+			const step = by_step.get( event.step ) ?? new Map
+			const key = event.midi + ':' + event.color
+			const prev = step.get( key )
+			if( !prev || prev.velocity < event.velocity || ( prev.velocity === event.velocity && prev.length < event.length ) ) step.set( key, event )
+			by_step.set( event.step, step )
+		}
+		const result = [] as $bog_doodle_score_event[]
+		for( const step of by_step.values() ) {
+			result.push( ... [ ... step.values() ].sort( ( a, b ) => b.velocity - a.velocity || a.midi - b.midi ).slice( 0, limit ) )
+		}
+		return result.sort( ( a, b ) => a.step - b.step || a.midi - b.midi )
+	}
+
 	export function $bog_doodle_score_time( step: number, steps_per_bar: number, bar_time: number, swing: number ) {
 		const step_time = bar_time / steps_per_bar
 		const swingable = steps_per_bar === 8 || steps_per_bar === 16

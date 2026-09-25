@@ -39,12 +39,16 @@ namespace $ {
 
 	function envelope( ctx: BaseAudioContext, dest: AudioNode, time: number, attack: number, peak: number, hold: number, release: number ) {
 		const gain = ctx.createGain()
-		gain.gain.setValueAtTime( 0.0001, time )
+		const decay = Math.min( hold, 0.12 )
+		const sustain = peak * 0.6
+		const fade = time + attack + hold
+		gain.gain.setValueAtTime( 0, time )
 		gain.gain.linearRampToValueAtTime( peak, time + attack )
-		gain.gain.setTargetAtTime( peak * 0.6, time + attack, hold / 3 + 0.01 )
-		gain.gain.setTargetAtTime( 0.0001, time + attack + hold, release / 4 )
+		gain.gain.linearRampToValueAtTime( sustain, time + attack + decay )
+		gain.gain.setValueAtTime( sustain, fade )
+		gain.gain.linearRampToValueAtTime( 0, fade + release )
 		gain.connect( dest )
-		return { gain, end: time + attack + hold + release }
+		return { gain, end: fade + release + 0.03 }
 	}
 
 	function osc( ctx: BaseAudioContext, type: OscillatorType, freq: number, dest: AudioNode, time: number, end: number, detune = 0 ) {
@@ -128,11 +132,24 @@ namespace $ {
 	}
 
 	export function $bog_doodle_synth_bus( ctx: BaseAudioContext ) {
+		const master = ctx.createGain()
+		master.gain.setValueAtTime( 0.7, 0 )
 		const comp = ctx.createDynamicsCompressor()
-		comp.threshold.setValueAtTime( -14, 0 )
+		comp.threshold.setValueAtTime( -18, 0 )
+		comp.knee.setValueAtTime( 12, 0 )
 		comp.ratio.setValueAtTime( 4, 0 )
-		comp.connect( ctx.destination )
-		return comp
+		comp.attack.setValueAtTime( 0.005, 0 )
+		comp.release.setValueAtTime( 0.2, 0 )
+		const limit = ctx.createDynamicsCompressor()
+		limit.threshold.setValueAtTime( -3, 0 )
+		limit.knee.setValueAtTime( 0, 0 )
+		limit.ratio.setValueAtTime( 20, 0 )
+		limit.attack.setValueAtTime( 0.001, 0 )
+		limit.release.setValueAtTime( 0.1, 0 )
+		master.connect( comp )
+		comp.connect( limit )
+		limit.connect( ctx.destination )
+		return master
 	}
 
 }

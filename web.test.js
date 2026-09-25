@@ -782,21 +782,34 @@ var $;
 
 ;
 "use strict";
-
-;
-"use strict";
-
-;
-"use strict";
 var $;
-(function ($_1) {
-    $mol_test_mocks.push($ => {
-        $.$mol_log3_come = () => { };
-        $.$mol_log3_done = () => { };
-        $.$mol_log3_fail = () => { };
-        $.$mol_log3_warn = () => { };
-        $.$mol_log3_rise = () => { };
-        $.$mol_log3_area = () => () => { };
+(function ($) {
+    $mol_test({
+        'C major over one octave ends on the upper tonic'() {
+            $mol_assert_like($bog_doodle_scale_notes(0, 'major', 4, 1), [60, 62, 64, 65, 67, 69, 71, 72]);
+        },
+        'A minor pentatonic over two octaves'() {
+            const notes = $bog_doodle_scale_notes(9, 'minor_penta', 3, 2);
+            $mol_assert_equal(notes.length, 11);
+            $mol_assert_equal(notes[0], 57);
+            $mol_assert_equal(notes[10], 81);
+        },
+        'top of the canvas is the highest row'() {
+            $mol_assert_equal($bog_doodle_scale_row(0, 8), 7);
+            $mol_assert_equal($bog_doodle_scale_row(1, 8), 0);
+            $mol_assert_equal($bog_doodle_scale_row(0.5, 8), 4);
+        },
+        'row center maps back to the same row'() {
+            for (let row = 0; row < 8; ++row) {
+                $mol_assert_equal($bog_doodle_scale_row($bog_doodle_scale_row_y(row, 8), 8), row);
+            }
+        },
+        'note names and frequencies'() {
+            $mol_assert_equal($bog_doodle_scale_name(60), 'C4');
+            $mol_assert_equal($bog_doodle_scale_name(70), 'B♭4');
+            $mol_assert_equal($bog_doodle_scale_freq(69), 440);
+            $mol_assert_equal(Math.round($bog_doodle_scale_freq(81)), 880);
+        },
     });
 })($ || ($ = {}));
 
@@ -1099,6 +1112,26 @@ var $;
 
 ;
 "use strict";
+
+;
+"use strict";
+
+;
+"use strict";
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    $mol_test_mocks.push($ => {
+        $.$mol_log3_come = () => { };
+        $.$mol_log3_done = () => { };
+        $.$mol_log3_fail = () => { };
+        $.$mol_log3_warn = () => { };
+        $.$mol_log3_rise = () => { };
+        $.$mol_log3_area = () => () => { };
+    });
+})($ || ($ = {}));
 
 ;
 "use strict";
@@ -2428,6 +2461,203 @@ var $;
 ;
 "use strict";
 var $;
+(function ($_1) {
+    const line = (id, x1, y1, x2, y2) => ({
+        id, color: 0, points: [x1, y1, 0.5, x2, y2, 0.5],
+    });
+    $mol_test({
+        'draw, undo and redo'($) {
+            const sketch = $bog_doodle_sketch.make({ $ });
+            sketch.add(line('a', 0, 0, 1, 1));
+            sketch.add(line('b', 0, 1, 1, 0));
+            $mol_assert_equal(sketch.strokes().length, 2);
+            sketch.undo();
+            $mol_assert_like(sketch.strokes().map(s => s.id), ['a']);
+            $mol_assert_ok(sketch.redo_enabled());
+            sketch.redo();
+            $mol_assert_like(sketch.strokes().map(s => s.id), ['a', 'b']);
+            $mol_assert_not(sketch.redo_enabled());
+        },
+        'new stroke after undo drops the redo branch'($) {
+            const sketch = $bog_doodle_sketch.make({ $ });
+            sketch.add(line('a', 0, 0, 1, 1));
+            sketch.undo();
+            sketch.add(line('c', 0, 0, 1, 0));
+            $mol_assert_not(sketch.redo_enabled());
+            $mol_assert_like(sketch.strokes().map(s => s.id), ['c']);
+        },
+        'eraser hits a stroke between its points'($) {
+            const sketch = $bog_doodle_sketch.make({ $ });
+            sketch.add(line('a', 0.1, 0.5, 0.9, 0.5));
+            sketch.add(line('b', 0.1, 0.1, 0.9, 0.1));
+            $mol_assert_like(sketch.hits(0.5, 0.51, 0.02), ['a']);
+            sketch.remove(sketch.hits(0.5, 0.51, 0.02));
+            $mol_assert_like(sketch.strokes().map(s => s.id), ['b']);
+        },
+        'select by box, move and copy'($) {
+            const sketch = $bog_doodle_sketch.make({ $ });
+            sketch.add(line('a', 0.1, 0.5, 0.2, 0.5));
+            sketch.add(line('b', 0.7, 0.5, 0.8, 0.5));
+            const picked = sketch.inside(0, 0, 0.3, 1);
+            $mol_assert_like(picked, ['a']);
+            sketch.shift(picked, 0.1, -0.1);
+            $mol_assert_like(sketch.strokes()[0].points, [0.2, 0.4, 0.5, 0.30000000000000004, 0.4, 0.5]);
+            const copies = sketch.copy(picked, 0.5, 0);
+            $mol_assert_equal(sketch.strokes().length, 3);
+            $mol_assert_unique(copies[0], 'a');
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    const notes = [60, 62, 64, 65, 67, 69, 71, 72];
+    $mol_test({
+        'horizontal line is one long note'() {
+            const events = $bog_doodle_score([{ id: 'a', color: 2, points: [0, 0.94, 1, 0.5, 0.94, 1] }], notes, 8);
+            $mol_assert_like(events, [{ stroke: 'a', color: 2, step: 0, length: 4, midi: 60, velocity: 1 }]);
+        },
+        'rising line splits into ascending notes'() {
+            const events = $bog_doodle_score([{ id: 'a', color: 0, points: [0, 1, 0, 0.9999, 0, 0] }], notes, 8);
+            $mol_assert_like(events.map(e => e.midi), notes);
+            $mol_assert_like(events.map(e => e.length), [1, 1, 1, 1, 1, 1, 1, 1]);
+            $mol_assert_equal(events[0].velocity, 0.25);
+        },
+        'dot plays on its step'() {
+            const events = $bog_doodle_score([{ id: 'a', color: 0, points: [0.3, 0.06, 0.5] }], notes, 8);
+            $mol_assert_like(events.map(e => [e.step, e.midi]), [[2, 72]]);
+        },
+        'vertical stroke inside a step is a chord'() {
+            const events = $bog_doodle_score([{ id: 'a', color: 0, points: [0.51, 0.94, 0.5, 0.51, 0.69, 0.5] }], notes, 8);
+            $mol_assert_like(events.map(e => [e.step, e.midi]), [[4, 60], [4, 62], [4, 64]]);
+        },
+        'swing delays only offbeats of straight grids'() {
+            $mol_assert_equal($bog_doodle_score_time(2, 8, 2, 0.5), 0.5);
+            $mol_assert_equal($bog_doodle_score_time(1, 8, 2, 0.75), 0.25 + 0.0625);
+            $mol_assert_equal($bog_doodle_score_time(1, 12, 3, 1), 0.25);
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'encode empty'() {
+            $mol_assert_equal($mol_charset_encode(''), new Uint8Array([]));
+        },
+        'encode 1 octet'() {
+            $mol_assert_equal($mol_charset_encode('F'), new Uint8Array([0x46]));
+        },
+        'encode 2 octet'() {
+            $mol_assert_equal($mol_charset_encode('Б'), new Uint8Array([0xd0, 0x91]));
+        },
+        'encode 3 octet'() {
+            $mol_assert_equal($mol_charset_encode('ह'), new Uint8Array([0xe0, 0xa4, 0xb9]));
+        },
+        'encode 4 octet'() {
+            $mol_assert_equal($mol_charset_encode('𐍈'), new Uint8Array([0xf0, 0x90, 0x8d, 0x88]));
+        },
+        'encode surrogate pair'() {
+            $mol_assert_equal($mol_charset_encode('😀'), new Uint8Array([0xf0, 0x9f, 0x98, 0x80]));
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    const png = new Uint8Array([0x1a, 0x0a, 0x00, 0x49, 0x48, 0x78, 0xda]);
+    $mol_test({
+        'base64 encode string'() {
+            $mol_assert_equal($mol_base64_encode($mol_charset_encode('Hello, ΧΨΩЫ')), 'SGVsbG8sIM6nzqjOqdCr');
+        },
+        'base64 encode binary'() {
+            $mol_assert_equal($mol_base64_encode(png), 'GgoASUh42g==');
+        },
+        'base64 encode string with plus'() {
+            $mol_assert_equal($mol_base64_encode($mol_charset_encode('шоешпо')), '0YjQvtC10YjQv9C+');
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    const png = new Uint8Array([0x1a, 0x0a, 0x00, 0x49, 0x48, 0x78, 0xda]);
+    const with_plus = new TextEncoder().encode('шоешпо');
+    $mol_test({
+        'base64 decode string'() {
+            $mol_assert_equal($mol_base64_decode('SGVsbG8sIM6nzqjOqdCr'), new TextEncoder().encode('Hello, ΧΨΩЫ'));
+        },
+        'base64 decode binary'() {
+            $mol_assert_equal($mol_base64_decode('GgoASUh42g=='), png);
+        },
+        'base64 decode binary - without equals'() {
+            $mol_assert_equal($mol_base64_decode('GgoASUh42g'), png);
+        },
+        'base64 decode with plus'() {
+            $mol_assert_equal($mol_base64_decode('0YjQvtC10YjQv9C+'), with_plus);
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'piece survives the share link'() {
+            const piece = {
+                ...$bog_doodle_piece_empty(),
+                title: 'Дождь',
+                key: 9,
+                scale: 'dorian',
+                bpm: 132,
+                grid: '16t',
+                swing: 0.5,
+                chain: true,
+                patterns: [
+                    [{ id: 'a', color: 3, points: [0, 0, 0, 0.5, 0.25, 1, 0.9999, 1, 0.5] }],
+                    [],
+                ],
+            };
+            const back = $bog_doodle_piece_unpack($bog_doodle_piece_pack(piece));
+            $mol_assert_equal(back.title, 'Дождь');
+            $mol_assert_equal(back.key, 9);
+            $mol_assert_equal(back.scale, 'dorian');
+            $mol_assert_equal(back.grid, '16t');
+            $mol_assert_equal(back.chain, true);
+            $mol_assert_equal(back.patterns.length, 2);
+            const stroke = back.patterns[0][0];
+            $mol_assert_equal(stroke.color, 3);
+            $mol_assert_like(stroke.points.map((v) => Math.round(v * 100) / 100), [0, 0, 0, 0.5, 0.25, 1, 1, 1, 0.5]);
+        },
+        'broken fields fall back to defaults'() {
+            const back = $bog_doodle_piece_unpack('{"s":"nope","g":"x"}');
+            $mol_assert_equal(back.scale, 'major_penta');
+            $mol_assert_equal(back.grid, '8');
+            $mol_assert_equal(back.patterns.length, 1);
+        },
+        'straight line keeps only its ends'() {
+            const points = [0, 0, 0.5, 0.25, 0.25, 0.5, 0.5, 0.5, 0.5, 1, 1, 0.5];
+            $mol_assert_like($bog_doodle_piece_simplify(points, 0.001), [0, 0, 0.5, 1, 1, 0.5]);
+        },
+        'corner survives simplification'() {
+            const points = [0, 0, 0.5, 0.5, 0, 0.5, 0.5, 0.5, 0.5];
+            $mol_assert_equal($bog_doodle_piece_simplify(points, 0.001).length, 9);
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
 (function ($) {
     class $mol_style_sheet_test1 extends $mol_view {
         Item() { return new $mol_view; }
@@ -2708,6 +2938,91 @@ var $;
 
 ;
 "use strict";
+var $;
+(function ($_1) {
+    var $$;
+    (function ($$) {
+        const pointer = (x, y, extra = {}) => ({
+            pointerId: 1,
+            pointerType: 'pen',
+            pressure: 0.8,
+            button: 0,
+            buttons: 1,
+            clientX: x,
+            clientY: y,
+            preventDefault() { },
+            ...extra,
+        });
+        const board = ($) => {
+            const board = $bog_doodle_board.make({ $ });
+            board.rect = () => ({ left: 0, top: 0, width: 100, height: 100 });
+            board.notes = () => [60, 62, 64, 65, 67, 69, 71, 72];
+            board.redraw = () => { };
+            return board;
+        };
+        $mol_test({
+            'pen stroke becomes a stroke with pressure'($) {
+                const view = board($);
+                view.pointer_down(pointer(10, 90));
+                for (let x = 11; x <= 60; ++x)
+                    view.pointer_move(pointer(x, 90));
+                view.pointer_up(pointer(60, 90));
+                const strokes = view.sketch().strokes();
+                $mol_assert_equal(strokes.length, 1);
+                $mol_assert_equal(strokes[0].points[2], 0.8);
+                $mol_assert_equal(strokes[0].points.length, 6);
+                $mol_assert_equal(view.note_hover(), null);
+            },
+            'snap puts the stroke on the row center'($) {
+                const view = board($);
+                view.snap = () => true;
+                view.pointer_down(pointer(10, 91));
+                view.pointer_up(pointer(10, 91));
+                $mol_assert_equal(view.sketch().strokes()[0].points[1], $bog_doodle_scale_row_y(0, 8));
+            },
+            'eraser removes touched strokes in one undo step'($) {
+                const view = board($);
+                view.sketch().add({ id: 'a', color: 0, points: [0.1, 0.5, 0.5, 0.9, 0.5, 0.5] });
+                view.sketch().add({ id: 'b', color: 0, points: [0.1, 0.2, 0.5, 0.9, 0.2, 0.5] });
+                view.tool('erase');
+                view.pointer_down(pointer(50, 50));
+                view.pointer_move(pointer(50, 20));
+                view.pointer_up(pointer(50, 20));
+                $mol_assert_equal(view.sketch().strokes().length, 0);
+                view.sketch().undo();
+                $mol_assert_equal(view.sketch().strokes().length, 2);
+            },
+            'select by box and drag moves strokes'($) {
+                const view = board($);
+                view.sketch().add({ id: 'a', color: 0, points: [0.1, 0.5, 0.5, 0.2, 0.5, 0.5] });
+                view.sketch().add({ id: 'b', color: 0, points: [0.7, 0.5, 0.5, 0.8, 0.5, 0.5] });
+                view.tool('select');
+                view.pointer_down(pointer(0, 0));
+                view.pointer_move(pointer(30, 100));
+                view.pointer_up(pointer(30, 100));
+                $mol_assert_like(view.selected(), ['a']);
+                view.pointer_down(pointer(15, 50));
+                view.pointer_move(pointer(25, 40));
+                view.pointer_up(pointer(25, 40));
+                const moved = view.sketch().strokes()[0].points;
+                $mol_assert_equal(Math.round(moved[0] * 100), 20);
+                $mol_assert_equal(Math.round(moved[1] * 100), 40);
+            },
+            'touch pans in pen only mode and pinch zooms'($) {
+                const view = board($);
+                view.pen_only = () => true;
+                view.pointer_down(pointer(50, 50, { pointerType: 'touch' }));
+                view.pointer_move(pointer(40, 50, { pointerType: 'touch' }));
+                view.pointer_up(pointer(40, 50, { pointerType: 'touch' }));
+                $mol_assert_equal(view.sketch().strokes().length, 0);
+                view.pointer_down(pointer(40, 50, { pointerType: 'touch' }));
+                view.pointer_down(pointer(60, 50, { pointerType: 'touch', pointerId: 2 }));
+                view.pointer_move(pointer(80, 50, { pointerType: 'touch', pointerId: 2 }));
+                $mol_assert_equal(Math.round(view.view().zoom * 10), 20);
+            },
+        });
+    })($$ = $_1.$$ || ($_1.$$ = {}));
+})($ || ($ = {}));
 
 ;
 "use strict";
@@ -2766,34 +3081,6 @@ var $;
 
 ;
 "use strict";
-/** @jsx $mol_jsx */
-/** @jsxFrag $mol_jsx_frag */
-var $;
-(function ($) {
-    $mol_test({
-        'safe tag'() {
-            $mol_assert_equal($mol_dom_serialize($$.$mol_dom_safe([$mol_jsx("div", null, "foo")])[0]), $mol_dom_serialize($mol_jsx("div", null, "foo")));
-        },
-        'bad tag'() {
-            $mol_assert_equal($mol_dom_serialize($$.$mol_dom_safe([$mol_jsx("script", null, "alert('ahtung!')")])[0]), $mol_dom_serialize($mol_jsx($mol_jsx_frag, null, "alert('ahtung!')")));
-        },
-        'common attr'() {
-            $mol_assert_equal($mol_dom_serialize($$.$mol_dom_safe([$mol_jsx("a", { id: "foo" }, "foo")])[0]), $mol_dom_serialize($mol_jsx("a", { id: "foo" }, "foo")));
-        },
-        'safe attr'() {
-            $mol_assert_equal($mol_dom_serialize($$.$mol_dom_safe([$mol_jsx("a", { href: "https://example.org/" }, "foo")])[0]), $mol_dom_serialize($mol_jsx("a", { href: "https://example.org/" }, "foo")));
-        },
-        'bad attr'() {
-            $mol_assert_equal($mol_dom_serialize($$.$mol_dom_safe([$mol_jsx("a", { onclick: "alert('ahtung!')" }, "foo")])[0]), $mol_dom_serialize($mol_jsx("a", null, "foo")));
-        },
-        'danger attr'() {
-            $mol_assert_equal($mol_dom_serialize($$.$mol_dom_safe([$mol_jsx("a", { href: "javascript:alert('ahtung!')" }, "foo")])[0]), $mol_dom_serialize($mol_jsx("a", { href: "about:blank#javascript:alert('ahtung!')" }, "foo")));
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
 var $;
 (function ($) {
     $mol_test({
@@ -2828,6 +3115,55 @@ var $;
 
 ;
 "use strict";
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    var $$;
+    (function ($$) {
+        $mol_test({
+            'handle clicks by default'($) {
+                let clicked = false;
+                const clicker = $mol_button.make({
+                    $,
+                    click: (event) => { clicked = true; },
+                });
+                const element = clicker.dom_tree();
+                const event = $mol_dom_context.document.createEvent('mouseevent');
+                event.initEvent('click', true, true);
+                element.dispatchEvent(event);
+                $mol_assert_ok(clicked);
+            },
+            'no handle clicks if disabled'($) {
+                let clicked = false;
+                const clicker = $mol_button.make({
+                    $,
+                    click: (event) => { clicked = true; },
+                    enabled: () => false,
+                });
+                const element = clicker.dom_tree();
+                const event = $mol_dom_context.document.createEvent('mouseevent');
+                event.initEvent('click', true, true);
+                element.dispatchEvent(event);
+                $mol_assert_not(clicked);
+            },
+            async 'Store error'($) {
+                const clicker = $mol_button.make({
+                    $,
+                    click: (event) => $.$mol_fail(new Error('Test error')),
+                });
+                const event = $mol_dom_context.document.createEvent('mouseevent');
+                $mol_assert_fail(() => clicker.event_activate(event), 'Test error');
+                await Promise.resolve();
+                $mol_assert_equal(clicker.status()[0].message, 'Test error');
+            },
+        });
+    })($$ = $_1.$$ || ($_1.$$ = {}));
+})($ || ($ = {}));
+
+;
+"use strict";
 var $;
 (function ($) {
     class TestClass extends Uint8Array {
@@ -2858,32 +3194,6 @@ var $;
         'decode empty string'() {
             const encoded = new Uint8Array([]);
             $mol_assert_equal($mol_charset_decode(encoded), '');
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_test({
-        'encode empty'() {
-            $mol_assert_equal($mol_charset_encode(''), new Uint8Array([]));
-        },
-        'encode 1 octet'() {
-            $mol_assert_equal($mol_charset_encode('F'), new Uint8Array([0x46]));
-        },
-        'encode 2 octet'() {
-            $mol_assert_equal($mol_charset_encode('Б'), new Uint8Array([0xd0, 0x91]));
-        },
-        'encode 3 octet'() {
-            $mol_assert_equal($mol_charset_encode('ह'), new Uint8Array([0xe0, 0xa4, 0xb9]));
-        },
-        'encode 4 octet'() {
-            $mol_assert_equal($mol_charset_encode('𐍈'), new Uint8Array([0xf0, 0x90, 0x8d, 0x88]));
-        },
-        'encode surrogate pair'() {
-            $mol_assert_equal($mol_charset_encode('😀'), new Uint8Array([0xf0, 0x9f, 0x98, 0x80]));
         },
     });
 })($ || ($ = {}));
@@ -3299,6 +3609,25 @@ var $;
 var $;
 (function ($) {
     $mol_test({
+        'null by default'() {
+            const key = String(Math.random());
+            $mol_assert_equal($mol_state_session.value(key), null);
+        },
+        'storing'() {
+            const key = String(Math.random());
+            $mol_state_session.value(key, '$mol_state_session_test');
+            $mol_assert_equal($mol_state_session.value(key), '$mol_state_session_test');
+            $mol_state_session.value(key, null);
+            $mol_assert_equal($mol_state_session.value(key), null);
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
         '$mol_syntax2_md_flow'() {
             const check = (input, right) => {
                 const tokens = [];
@@ -3331,79 +3660,235 @@ var $;
 
 ;
 "use strict";
+/** @jsx $mol_jsx */
+/** @jsxFrag $mol_jsx_frag */
+var $;
+(function ($) {
+    $mol_test({
+        'safe tag'() {
+            $mol_assert_equal($mol_dom_serialize($$.$mol_dom_safe([$mol_jsx("div", null, "foo")])[0]), $mol_dom_serialize($mol_jsx("div", null, "foo")));
+        },
+        'bad tag'() {
+            $mol_assert_equal($mol_dom_serialize($$.$mol_dom_safe([$mol_jsx("script", null, "alert('ahtung!')")])[0]), $mol_dom_serialize($mol_jsx($mol_jsx_frag, null, "alert('ahtung!')")));
+        },
+        'common attr'() {
+            $mol_assert_equal($mol_dom_serialize($$.$mol_dom_safe([$mol_jsx("a", { id: "foo" }, "foo")])[0]), $mol_dom_serialize($mol_jsx("a", { id: "foo" }, "foo")));
+        },
+        'safe attr'() {
+            $mol_assert_equal($mol_dom_serialize($$.$mol_dom_safe([$mol_jsx("a", { href: "https://example.org/" }, "foo")])[0]), $mol_dom_serialize($mol_jsx("a", { href: "https://example.org/" }, "foo")));
+        },
+        'bad attr'() {
+            $mol_assert_equal($mol_dom_serialize($$.$mol_dom_safe([$mol_jsx("a", { onclick: "alert('ahtung!')" }, "foo")])[0]), $mol_dom_serialize($mol_jsx("a", null, "foo")));
+        },
+        'danger attr'() {
+            $mol_assert_equal($mol_dom_serialize($$.$mol_dom_safe([$mol_jsx("a", { href: "javascript:alert('ahtung!')" }, "foo")])[0]), $mol_dom_serialize($mol_jsx("a", { href: "about:blank#javascript:alert('ahtung!')" }, "foo")));
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    $mol_test({
+        'create, save, switch and remove pieces'($) {
+            const gallery = $bog_doodle_gallery.make({ $ });
+            $mol_assert_equal(gallery.current(), '');
+            const first = gallery.create();
+            const second = gallery.create({ ...$bog_doodle_piece_empty(), title: 'Второй' });
+            $mol_assert_like(gallery.ids(), [second, first]);
+            $mol_assert_equal(gallery.current(), second);
+            $mol_assert_equal(gallery.piece(second).title, 'Второй');
+            gallery.save(first, { ...$bog_doodle_piece_empty(), bpm: 150 });
+            $mol_assert_equal(gallery.piece(first).bpm, 150);
+            gallery.remove(second);
+            $mol_assert_like(gallery.ids(), [first]);
+            $mol_assert_equal(gallery.current(), first);
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'stereo pcm16 header and samples'() {
+            const file = $bog_doodle_wav([new Float32Array([1, -1]), new Float32Array([0, 2])], 8000);
+            const view = new DataView(file.buffer);
+            $mol_assert_equal(file.length, 44 + 8);
+            $mol_assert_equal(String.fromCharCode(...file.slice(0, 4)), 'RIFF');
+            $mol_assert_equal(view.getUint16(22, true), 2);
+            $mol_assert_equal(view.getUint32(24, true), 8000);
+            $mol_assert_like([0, 1, 2, 3].map(i => view.getInt16(44 + i * 2, true)), [32767, 0, -32768, 32767]);
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'one note file'() {
+            const file = $bog_doodle_midi_file([{ time: 0, length: 1, midi: 60, velocity: 1, channel: 0 }], 120, 96);
+            $mol_assert_like(Array.from(file), [
+                0x4d, 0x54, 0x68, 0x64, 0, 0, 0, 6, 0, 0, 0, 1, 0, 96,
+                0x4d, 0x54, 0x72, 0x6b, 0, 0, 0, 19,
+                0, 0xff, 0x51, 3, 0x07, 0xa1, 0x20,
+                0, 0x90, 60, 127,
+                96, 0x80, 60, 0,
+                0, 0xff, 0x2f, 0,
+            ]);
+        },
+        'long delta is written as variable length'() {
+            const file = $bog_doodle_midi_file([{ time: 0, length: 2, midi: 64, velocity: 0.5, channel: 1 }], 60, 480);
+            $mol_assert_like(Array.from(file.slice(-9)), [0x87, 0x40, 0x81, 64, 0, 0, 0xff, 0x2f, 0]);
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    const piece = (chain) => ({
+        ...$bog_doodle_piece_empty(),
+        key: 0,
+        scale: 'major',
+        octave: 4,
+        range: 1,
+        bars: 1,
+        grid: '8',
+        chain,
+        patterns: [
+            [{ id: 'a', color: 0, points: [0, 0.94, 0.5, 0.25, 0.94, 0.5] }],
+            [{ id: 'b', color: 2, points: [0.5, 0.06, 1, 0.75, 0.06, 1] }],
+        ],
+    });
+    $mol_test({
+        'only the edited pattern plays without chain'($) {
+            const player = $bog_doodle_player.make({ $, piece: () => piece(false), pattern: () => 1 });
+            $mol_assert_like(player.midi_notes(), [{ time: 2, length: 1, midi: 72, velocity: 1, channel: 2 }]);
+        },
+        'chain plays patterns one after another'($) {
+            const player = $bog_doodle_player.make({ $, piece: () => piece(true), pattern: () => 1 });
+            $mol_assert_like(player.midi_notes().map(n => [n.time, n.midi]), [[0, 60], [6, 72]]);
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
 var $;
 (function ($_1) {
     var $$;
     (function ($$) {
+        const pointer = (x, y) => ({
+            pointerId: 1,
+            pointerType: 'mouse',
+            pressure: 0.5,
+            button: 0,
+            buttons: 1,
+            clientX: x,
+            clientY: y,
+            preventDefault() { },
+        });
+        const app = ($) => {
+            const app = $bog_doodle_app.make({ $ });
+            const board = app.Board();
+            board.rect = () => ({ left: 0, top: 0, width: 100, height: 100 });
+            board.redraw = () => { };
+            app.note_preview = (next) => next ?? null;
+            return app;
+        };
+        const draw = (app, y) => {
+            const board = app.Board();
+            board.pointer_down(pointer(10, y));
+            board.pointer_move(pointer(40, y));
+            board.pointer_up(pointer(40, y));
+        };
         $mol_test({
-            'handle clicks by default'($) {
-                let clicked = false;
-                const clicker = $mol_button.make({
-                    $,
-                    click: (event) => { clicked = true; },
-                });
-                const element = clicker.dom_tree();
-                const event = $mol_dom_context.document.createEvent('mouseevent');
-                event.initEvent('click', true, true);
-                element.dispatchEvent(event);
-                $mol_assert_ok(clicked);
+            'first stroke creates a piece in the gallery'($) {
+                const view = app($);
+                $mol_assert_equal(view.Store().ids().length, 0);
+                draw(view, 90);
+                $mol_assert_equal(view.Store().ids().length, 1);
+                $mol_assert_equal(view.piece().patterns[0].length, 1);
+                $mol_assert_ok(view.undo_enabled());
+                view.undo();
+                $mol_assert_equal(view.piece().patterns[0].length, 0);
             },
-            'no handle clicks if disabled'($) {
-                let clicked = false;
-                const clicker = $mol_button.make({
-                    $,
-                    click: (event) => { clicked = true; },
-                    enabled: () => false,
-                });
-                const element = clicker.dom_tree();
-                const event = $mol_dom_context.document.createEvent('mouseevent');
-                event.initEvent('click', true, true);
-                element.dispatchEvent(event);
-                $mol_assert_not(clicked);
+            'color picks the timbre of the next stroke'($) {
+                const view = app($);
+                view.color_checked(3, true);
+                draw(view, 50);
+                $mol_assert_equal(view.piece().patterns[0][0].color, 3);
+                $mol_assert_ok(view.Color(3).checked());
             },
-            async 'Store error'($) {
-                const clicker = $mol_button.make({
-                    $,
-                    click: (event) => $.$mol_fail(new Error('Test error')),
-                });
-                const event = $mol_dom_context.document.createEvent('mouseevent');
-                $mol_assert_fail(() => clicker.event_activate(event), 'Test error');
-                await Promise.resolve();
-                $mol_assert_equal(clicker.status()[0].message, 'Test error');
+            'patterns: add, draw separately, chain'($) {
+                const view = app($);
+                draw(view, 90);
+                view.pattern_add();
+                $mol_assert_equal(view.pattern(), 1);
+                $mol_assert_equal(view.pattern_tabs().length, 3);
+                $mol_assert_equal(view.sketch().strokes().length, 0);
+                draw(view, 20);
+                view.chain(true);
+                const notes = view.Player().midi_notes();
+                $mol_assert_equal(notes.length, 2);
+                $mol_assert_ok(notes[1].midi > notes[0].midi);
+                view.pattern_drop();
+                $mol_assert_equal(view.pattern(), 0);
+                $mol_assert_equal(view.piece().patterns.length, 1);
+            },
+            'settings change the grid'($) {
+                const view = app($);
+                view.grid_value('16');
+                view.bars_value('1');
+                $mol_assert_equal(view.steps(), 16);
+                view.scale_value('blues');
+                view.range_value('1');
+                $mol_assert_equal(view.notes().length, 7);
+            },
+            'share link opens the same piece'($) {
+                const view = app($);
+                view.piece_title('Ручей');
+                draw(view, 60);
+                const link = view.share_link();
+                const share = link.match(/share=([^/]*)/)[1];
+                $mol_assert_equal($bog_doodle_piece_unpack(decodeURIComponent(share)).title, 'Ручей');
+                $.$mol_state_arg.dict({});
+            },
+            'gallery keeps pieces apart'($) {
+                const view = app($);
+                draw(view, 90);
+                const first = view.Store().current();
+                view.piece_new();
+                $mol_assert_equal(view.piece().patterns[0].length, 0);
+                draw(view, 30);
+                view.piece_open(first);
+                $mol_assert_equal(view.Store().current(), first);
+                $mol_assert_equal(view.piece().patterns[0].length, 1);
+                $mol_assert_equal(view.gallery_rows().length, 3);
+            },
+            'selection tools appear with selection'($) {
+                const view = app($);
+                draw(view, 50);
+                $mol_assert_equal(view.selection_tools().length, 0);
+                view.tool_select(true);
+                const board = view.Board();
+                board.pointer_down(pointer(0, 0));
+                board.pointer_move(pointer(100, 100));
+                board.pointer_up(pointer(100, 100));
+                $mol_assert_equal(view.selection_tools().length, 2);
+                view.selection_copy();
+                $mol_assert_equal(view.piece().patterns[0].length, 2);
+                view.selection_drop();
+                $mol_assert_equal(view.piece().patterns[0].length, 1);
             },
         });
     })($$ = $_1.$$ || ($_1.$$ = {}));
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_test({
-        'null by default'() {
-            const key = String(Math.random());
-            $mol_assert_equal($mol_state_session.value(key), null);
-        },
-        'storing'() {
-            const key = String(Math.random());
-            $mol_state_session.value(key, '$mol_state_session_test');
-            $mol_assert_equal($mol_state_session.value(key), '$mol_state_session_test');
-            $mol_state_session.value(key, null);
-            $mol_assert_equal($mol_state_session.value(key), null);
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_test({
-        'app shows intro in body'() {
-            const app = new $bog_doodle_app;
-            $mol_assert_equal(app.body()[0], app.Intro());
-        },
-    });
 })($ || ($ = {}));
 
 

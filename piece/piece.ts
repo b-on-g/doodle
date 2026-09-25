@@ -13,6 +13,22 @@ namespace $ {
 		patterns: readonly $bog_doodle_sketch_strokes[]
 		chain: boolean
 		back: string
+		layers: readonly $bog_doodle_piece_layer[]
+		axis: $bog_doodle_piece_axis
+	}
+
+	export type $bog_doodle_piece_layer = {
+		id: string
+		name: string
+		visible: boolean
+		audible: boolean
+	}
+
+	export type $bog_doodle_piece_axis = 'time_x' | 'time_y'
+
+	export function $bog_doodle_piece_layer_of( piece: $bog_doodle_piece, stroke: $bog_doodle_sketch_stroke ) {
+		const id = stroke.layer
+		return piece.layers.find( layer => layer.id === id ) ?? piece.layers[ 0 ]
 	}
 
 	export function $bog_doodle_piece_empty(): $bog_doodle_piece {
@@ -29,6 +45,8 @@ namespace $ {
 			patterns: [ [] ],
 			chain: false,
 			back: '',
+			layers: [ { id: 'l1', name: '', visible: true, audible: true } ],
+			axis: 'time_y',
 		}
 	}
 
@@ -60,7 +78,7 @@ namespace $ {
 
 	export function $bog_doodle_piece_pack( piece: $bog_doodle_piece ) {
 		return JSON.stringify( {
-			v: 1,
+			v: 2,
 			t: piece.title,
 			k: piece.key,
 			s: piece.scale,
@@ -71,16 +89,43 @@ namespace $ {
 			g: piece.grid,
 			w: piece.swing,
 			c: piece.chain ? 1 : 0,
-			p: piece.patterns.map( strokes => strokes.map( s => s.color + '.' + points_pack( s.points ) ) ),
+			a: piece.axis,
+			l: piece.layers.map( l => [ l.id, l.name, l.visible ? 1 : 0, l.audible ? 1 : 0 ] ),
+			p: piece.patterns.map( strokes => strokes.map( s => [
+				s.color,
+				points_pack( s.points ),
+				s.ink ?? '',
+				Math.round( ( s.size ?? 1 ) * 100 ) / 100,
+				s.layer ?? '',
+			] ) ),
 		} )
+	}
+
+	function stroke_unpack( item: string | readonly unknown[] ): $bog_doodle_sketch_stroke {
+		if( typeof item === 'string' ) {
+			const [ color, points ] = item.split( '.' )
+			return { id: $bog_doodle_sketch_stroke_id(), color: Number( color ) || 0, points: points_unpack( points ?? '' ) }
+		}
+		const [ color, points, ink, size, layer ] = item
+		return {
+			id: $bog_doodle_sketch_stroke_id(),
+			color: Number( color ) || 0,
+			points: points_unpack( String( points ?? '' ) ),
+			... ink ? { ink: String( ink ) } : {},
+			... size && Number( size ) !== 1 ? { size: Number( size ) } : {},
+			... layer ? { layer: String( layer ) } : {},
+		}
 	}
 
 	export function $bog_doodle_piece_unpack( str: string ): $bog_doodle_piece {
 		const raw = JSON.parse( str )
 		const empty = $bog_doodle_piece_empty()
-		const patterns = ( raw.p as string[][] ?? [ [] ] ).map( strokes => strokes.map( item => {
-			const [ color, points ] = item.split( '.' )
-			return { id: $bog_doodle_sketch_stroke_id(), color: Number( color ) || 0, points: points_unpack( points ?? '' ) }
+		const patterns = ( raw.p as ( string | unknown[] )[][] ?? [ [] ] ).map( strokes => strokes.map( stroke_unpack ) )
+		const layers = ( raw.l as unknown[][] ?? [] ).map( ( [ id, name, visible, audible ] ) => ( {
+			id: String( id ),
+			name: String( name ?? '' ),
+			visible: Boolean( visible ),
+			audible: Boolean( audible ),
 		} ) )
 		return {
 			... empty,
@@ -94,6 +139,8 @@ namespace $ {
 			grid: raw.g in $bog_doodle_score_grids ? raw.g : empty.grid,
 			swing: Number( raw.w ?? 0 ),
 			chain: Boolean( raw.c ),
+			axis: raw.a === 'time_x' ? 'time_x' : 'time_y',
+			layers: layers.length ? layers : empty.layers,
 			patterns: patterns.length ? patterns : [ [] ],
 		}
 	}

@@ -1,0 +1,11 @@
+[bog_doodle_slider] {
+	display: block;
+	appearance: auto;
+	-webkit-appearance: auto;
+	background: transparent;
+	width: 7rem;
+	height: 2.5rem;
+	margin: 0 var(--mol_gap_text);
+	accent-color: var(--mol_theme_current);
+	cursor: pointer;
+}

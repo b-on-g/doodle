@@ -1,0 +1,46 @@
+$bog_doodle_picker $mol_view
+	value? \#1f1d1a
+	swatches /string
+	sub /
+		<= Area $mol_view
+			style *
+				^
+				--bog_doodle_picker_hue <= hue_css \red
+			event *
+				pointerdown? <=> area_down? null
+				pointermove? <=> area_move? null
+				pointerup? <=> area_up? null
+			sub /
+				<= Area_knob $mol_view
+					style *
+						^
+						left <= area_left \0%
+						top <= area_top \0%
+		<= Hue $mol_view
+			event *
+				pointerdown? <=> hue_down? null
+				pointermove? <=> hue_move? null
+				pointerup? <=> hue_up? null
+			sub /
+				<= Hue_knob $mol_view
+					style *
+						^
+						left <= hue_left \0%
+		<= Swatches $mol_view
+			sub <= swatch_list /
+				<= Swatch* $mol_button_minor
+					hint <= swatch_color* \
+					click? <=> swatch_pick*? null
+					style *
+						^
+						--bog_doodle_picker_swatch <= swatch_color* \
+					sub /
+		<= Hex_row $mol_view
+			sub /
+				<= Preview $mol_view
+					style *
+						^
+						--bog_doodle_picker_swatch <= value? \#1f1d1a
+				<= Hex $mol_string
+					hint \#rrggbb
+					value? <=> hex? \

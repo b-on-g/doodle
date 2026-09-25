@@ -4,6 +4,9 @@ namespace $ {
 		id: string
 		color: number
 		points: readonly number[]
+		ink?: string
+		size?: number
+		layer?: string
 	}
 
 	export type $bog_doodle_sketch_strokes = readonly $bog_doodle_sketch_stroke[]
@@ -134,17 +137,21 @@ namespace $ {
 			return copies.map( s => s.id )
 		}
 
-		clear() {
-			if( !this.strokes().length ) return
-			this.commit( [] )
+		clear( filter: ( stroke: $bog_doodle_sketch_stroke )=> boolean = ()=> true ) {
+			const rest = this.strokes().filter( s => !filter( s ) )
+			if( rest.length === this.strokes().length ) return
+			this.commit( rest )
 		}
 
-		hits( x: number, y: number, radius: number ) {
-			return this.strokes().filter( s => $bog_doodle_sketch_stroke_near( s, x, y, radius ) ).map( s => s.id )
+		hits( x: number, y: number, radius: number, filter: ( stroke: $bog_doodle_sketch_stroke )=> boolean = ()=> true ) {
+			return this.strokes()
+				.filter( s => filter( s ) && $bog_doodle_sketch_stroke_near( s, x, y, radius ) )
+				.map( s => s.id )
 		}
 
-		inside( left: number, top: number, right: number, bottom: number ) {
+		inside( left: number, top: number, right: number, bottom: number, filter: ( stroke: $bog_doodle_sketch_stroke )=> boolean = ()=> true ) {
 			return this.strokes().filter( s => {
+				if( !filter( s ) ) return false
 				const box = $bog_doodle_sketch_stroke_box( s )
 				return box.right >= left && box.left <= right && box.bottom >= top && box.top <= bottom
 			} ).map( s => s.id )

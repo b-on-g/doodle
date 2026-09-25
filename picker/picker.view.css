@@ -1,0 +1,80 @@
+[bog_doodle_picker] {
+	flex-direction: column;
+	gap: var(--mol_gap_space);
+	padding: var(--mol_gap_block);
+	width: 16rem;
+	max-width: 100%;
+}
+
+[bog_doodle_picker_area] {
+	position: relative;
+	height: 10rem;
+	border-radius: var(--mol_gap_round);
+	background:
+		linear-gradient( to top, #000, transparent ),
+		linear-gradient( to right, #fff, var(--bog_doodle_picker_hue) );
+	touch-action: none;
+	cursor: crosshair;
+}
+
+[bog_doodle_picker_area_knob] {
+	position: absolute;
+	width: 1rem;
+	height: 1rem;
+	margin: -0.5rem 0 0 -0.5rem;
+	border-radius: 50%;
+	border: 2px solid #fff;
+	box-shadow: 0 0 0 1px #0008;
+	pointer-events: none;
+}
+
+[bog_doodle_picker_hue] {
+	position: relative;
+	height: 1rem;
+	border-radius: var(--mol_gap_round);
+	background: linear-gradient( to right, #f00, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 );
+	touch-action: none;
+	cursor: pointer;
+}
+
+[bog_doodle_picker_hue_knob] {
+	position: absolute;
+	top: -2px;
+	bottom: -2px;
+	width: 6px;
+	margin-left: -3px;
+	border-radius: 3px;
+	background: #fff;
+	box-shadow: 0 0 0 1px #0008;
+	pointer-events: none;
+}
+
+[bog_doodle_picker_swatches] {
+	flex-wrap: wrap;
+	gap: 4px;
+}
+
+[bog_doodle_picker_swatch] {
+	width: 1.75rem;
+	height: 1.75rem;
+	min-width: 0;
+	min-height: 0;
+	padding: 0;
+	border-radius: 50%;
+	background: var(--bog_doodle_picker_swatch);
+	box-shadow: inset 0 0 0 1px #0002;
+}
+
+[bog_doodle_picker_hex_row] {
+	align-items: center;
+	gap: var(--mol_gap_space);
+}
+
+[bog_doodle_picker_preview] {
+	flex: none;
+	width: 2.5rem;
+	height: 2.5rem;
+	border-radius: var(--mol_gap_round);
+	background: var(--bog_doodle_picker_swatch);
+	box-shadow: inset 0 0 0 1px #0002;
+}

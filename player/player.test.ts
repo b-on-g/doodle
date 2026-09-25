@@ -22,6 +22,19 @@ namespace $ {
 			$mol_assert_like( player.midi_notes(), [ { time: 2, length: 1, midi: 72, velocity: 1, channel: 2 } ] )
 		},
 
+		'muted layer is silent'( $ ) {
+			const muted = {
+				... piece( true ),
+				layers: [
+					{ id: 'l1', name: '', visible: true, audible: false },
+					{ id: 'l2', name: '', visible: true, audible: true },
+				],
+			}
+			muted.patterns = [ [ muted.patterns[ 0 ][ 0 ], { ... muted.patterns[ 1 ][ 0 ], layer: 'l2' } ] ]
+			const player = $bog_doodle_player.make({ $, piece: ()=> muted, pattern: ()=> 0 })
+			$mol_assert_like( player.midi_notes().map( n => n.midi ), [ 72 ] )
+		},
+
 		'chain plays patterns one after another'( $ ) {
 			const player = $bog_doodle_player.make({ $, piece: ()=> piece( true ), pattern: ()=> 1 })
 			$mol_assert_like( player.midi_notes().map( n => [ n.time, n.midi ] ), [ [ 0, 60 ], [ 6, 72 ] ] )

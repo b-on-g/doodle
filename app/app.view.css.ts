@@ -41,6 +41,11 @@ namespace $.$$ {
 		},
 
 		Palette: {
+			flex: {
+				wrap: 'wrap',
+			},
+			maxWidth: '100%',
+			alignItems: 'center',
 			border: {
 				radius: $mol_gap.round,
 			},
@@ -72,6 +77,109 @@ namespace $.$$ {
 				color: $mol_style_func.vary( '--bog_doodle_app_ink' ),
 			},
 			boxShadow: `0 0 0 2px ${ $mol_theme.back }`,
+		},
+
+		Ink_dot: {
+			width: '1.25rem',
+			height: '1.25rem',
+			border: {
+				radius: '50%',
+			},
+			background: {
+				color: $mol_style_func.vary( '--bog_doodle_app_ink' ),
+			},
+			boxShadow: `0 0 0 2px ${ $mol_theme.back }`,
+		},
+
+		Voice: {
+			alignItems: 'center',
+			color: $mol_theme.shade,
+			padding: {
+				left: $mol_gap.text,
+				right: $mol_gap.text,
+			},
+			font: {
+				size: '.875rem',
+			},
+		},
+
+		Size: {
+			alignItems: 'center',
+		},
+
+		Zoom: {
+			alignItems: 'center',
+			border: {
+				radius: $mol_gap.round,
+			},
+			background: {
+				color: $mol_theme.card,
+			},
+		},
+
+		Zoom_level: {
+			minWidth: '3.5rem',
+			justify: {
+				content: 'center',
+			},
+		},
+
+		Vibes: {
+			flex: {
+				wrap: 'wrap',
+				shrink: 1,
+				basis: '100%',
+			},
+			minWidth: 0,
+			gap: $mol_gap.space,
+		},
+
+		Vibe: {
+			border: {
+				radius: $mol_gap.round,
+			},
+			background: {
+				color: $mol_theme.card,
+			},
+			'@': {
+				mol_check_checked: {
+					true: {
+						color: $mol_theme.current,
+						font: {
+							weight: 'bold',
+						},
+					},
+				},
+			},
+		},
+
+		Layer_tools: {
+			flex: {
+				wrap: 'wrap',
+			},
+			alignItems: 'center',
+			gap: $mol_gap.space,
+			padding: $mol_gap.block,
+		},
+
+		Layer: {
+			alignItems: 'center',
+		},
+
+		Layer_pick: {
+			flex: {
+				grow: 1,
+			},
+			'@': {
+				mol_check_checked: {
+					true: {
+						color: $mol_theme.current,
+						font: {
+							weight: 'bold',
+						},
+					},
+				},
+			},
 		},
 
 		Patterns: {

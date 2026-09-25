@@ -9,6 +9,34 @@ namespace $ {
 		{ ink: '#8a44c8', name: 'Колокол' },
 	]
 
+	export function $bog_doodle_synth_hsl( ink: string ) {
+		const hex = ink.replace( '#', '' ).slice( 0, 6 ).padEnd( 6, '0' )
+		const r = parseInt( hex.slice( 0, 2 ), 16 ) / 255
+		const g = parseInt( hex.slice( 2, 4 ), 16 ) / 255
+		const b = parseInt( hex.slice( 4, 6 ), 16 ) / 255
+		const max = Math.max( r, g, b ), min = Math.min( r, g, b )
+		const l = ( max + min ) / 2
+		const d = max - min
+		if( !d ) return { h: 0, s: 0, l }
+		const s = d / ( 1 - Math.abs( 2 * l - 1 ) )
+		const h = max === r ? ( ( g - b ) / d + 6 ) % 6 : max === g ? ( b - r ) / d + 2 : ( r - g ) / d + 4
+		return { h: h * 60, s, l }
+	}
+
+	export function $bog_doodle_synth_timbre( ink: string ) {
+		const { h, s, l } = $bog_doodle_synth_hsl( ink )
+		if( s < 0.2 || l < 0.12 || l > 0.92 ) return 0
+		if( h < 15 || h >= 345 ) return 1
+		if( h < 70 ) return 4
+		if( h < 170 ) return 3
+		if( h < 250 ) return 2
+		return 5
+	}
+
+	export function $bog_doodle_synth_ink( stroke: { color: number, ink?: string } ) {
+		return stroke.ink || $bog_doodle_synth_colors[ stroke.color ]?.ink || '#1f1d1a'
+	}
+
 	function envelope( ctx: BaseAudioContext, dest: AudioNode, time: number, attack: number, peak: number, hold: number, release: number ) {
 		const gain = ctx.createGain()
 		gain.gain.setValueAtTime( 0.0001, time )

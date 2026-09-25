@@ -1,6 +1,7 @@
 $bog_doodle_app $mol_view
 	title @ \Doodle
 	untitled @ \Без названия
+	layer_prefix @ \Слой
 	Store $bog_doodle_gallery
 	plugins /
 		<= Theme $mol_theme_auto
@@ -35,16 +36,20 @@ $bog_doodle_app $mol_view
 					hint @ \Мои рисунки
 					checked? <=> gallery_opened? false
 					Icon <= Gallery_open_icon $mol_icon_folder_music
+				<= Layers_open $mol_check_icon
+					hint @ \Слои
+					checked? <=> layers_opened? false
+					Icon <= Layers_open_icon $mol_icon_layers
 				<= Settings_open $mol_check_icon
-					hint @ \Настройки, экспорт и ссылка
+					hint @ \Настроение, лад, темп, экспорт и ссылка
 					checked? <=> settings_opened? false
 					Icon <= Settings_open_icon $mol_icon_tune
 				<= Tools $mol_view
 					sub /
 						<= Tool_draw $mol_check_icon
-							hint @ \Карандаш (B)
+							hint @ \Кисть (B)
 							checked? <=> tool_draw? false
-							Icon <= Tool_draw_icon $mol_icon_pencil
+							Icon <= Tool_draw_icon $mol_icon_brush
 						<= Tool_erase $mol_check_icon
 							hint @ \Ластик (E), правая кнопка или кнопка пера
 							checked? <=> tool_erase? false
@@ -54,14 +59,21 @@ $bog_doodle_app $mol_view
 							checked? <=> tool_select? false
 							Icon <= Tool_select_icon $mol_icon_cursor_default
 						<= Tool_pan $mol_check_icon
-							hint @ \Рука (H): двигать холст, колесо с Ctrl или щипок меняют масштаб
+							hint @ \Рука (H): двигать холст
 							checked? <=> tool_pan? false
 							Icon <= Tool_pan_icon $mol_icon_pan
-						<= Zoom_reset $mol_button_minor
-							hint @ \Показать весь луп (0)
-							click? <=> zoom_reset? null
-							sub /
-								<= Zoom_reset_icon $mol_icon_magnify_minus
+				<= Size $mol_view
+					sub <= size_tools /
+						<= Brush_size $bog_doodle_slider
+							hint @ \Толщина кисти ( [ и ] )
+							value? <=> brush_value? 10
+							min 2
+							max 40
+						<= Eraser_size $bog_doodle_slider
+							hint @ \Размер ластика ( [ и ] )
+							value? <=> eraser? 24
+							min 6
+							max 120
 				<= Palette $mol_view
 					sub <= palette /
 						<= Color* $mol_check
@@ -72,6 +84,38 @@ $bog_doodle_app $mol_view
 								--bog_doodle_app_ink <= color_ink* \
 							sub /
 								<= Color_dot* $mol_view
+						<= Ink_pick $mol_pick
+							hint @ \Любой цвет: оттенок выбирает инструмент
+							align_hor \left
+							trigger_content /
+								<= Ink_dot $mol_view
+									style *
+										^
+										--bog_doodle_app_ink <= ink? \#1f1d1a
+								<= Ink_icon $mol_icon_palette
+							bubble_content /
+								<= Picker $bog_doodle_picker
+									value? <=> ink? \#1f1d1a
+									swatches <= ink_recent /string
+						<= Voice $mol_view
+							sub /
+								<= voice_name \
+				<= Zoom $mol_view
+					sub /
+						<= Zoom_out $mol_button_minor
+							hint @ \Отдалить (−)
+							click? <=> zoom_out? null
+							sub /
+								<= Zoom_out_icon $mol_icon_magnify_minus
+						<= Zoom_level $mol_button_minor
+							hint @ \Весь луп (0)
+							click? <=> zoom_reset? null
+							title <= zoom_percent \100%
+						<= Zoom_in $mol_button_minor
+							hint @ \Приблизить (+)
+							click? <=> zoom_in? null
+							sub /
+								<= Zoom_in_icon $mol_icon_magnify_plus
 				<= Selection $mol_view
 					sub <= selection_tools /
 						<= Copy $mol_button_minor
@@ -87,7 +131,7 @@ $bog_doodle_app $mol_view
 				<= Patterns $mol_view
 					sub <= pattern_tabs /
 						<= Pattern* $mol_check
-							hint @ \Паттерн
+							hint @ \Паттерн: отдельный луп, их можно играть цепочкой
 							checked? <=> pattern_checked*? false
 							title <= pattern_title* \
 						<= Pattern_add $mol_button_minor
@@ -103,11 +147,18 @@ $bog_doodle_app $mol_view
 					steps <= steps 16
 					beat_steps <= beat_steps 2
 					bar_steps <= bar_steps 8
+					axis <= axis \time_y
 					tool? <=> tool? \draw
-					color <= color 0
+					ink <= ink? \#1f1d1a
+					brush <= brush 1
+					eraser <= eraser? 24
 					snap <= snap false
 					pen_only <= pen_only false
 					back <= back \
+					layer_order <= layer_order /string
+					layer_active <= layer_active? \l1
+					layer_default <= layer_default \l1
+					layer_focus <= layer_focus? false
 					selected? <=> selected? /string
 					playhead <= playhead null
 					playing <= playing false
@@ -116,8 +167,64 @@ $bog_doodle_app $mol_view
 					sub /
 						<= Panel_content $mol_list
 							rows <= panel_rows /
+	Layers $mol_list
+		rows /
+			<= Layer_tools $mol_view
+				sub /
+					<= Layer_add $mol_button_major
+						title @ \Новый слой
+						click? <=> layer_add? null
+					<= Layer_focus $mol_check_box
+						title @ \Приглушать остальные
+						checked? <=> layer_focus? false
+			<= Layer_name_field $mol_labeler
+				title @ \Имя активного слоя
+				content /
+					<= Layer_name $mol_string
+						hint <= layer_name_hint \
+						value? <=> layer_name? \
+			<= Layer_list $mol_list
+				rows <= layer_rows /
+					<= Layer* $mol_view
+						sub /
+							<= Layer_visible* $mol_check_icon
+								hint @ \Видно
+								checked? <=> layer_visible*? true
+								Icon <= Layer_visible_icon* $mol_icon_eye
+							<= Layer_audible* $mol_check_icon
+								hint @ \Звучит
+								checked? <=> layer_audible*? true
+								Icon <= Layer_audible_icon* $mol_icon_volume_high
+							<= Layer_pick* $mol_check
+								hint @ \Рисовать на этом слое
+								checked? <=> layer_picked*? false
+								title <= layer_title* \
+							<= Layer_up* $mol_button_minor
+								hint @ \Выше
+								click? <=> layer_up*? null
+								sub /
+									<= Layer_up_icon* $mol_icon_arrow_up
+							<= Layer_down* $mol_button_minor
+								hint @ \Ниже
+								click? <=> layer_down*? null
+								sub /
+									<= Layer_down_icon* $mol_icon_arrow_down
+							<= Layer_drop* $mol_button_minor
+								hint @ \Удалить слой со всеми штрихами
+								enabled <= layer_drop_enabled false
+								click? <=> layer_drop*? null
+								sub /
+									<= Layer_drop_icon* $mol_icon_delete
 	Settings $mol_list
 		rows /
+			<= Vibe_field $mol_labeler
+				title @ \Настроение: выбери, и лад, темп и инструмент подстроятся
+				content /
+					<= Vibes $mol_view
+						sub <= vibe_list /
+							<= Vibe* $mol_check
+								title <= vibe_name* \
+								checked? <=> vibe_checked*? false
 			<= Title_field $mol_labeler
 				title @ \Название
 				content /
@@ -147,6 +254,14 @@ $bog_doodle_app $mol_view
 							mixolydian @ \Миксолидийский
 							blues @ \Блюз
 							chromatic @ \Хроматика
+			<= Axis_field $mol_labeler
+				title @ \Раскладка
+				content /
+					<= Axis_input $mol_switch
+						value? <=> axis_value? \time_y
+						options *
+							time_y @ \Ноты слева направо, время вниз
+							time_x @ \Ноты снизу вверх, время вправо
 			<= Range_field $mol_labeler
 				title @ \Диапазон, октав
 				content /

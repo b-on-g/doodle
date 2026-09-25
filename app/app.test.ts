@@ -22,9 +22,9 @@ namespace $.$$ {
 
 	const draw = ( app: $bog_doodle_app, y: number ) => {
 		const board = app.Board() as $bog_doodle_board
-		board.pointer_down( pointer( 10, y ) )
-		board.pointer_move( pointer( 40, y ) )
-		board.pointer_up( pointer( 40, y ) )
+		board.pointer_down( pointer( 100 - y, 10 ) )
+		board.pointer_move( pointer( 100 - y, 40 ) )
+		board.pointer_up( pointer( 100 - y, 40 ) )
 	}
 
 	$mol_test({
@@ -57,7 +57,10 @@ namespace $.$$ {
 			$mol_assert_equal( view.pattern_tabs().length, 3 )
 			$mol_assert_equal( view.sketch().strokes().length, 0 )
 			draw( view, 20 )
+			$mol_assert_equal( view.pattern(), 1 )
+			$mol_assert_equal( view.piece().patterns[ 1 ].length, 1 )
 			view.chain( true )
+			$mol_assert_equal( view.pattern(), 1 )
 			const notes = view.Player().midi_notes()
 			$mol_assert_equal( notes.length, 2 )
 			$mol_assert_ok( notes[ 1 ].midi > notes[ 0 ].midi )
@@ -114,6 +117,84 @@ namespace $.$$ {
 			$mol_assert_equal( view.piece().patterns[ 0 ].length, 2 )
 			view.selection_drop()
 			$mol_assert_equal( view.piece().patterns[ 0 ].length, 1 )
+		},
+
+		'vibe tunes music and brush in one tap'( $ ) {
+			const view = app( $ )
+			view.vibe_checked( 'blues', true )
+			$mol_assert_equal( view.piece().scale, 'blues' )
+			$mol_assert_equal( view.piece().swing, 1 )
+			$mol_assert_ok( view.Vibe( 'blues' ).checked() )
+			$mol_assert_not( view.Vibe( 'calm' ).checked() )
+			$mol_assert_equal( view.voice_name(), $bog_doodle_synth_colors[ 1 ].name )
+			view.bpm_value( 93 )
+			$mol_assert_not( view.Vibe( 'blues' ).checked() )
+		},
+
+		'any color draws with the instrument of its hue'( $ ) {
+			const view = app( $ )
+			view.ink( '#33cc99' )
+			draw( view, 50 )
+			const stroke = view.piece().patterns[ 0 ][ 0 ]
+			$mol_assert_equal( stroke.ink, '#33cc99' )
+			$mol_assert_equal( stroke.color, 3 )
+			$mol_assert_like( view.ink_recent(), [ '#33cc99' ] )
+		},
+
+		'brush size goes into the stroke and slider follows the tool'( $ ) {
+			const view = app( $ )
+			view.brush_value( 25 )
+			draw( view, 50 )
+			$mol_assert_equal( view.piece().patterns[ 0 ][ 0 ].size, 2.5 )
+			$mol_assert_like( view.size_tools(), [ view.Brush_size() ] )
+			view.tool_erase( true )
+			$mol_assert_like( view.size_tools(), [ view.Eraser_size() ] )
+			view.size_step( 1 )
+			$mol_assert_equal( view.eraser(), 30 )
+		},
+
+		'layers: draw on the new one, hide it, mute it, drop it'( $ ) {
+			const view = app( $ )
+			draw( view, 90 )
+			view.layer_add()
+			const top = view.layer_active()
+			$mol_assert_equal( view.layers().length, 2 )
+			$mol_assert_equal( view.layer_rows()[ 0 ], view.Layer( top ) )
+			draw( view, 20 )
+			$mol_assert_equal( view.piece().patterns[ 0 ][ 1 ].layer, top )
+
+			view.layer_audible( top, false )
+			$mol_assert_equal( view.Player().midi_notes().length, 1 )
+			view.layer_visible( top, false )
+			$mol_assert_like( view.layer_order(), [ view.layer_default() ] )
+
+			view.layer_name( 'Мелодия' )
+			$mol_assert_equal( view.layer_title( top ), 'Мелодия' )
+
+			view.layer_drop( top )
+			$mol_assert_equal( view.layers().length, 1 )
+			$mol_assert_equal( view.piece().patterns[ 0 ].length, 1 )
+			$mol_assert_equal( view.layer_active(), view.layer_default() )
+		},
+
+		'moving the bottom layer up keeps its strokes'( $ ) {
+			const view = app( $ )
+			draw( view, 90 )
+			const bottom = view.layer_default()
+			view.layer_add()
+			view.layer_up( bottom )
+			$mol_assert_equal( view.layers()[ 1 ].id, bottom )
+			$mol_assert_equal( view.piece().patterns[ 0 ][ 0 ].layer, bottom )
+		},
+
+		'zoom buttons and axis setting'( $ ) {
+			const view = app( $ )
+			view.zoom_out()
+			$mol_assert_equal( view.zoom_percent(), '80%' )
+			view.zoom_reset()
+			$mol_assert_equal( view.axis(), 'time_y' )
+			view.axis_value( 'time_x' )
+			$mol_assert_equal( ( view.Board() as $bog_doodle_board ).axis(), 'time_x' )
 		},
 
 	})

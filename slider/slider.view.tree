@@ -1,0 +1,18 @@
+$bog_doodle_slider $mol_view
+	dom_name \input
+	value? 0
+	min 0
+	max 100
+	step 1
+	attr *
+		^
+		type \range
+		min <= min
+		max <= max
+		step <= step
+		title <= hint \
+	field *
+		^
+		value <= value_text \0
+	event *
+		input? <=> changed? null

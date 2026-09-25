@@ -5,11 +5,19 @@ $bog_doodle_board $mol_view
 	steps 16
 	beat_steps 2
 	bar_steps 8
+	axis \time_y
 	tool? \draw
-	color 0
+	ink \#1f1d1a
+	brush 1
+	eraser 24
 	snap false
 	pen_only false
 	back \
+	layer_order /string
+		\l1
+	layer_active \l1
+	layer_default \l1
+	layer_focus false
 	selected? /string
 	playhead null
 	playing false

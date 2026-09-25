@@ -48,8 +48,10 @@ namespace $.$$ {
 		@ $mol_mem
 		pattern( next?: number ): number {
 			const count = this.piece().patterns.length
-			return Math.max( 0, Math.min( count - 1, next ?? 0 ) )
+			return this.pattern_kept = Math.max( 0, Math.min( count - 1, next ?? this.pattern_kept ) )
 		}
+
+		pattern_kept = 0
 
 		strokes( pattern: number, next?: $bog_doodle_sketch_strokes ) {
 			const piece = this.piece()
@@ -166,17 +168,58 @@ namespace $.$$ {
 			return this.tool_set( 'pan', next )
 		}
 
+		board() {
+			return this.Board() as $bog_doodle_board
+		}
+
 		zoom_reset() {
-			( this.Board() as $bog_doodle_board ).zoom_reset()
+			this.board().zoom_reset()
+		}
+
+		zoom_in() {
+			this.board().zoom_in()
+		}
+
+		zoom_out() {
+			this.board().zoom_out()
+		}
+
+		zoom_percent() {
+			return this.board().zoom_percent()
 		}
 
 		@ $mol_mem
-		color( next?: number ) {
-			return this.pref( 'color', next, 0 )
+		ink( next?: string ) {
+			if( next !== undefined ) {
+				this.ink_remember( next )
+				const selected = this.selected()
+				if( selected.length ) this.recolor( selected, next )
+				if( this.tool() !== 'draw' && !selected.length ) this.tool( 'draw' )
+			}
+			return this.pref( 'ink', next, $bog_doodle_synth_colors[ 0 ].ink )
+		}
+
+		@ $mol_mem
+		ink_recent( next?: readonly string[] ): readonly string[] {
+			return this.pref( 'ink_recent', next, [] as readonly string[] )
+		}
+
+		ink_remember( ink: string ) {
+			const palette = $bog_doodle_synth_colors.map( c => c.ink )
+			if( palette.includes( ink ) ) return
+			this.ink_recent( [ ink, ... this.ink_recent().filter( item => item !== ink ) ].slice( 0, 12 ) )
+		}
+
+		color() {
+			return $bog_doodle_synth_timbre( this.ink() )
+		}
+
+		voice_name() {
+			return $bog_doodle_synth_colors[ this.color() ].name
 		}
 
 		palette() {
-			return $bog_doodle_synth_colors.map( ( _, index ) => this.Color( index ) )
+			return [ ... $bog_doodle_synth_colors.map( ( _, index ) => this.Color( index ) ), this.Ink_pick(), this.Voice() ]
 		}
 
 		color_name( index: number ) {
@@ -188,19 +231,41 @@ namespace $.$$ {
 		}
 
 		color_checked( index: number, next?: boolean ) {
-			if( next ) {
-				this.color( index )
-				if( this.tool() !== 'draw' ) this.tool( 'draw' )
-				const selected = this.selected()
-				if( selected.length ) this.recolor( selected, index )
-			}
-			return this.color() === index
+			if( next ) this.ink( this.color_ink( index ) )
+			return this.ink() === this.color_ink( index )
 		}
 
-		recolor( ids: readonly string[], color: number ) {
+		recolor( ids: readonly string[], ink: string ) {
 			const picked = new Set( ids )
+			const color = $bog_doodle_synth_timbre( ink )
 			const sketch = this.sketch()
-			sketch.commit( sketch.strokes().map( s => picked.has( s.id ) ? { ... s, color } : s ) )
+			sketch.commit( sketch.strokes().map( s => picked.has( s.id ) ? { ... s, ink, color } : s ) )
+		}
+
+		@ $mol_mem
+		brush_value( next?: number ) {
+			return this.pref( 'brush', next, 10 )
+		}
+
+		brush() {
+			return this.brush_value() / 10
+		}
+
+		@ $mol_mem
+		eraser( next?: number ) {
+			return this.pref( 'eraser', next, 24 )
+		}
+
+		size_tools() {
+			const tool = this.tool()
+			if( tool === 'draw' ) return [ this.Brush_size() ]
+			if( tool === 'erase' ) return [ this.Eraser_size() ]
+			return []
+		}
+
+		size_step( dir: number ) {
+			if( this.tool() === 'erase' ) this.eraser( Math.max( 6, Math.min( 120, this.eraser() + dir * 6 ) ) )
+			else this.brush_value( Math.max( 2, Math.min( 40, this.brush_value() + dir * 2 ) ) )
 		}
 
 		@ $mol_mem
@@ -287,8 +352,174 @@ namespace $.$$ {
 			return this.panel() ? [ this.Board(), this.Panel() ] : [ this.Board() ]
 		}
 
+		layers_opened( next?: boolean ) {
+			if( next !== undefined ) this.panel( next ? 'layers' : '' )
+			return this.panel() === 'layers'
+		}
+
 		panel_rows() {
-			return [ this.panel() === 'gallery' ? this.Gallery() : this.Settings() ]
+			const panel = this.panel()
+			if( panel === 'gallery' ) return [ this.Gallery() ]
+			if( panel === 'layers' ) return [ this.Layers() ]
+			return [ this.Settings() ]
+		}
+
+		axis() {
+			return this.piece().axis
+		}
+
+		axis_value( next?: string ) {
+			if( next !== undefined ) this.piece_patch( { axis: next as $bog_doodle_piece_axis } )
+			return this.piece().axis
+		}
+
+		vibe_list() {
+			return $bog_doodle_vibe_list.map( vibe => this.Vibe( vibe.id ) )
+		}
+
+		vibe_name( id: string ) {
+			return $bog_doodle_vibe_list.find( vibe => vibe.id === id )?.name ?? id
+		}
+
+		vibe_checked( id: string, next?: boolean ) {
+			if( next ) {
+				this.piece( $bog_doodle_vibe_apply( this.piece(), id ) )
+				const vibe = $bog_doodle_vibe_list.find( item => item.id === id )
+				if( vibe ) this.ink( vibe.ink )
+			}
+			return $bog_doodle_vibe_current( this.piece() ) === id
+		}
+
+		layers() {
+			return this.piece().layers
+		}
+
+		layer_default() {
+			return this.layers()[ 0 ].id
+		}
+
+		layer_order() {
+			return this.layers().filter( layer => layer.visible ).map( layer => layer.id )
+		}
+
+		layer_kept = ''
+
+		@ $mol_mem
+		layer_active( next?: string ): string {
+			const ids = this.layers().map( layer => layer.id )
+			const id = next ?? this.layer_kept
+			return this.layer_kept = ids.includes( id ) ? id : ids[ ids.length - 1 ]
+		}
+
+		@ $mol_mem
+		layer_focus( next?: boolean ) {
+			return this.pref( 'layer_focus', next, false )
+		}
+
+		layer_rows() {
+			return this.layers().map( layer => layer.id ).reverse().map( id => this.Layer( id ) )
+		}
+
+		layer_index( id: string ) {
+			return this.layers().findIndex( layer => layer.id === id )
+		}
+
+		layer_patch( id: string, patch: Partial< $bog_doodle_piece_layer > ) {
+			this.piece_patch( { layers: this.layers().map( layer => layer.id === id ? { ... layer, ... patch } : layer ) } )
+		}
+
+		layer_title( id: string ) {
+			const layer = this.layers()[ this.layer_index( id ) ]
+			return layer?.name || this.layer_name_default( id )
+		}
+
+		layer_name_default( id: string ) {
+			return this.layer_prefix() + ' ' + ( this.layer_index( id ) + 1 )
+		}
+
+		layer_name_hint() {
+			return this.layer_name_default( this.layer_active() )
+		}
+
+		layer_name( next?: string ) {
+			const id = this.layer_active()
+			if( next !== undefined ) this.layer_patch( id, { name: next } )
+			return this.layers()[ this.layer_index( id ) ]?.name ?? ''
+		}
+
+		layer_visible( id: string, next?: boolean ) {
+			if( next !== undefined ) this.layer_patch( id, { visible: next } )
+			return this.layers()[ this.layer_index( id ) ]?.visible ?? true
+		}
+
+		layer_audible( id: string, next?: boolean ) {
+			if( next !== undefined ) this.layer_patch( id, { audible: next } )
+			return this.layers()[ this.layer_index( id ) ]?.audible ?? true
+		}
+
+		@ $mol_mem_key
+		Layer_visible_icon( id: string ) {
+			return this.layer_visible( id ) ? new this.$.$mol_icon_eye : new this.$.$mol_icon_eye_off
+		}
+
+		@ $mol_mem_key
+		Layer_audible_icon( id: string ) {
+			return this.layer_audible( id ) ? new this.$.$mol_icon_volume_high : new this.$.$mol_icon_volume_off
+		}
+
+		layer_picked( id: string, next?: boolean ) {
+			if( next ) {
+				this.layer_active( id )
+				this.selected( [] )
+				if( !this.layer_visible( id ) ) this.layer_visible( id, true )
+			}
+			return this.layer_active() === id
+		}
+
+		layer_add() {
+			const id = 'l' + $bog_doodle_sketch_stroke_id()
+			this.piece_patch( { layers: [ ... this.layers(), { id, name: '', visible: true, audible: true } ] } )
+			this.layer_active( id )
+			this.selected( [] )
+		}
+
+		layer_move( id: string, dir: number ) {
+			const layers = this.layers().slice()
+			const from = this.layer_index( id )
+			const to = from + dir
+			if( from < 0 || to < 0 || to >= layers.length ) return
+			const [ layer ] = layers.splice( from, 1 )
+			layers.splice( to, 0, layer )
+			const first = this.layers()[ 0 ].id
+			const patterns = first === layers[ 0 ].id
+				? this.piece().patterns
+				: this.piece().patterns.map( strokes => strokes.map( s => s.layer ? s : { ... s, layer: first } ) )
+			this.piece_patch( { layers, patterns } )
+		}
+
+		layer_up( id: string ) {
+			this.layer_move( id, 1 )
+		}
+
+		layer_down( id: string ) {
+			this.layer_move( id, -1 )
+		}
+
+		layer_drop_enabled() {
+			return this.layers().length > 1
+		}
+
+		layer_drop( id: string ) {
+			if( this.layers().length < 2 ) return
+			const first = this.layer_default()
+			const of = ( s: $bog_doodle_sketch_stroke ) => s.layer || first
+			const layers = this.layers().filter( layer => layer.id !== id )
+			const patterns = this.piece().patterns.map( strokes => strokes
+				.filter( s => of( s ) !== id )
+				.map( s => s.layer ? s : { ... s, layer: first } )
+			)
+			this.piece_patch( { layers, patterns } )
+			this.selected( [] )
 		}
 
 		piece_title( next?: string ) {
@@ -446,7 +677,7 @@ namespace $.$$ {
 		}
 
 		export_png() {
-			( this.Board() as $bog_doodle_board ).export_canvas().toBlob( ( blob: Blob | null ) => blob && this.download( blob, 'png' ), 'image/png' )
+			this.board().export_canvas().toBlob( ( blob: Blob | null ) => blob && this.download( blob, 'png' ), 'image/png' )
 		}
 
 		export_wav() {
@@ -511,7 +742,9 @@ namespace $.$$ {
 				? { KeyZ: event.shiftKey ? 'redo' : 'undo', KeyY: 'redo' }[ event.code ]
 				: {
 					Space: 'play', KeyB: 'draw', KeyP: 'draw', KeyE: 'erase', KeyV: 'select', KeyH: 'pan',
-					Digit0: 'zoom', KeyD: 'copy', Delete: 'drop', Backspace: 'drop', Escape: 'escape',
+					Digit0: 'zoom', Equal: 'zoom_in', NumpadAdd: 'zoom_in', Minus: 'zoom_out', NumpadSubtract: 'zoom_out',
+					BracketLeft: 'smaller', BracketRight: 'bigger',
+					KeyD: 'copy', Delete: 'drop', Backspace: 'drop', Escape: 'escape',
 				}[ event.code ]
 			if( !action ) return
 			event.preventDefault()
@@ -520,6 +753,10 @@ namespace $.$$ {
 				case 'redo': return this.redo()
 				case 'play': return this.play_toggle()
 				case 'zoom': return this.zoom_reset()
+				case 'zoom_in': return this.zoom_in()
+				case 'zoom_out': return this.zoom_out()
+				case 'smaller': return this.size_step( -1 )
+				case 'bigger': return this.size_step( 1 )
 				case 'copy': return this.selected().length && this.selection_copy()
 				case 'drop': return this.selected().length && this.selection_drop()
 				case 'escape': return this.selected( [] )
@@ -571,7 +808,7 @@ namespace $.$$ {
 			}
 			const y = $bog_doodle_scale_row_y( row, notes.length )
 			const p = Math.max( 0, Math.min( 1, ( hold.velocity - 0.25 ) / 0.75 ) )
-			this.sketch().add( { id: $bog_doodle_sketch_stroke_id(), color: this.color(), points: [ hold.x, y, p, end, y, p ] } )
+			this.sketch().add( { id: $bog_doodle_sketch_stroke_id(), color: this.color(), ink: this.ink(), layer: this.layer_active(), points: [ hold.x, y, p, end, y, p ] } )
 		}
 
 	}

@@ -8033,6 +8033,7 @@ declare namespace $ {
 			'rock': string,
 			'tango': string,
 			'march': string,
+			'medieval': string,
 			'celtic': string,
 			'east': string,
 			'anxiety': string,

@@ -6590,6 +6590,14 @@ var $;
 			(obj.sub) = () => ([(this.mood_tango())]);
 			return obj;
 		}
+		mood_medieval(){
+			return (this.$.$mol_locale.text("$bog_doodle_land_mood_medieval"));
+		}
+		Mood_medieval(){
+			const obj = new this.$.$mol_view();
+			(obj.sub) = () => ([(this.mood_medieval())]);
+			return obj;
+		}
 		mood_celtic(){
 			return (this.$.$mol_locale.text("$bog_doodle_land_mood_celtic"));
 		}
@@ -6648,6 +6656,7 @@ var $;
 				(this.Mood_lofi()), 
 				(this.Mood_jazz()), 
 				(this.Mood_tango()), 
+				(this.Mood_medieval()), 
 				(this.Mood_celtic()), 
 				(this.Mood_horror()), 
 				(this.Mood_cyber()), 
@@ -6940,6 +6949,7 @@ var $;
 	($mol_mem(($.$bog_doodle_land.prototype), "Mood_lofi"));
 	($mol_mem(($.$bog_doodle_land.prototype), "Mood_jazz"));
 	($mol_mem(($.$bog_doodle_land.prototype), "Mood_tango"));
+	($mol_mem(($.$bog_doodle_land.prototype), "Mood_medieval"));
 	($mol_mem(($.$bog_doodle_land.prototype), "Mood_celtic"));
 	($mol_mem(($.$bog_doodle_land.prototype), "Mood_horror"));
 	($mol_mem(($.$bog_doodle_land.prototype), "Mood_cyber"));

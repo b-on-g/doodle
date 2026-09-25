@@ -129,7 +129,8 @@ namespace $.$$ {
 			$mol_assert_equal( view.piece().swing, 1 )
 			$mol_assert_ok( view.Vibe( 'blues' ).checked() )
 			$mol_assert_not( view.Vibe( 'calm' ).checked() )
-			$mol_assert_equal( view.voice_name(), $bog_doodle_synth_colors[ 1 ].name )
+			$mol_assert_equal( view.voice_name(), view.color_name( 1 ) )
+			$mol_assert_ok( view.voice_name() )
 			view.bpm_value( 93 )
 			$mol_assert_not( view.Vibe( 'blues' ).checked() )
 		},

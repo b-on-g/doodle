@@ -222,7 +222,7 @@ namespace $.$$ {
 		}
 
 		voice_name() {
-			return $bog_doodle_synth_colors[ this.color() ].name
+			return ( this.voice_names() as Record< string, string > )[ String( this.color() ) ] ?? ''
 		}
 
 		palette() {
@@ -230,7 +230,7 @@ namespace $.$$ {
 		}
 
 		color_name( index: number ) {
-			return $bog_doodle_synth_colors[ index ].name
+			return ( this.voice_names() as Record< string, string > )[ String( index ) ] ?? ''
 		}
 
 		color_ink( index: number ) {
@@ -385,7 +385,7 @@ namespace $.$$ {
 		}
 
 		vibe_name( id: string ) {
-			return $bog_doodle_vibe_list.find( vibe => vibe.id === id )?.name ?? id
+			return ( this.vibe_names() as Record< string, string > )[ id ] ?? id
 		}
 
 		vibe_checked( id: string, next?: boolean ) {

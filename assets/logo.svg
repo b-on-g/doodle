@@ -1,4 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-	<rect width="64" height="64" rx="12" fill="#7c3aed"/>
-	<text x="32" y="44" font-size="32" font-family="system-ui" fill="white" text-anchor="middle">D</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+	<rect width="512" height="512" rx="112" fill="#fbfaf6"/>
+	<g stroke="#e6e0d2" stroke-width="6">
+		<line x1="96" y1="64" x2="96" y2="448"/>
+		<line x1="176" y1="64" x2="176" y2="448"/>
+		<line x1="256" y1="64" x2="256" y2="448"/>
+		<line x1="336" y1="64" x2="336" y2="448"/>
+		<line x1="416" y1="64" x2="416" y2="448"/>
+	</g>
+	<g fill="none" stroke-linecap="round">
+		<path d="M112 360 C 170 360 180 170 256 170 S 340 300 400 300" stroke="#2f6fd8" stroke-width="30"/>
+		<path d="M128 200 C 180 150 220 250 280 230" stroke="#8a44c8" stroke-width="22"/>
+		<path d="M140 420 L 380 420" stroke="#2a9d5c" stroke-width="18"/>
+	</g>
+	<circle cx="376" cy="150" r="30" fill="#d8452f"/>
 </svg>

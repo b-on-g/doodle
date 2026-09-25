@@ -25,6 +25,14 @@ namespace $ {
 			}
 		},
 
+		'every vibe has its own settings'() {
+			const seen = new Set( $bog_doodle_vibe_list.map( v => JSON.stringify( v.settings ) ) )
+			$mol_assert_equal( seen.size, $bog_doodle_vibe_list.length )
+			for( const vibe of $bog_doodle_vibe_list ) {
+				$mol_assert_equal( $bog_doodle_vibe_current( $bog_doodle_vibe_apply( $bog_doodle_piece_empty(), vibe.id ) ), vibe.id )
+			}
+		},
+
 	})
 
 }

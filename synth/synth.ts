@@ -1,12 +1,12 @@
 namespace $ {
 
 	export const $bog_doodle_synth_colors = [
-		{ ink: '#1f1d1a', name: 'Пианино' },
-		{ ink: '#d8452f', name: 'Щипок' },
-		{ ink: '#2f6fd8', name: 'Пэд' },
-		{ ink: '#2a9d5c', name: 'Маримба' },
-		{ ink: '#e39a1b', name: 'Лид' },
-		{ ink: '#8a44c8', name: 'Колокол' },
+		{ ink: '#1f1d1a' },
+		{ ink: '#d8452f' },
+		{ ink: '#2f6fd8' },
+		{ ink: '#2a9d5c' },
+		{ ink: '#e39a1b' },
+		{ ink: '#8a44c8' },
 	]
 
 	export function $bog_doodle_synth_hsl( ink: string ) {

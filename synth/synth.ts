@@ -79,9 +79,8 @@ namespace $ {
 
 			case 2: {
 				const env = envelope( ctx, dest, time, Math.min( 0.25, length / 2 ), level * 0.8, length, 0.6 )
-				osc( ctx, 'sine', freq, env.gain, time, env.end, -7 )
-				osc( ctx, 'triangle', freq, env.gain, time, env.end, 7 )
-				osc( ctx, 'sine', freq * 2, env.gain, time, env.end, 3 )
+				osc( ctx, 'triangle', freq, env.gain, time, env.end, -6 )
+				osc( ctx, 'sine', freq * 2, env.gain, time, env.end, 5 )
 				return
 			}
 
@@ -100,8 +99,7 @@ namespace $ {
 				filter.frequency.setValueAtTime( Math.min( 12000, freq * 6 ), time )
 				filter.Q.setValueAtTime( 4, time )
 				filter.connect( env.gain )
-				osc( ctx, 'square', freq, filter, time, env.end )
-				osc( ctx, 'sawtooth', freq, filter, time, env.end, 9 )
+				osc( ctx, 'sawtooth', freq, filter, time, env.end )
 				return
 			}
 
@@ -119,8 +117,7 @@ namespace $ {
 			default: {
 				const env = envelope( ctx, dest, time, 0.005, level * 1.3, Math.min( length, 0.4 ), 0.8 )
 				osc( ctx, 'triangle', freq, env.gain, time, env.end )
-				const over = envelope( ctx, dest, time, 0.003, level * 0.35, 0.05, 0.3 )
-				osc( ctx, 'sine', freq * 2, over.gain, time, over.end )
+				osc( ctx, 'sine', freq * 2, env.gain, time, env.end )
 			}
 
 		}
@@ -133,21 +130,14 @@ namespace $ {
 
 	export function $bog_doodle_synth_bus( ctx: BaseAudioContext ) {
 		const master = ctx.createGain()
-		master.gain.setValueAtTime( 0.7, 0 )
-		const comp = ctx.createDynamicsCompressor()
-		comp.threshold.setValueAtTime( -18, 0 )
-		comp.knee.setValueAtTime( 12, 0 )
-		comp.ratio.setValueAtTime( 4, 0 )
-		comp.attack.setValueAtTime( 0.005, 0 )
-		comp.release.setValueAtTime( 0.2, 0 )
+		master.gain.setValueAtTime( 0.6, 0 )
 		const limit = ctx.createDynamicsCompressor()
-		limit.threshold.setValueAtTime( -3, 0 )
-		limit.knee.setValueAtTime( 0, 0 )
-		limit.ratio.setValueAtTime( 20, 0 )
-		limit.attack.setValueAtTime( 0.001, 0 )
-		limit.release.setValueAtTime( 0.1, 0 )
-		master.connect( comp )
-		comp.connect( limit )
+		limit.threshold.setValueAtTime( -6, 0 )
+		limit.knee.setValueAtTime( 6, 0 )
+		limit.ratio.setValueAtTime( 12, 0 )
+		limit.attack.setValueAtTime( 0.002, 0 )
+		limit.release.setValueAtTime( 0.15, 0 )
+		master.connect( limit )
 		limit.connect( ctx.destination )
 		return master
 	}

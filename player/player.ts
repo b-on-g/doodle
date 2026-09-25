@@ -36,7 +36,7 @@ namespace $ {
 
 		@ $mol_mem_key
 		events( pattern: number ) {
-			const events = $bog_doodle_score_thin( $bog_doodle_score( this.piece().patterns[ pattern ] ?? [], this.notes(), this.steps() ), 10 )
+			const events = $bog_doodle_score_thin( $bog_doodle_score( this.piece().patterns[ pattern ] ?? [], this.notes(), this.steps() ), this.step_voices() )
 			const by_step = new Map< number, $bog_doodle_score_event[] >()
 			for( const event of events ) {
 				const list = by_step.get( event.step ) ?? []
@@ -55,6 +55,41 @@ namespace $ {
 			return piece.patterns.map( ( _, index ) => ( Math.min( from, count - 1 ) + index ) % count )
 		}
 
+		weak() {
+			const nav = this.$.$mol_dom_context.navigator as Navigator & { deviceMemory?: number }
+			return ( nav?.hardwareConcurrency ?? 8 ) <= 4 || ( nav?.deviceMemory ?? 8 ) <= 4
+		}
+
+		step_voices(): number {
+			return this.weak() ? 6 : 10
+		}
+
+		max_voices(): number {
+			return this.weak() ? 16 : 32
+		}
+
+		voices = [] as number[]
+
+		voice_take( start: number, end: number ) {
+			this.voices = this.voices.filter( until => until > start )
+			if( this.voices.length >= this.max_voices() ) return false
+			this.voices.push( end )
+			return true
+		}
+
+		lookahead() {
+			return 0.4
+		}
+
+		catch_up( now: number ) {
+			if( this.base >= now + 0.02 ) return 0
+			const duration = this.bar_time() / this.steps_per_bar()
+			const skipped = Math.ceil( ( now + 0.05 - this.base ) / duration )
+			this.base += skipped * duration
+			this.step = ( this.step + skipped ) % ( this.steps() * this.order().length )
+			return skipped
+		}
+
 		audio = null as AudioContext | null
 		bus = null as AudioNode | null
 		timer = null as $mol_after_timeout | null
@@ -65,7 +100,7 @@ namespace $ {
 		context() {
 			if( this.audio ) return this.audio
 			const Context = ( this.$.$mol_dom_context as any ).AudioContext as typeof AudioContext
-			this.audio = new Context
+			this.audio = new Context( { latencyHint: 'playback' } )
 			this.bus = $bog_doodle_synth_bus( this.audio )
 			return this.audio
 		}
@@ -80,8 +115,9 @@ namespace $ {
 			ctx.resume()
 			this.step = 0
 			this.from = this.pattern()
-			this.base = ctx.currentTime + 0.08
+			this.base = ctx.currentTime + 0.1
 			this.marks = []
+			this.voices = []
 			this.playing( true )
 			this.tick()
 		}
@@ -100,9 +136,10 @@ namespace $ {
 
 		tick() {
 			const ctx = this.context()
-			const ahead = ctx.currentTime + 0.2
+			this.catch_up( ctx.currentTime )
+			const ahead = ctx.currentTime + this.lookahead()
 			while( this.base < ahead ) this.schedule( ctx )
-			this.timer = new this.$.$mol_after_timeout( 25, ()=> this.tick() )
+			this.timer = new this.$.$mol_after_timeout( 50, ()=> this.tick() )
 		}
 
 		schedule( ctx: BaseAudioContext ) {
@@ -115,7 +152,9 @@ namespace $ {
 			const time = this.base + $bog_doodle_score_time( local, per_bar, this.bar_time(), this.piece().swing ) - local * duration
 
 			for( const event of this.events( pattern ).get( local ) ?? [] ) {
-				$bog_doodle_synth_note( ctx, this.bus!, event.color, $bog_doodle_scale_freq( event.midi ), time, event.length * duration * 0.95, event.velocity )
+				const length = event.length * duration * 0.95
+				if( !this.voice_take( time, time + length + 0.8 ) ) continue
+				$bog_doodle_synth_note( ctx, this.bus!, event.color, $bog_doodle_scale_freq( event.midi ), time, length, event.velocity )
 			}
 
 			const beat = per_bar / 4

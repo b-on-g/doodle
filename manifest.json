@@ -1,43 +1,10 @@
 {
-	"name": "Doodle: draw music",
-	"short_name": "Doodle",
-	"description": "Draw lines and hear music. Free, no subscription, works offline.",
-	"id": "bog_doodle_app",
+	"name": "bog_doodle_land",
+	"short_name": "bog_doodle_land",
+	"description": "",
+	"id": "bog_doodle_land",
 	"start_url": ".",
 	"display": "standalone",
-	"background_color": "#fbfaf6",
-	"theme_color": "#fbfaf6",
-	"scope": ".",
-	"orientation": "any",
-	"categories": [
-		"music",
-		"entertainment",
-		"education"
-	],
-	"icons": [
-		{
-			"src": "bog/doodle/assets/logo-192.png",
-			"sizes": "192x192",
-			"type": "image/png",
-			"purpose": "any"
-		},
-		{
-			"src": "bog/doodle/assets/logo-512.png",
-			"sizes": "512x512",
-			"type": "image/png",
-			"purpose": "any"
-		},
-		{
-			"src": "bog/doodle/assets/logo-maskable-512.png",
-			"sizes": "512x512",
-			"type": "image/png",
-			"purpose": "maskable"
-		},
-		{
-			"src": "bog/doodle/assets/logo.svg",
-			"sizes": "any",
-			"type": "image/svg+xml",
-			"purpose": "any"
-		}
-	]
+	"background_color": "#000000",
+	"theme_color": "#000000"
 }

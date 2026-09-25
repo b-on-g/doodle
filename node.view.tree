@@ -2,725 +2,22 @@ $mol_theme_auto $mol_plugin
 	light \$mol_theme_light
 	attr * mol_theme <= theme <= dark \$mol_theme_dark
 
-$mol_hotkey2 $mol_plugin
-	event *
+$mol_image $mol_view
+	dom_name \img
+	attr *any
 		^
-		keydown? <=> keydown? null
-	action *
-
-$mol_hotkey $mol_hotkey2
-	key *
-	mod_ctrl false
-	mod_alt false
-	mod_shift false
-
-$mol_string $mol_view
-	dom_name \input
-	enabled true
-	minimal_height 40
-	autocomplete false
-	selection? /number
-		0
-		0
-	auto /
-		<= selection_watcher null
-		<= error_report null
-	field *
-		^
-		disabled <= disabled false
-		value <= value_changed? <=> value? \
-		placeholder <= hint_visible <= hint \
-		spellcheck <= spellcheck true
-		autocomplete <= autocomplete_native \
-		selectionEnd <= selection_end 0
-		selectionStart <= selection_start 0
-		inputMode <= keyboard \text
-		enterkeyhint <= enter \go
-	attr *
-		^
-		maxlength <= length_max +Infinity
-		type <= type? \text
-	event *
-		^
-		input? <=> event_change? null
-	plugins /
-		<= Submit $mol_hotkey
-			mod_ctrl <= submit_with_ctrl false
-			key * enter? <=> submit? null
-
-$mol_svg $mol_view
-	dom_name \svg
-	dom_name_space \http://www.w3.org/2000/svg
-	font_size 16
-	font_family \
-	style_size *
-
-$mol_svg_root $mol_svg
-	dom_name \svg
-	attr *
-		^
-		viewBox <= view_box \0 0 100 100
-		preserveAspectRatio <= aspect \xMidYMid
-
-$mol_svg_path $mol_svg
-	dom_name \path
-	attr *
-		^
-		d <= geometry \
-
-
-$mol_icon $mol_svg_root
-	view_box \0 0 24 24
+		src <= uri \
+		title <= hint
+		alt <= title \
+		loading <= loading \lazy
+		decoding <= decoding \async
+		crossOrigin <= cors null
+		width <= natural_width 0
+		height <= natural_height 0
+	event *any
+		load? <=> load? null
 	minimal_width 16
 	minimal_height 16
-	sub /
-		<= Path $mol_svg_path
-			geometry <= path \
-
-$mol_icon_play $mol_icon path \M8,5.14V19.14L19,12.14L8,5.14Z
-
-$mol_icon_stop $mol_icon path \M18,18H6V6H18V18Z
-
-$mol_speck $mol_view
-	theme \$mol_theme_accent
-	sub /
-		<= value null
-
-$mol_button $mol_view
-	enabled true
-	click? null
-	event_click? null
-	status? /
-	event *
-		^
-		click? <=> activate? <=> event_activate? null
-		dblclick? <=> clicks? null
-		keydown? <=> key_press? <=> event_key_press? null
-	attr *
-		^
-		disabled <= disabled false
-		role \button
-		tabindex <= tab_index 0
-		title <= hint_safe <= hint \
-	sub /$mol_view_content
-		<= title
-	Speck $mol_speck
-		value <= error \
-
-$mol_button_typed $mol_button
-	minimal_height 40
-	minimal_width 40
-
-$mol_button_minor $mol_button_typed
-
-$mol_button_major $mol_button_minor
-	theme \$mol_theme_base
-
-$mol_icon_undo $mol_icon path \M12.5,8C9.85,8 7.45,9 5.6,10.6L2,7V16H11L7.38,12.38C8.77,11.22 10.54,10.5 12.5,10.5C16.04,10.5 19.05,12.81 20.1,16L22.47,15.22C21.08,11.03 17.15,8 12.5,8Z
-
-$mol_icon_redo $mol_icon path \M18.4,10.6C16.55,9 14.15,8 11.5,8C6.85,8 2.92,11.03 1.54,15.22L3.9,16C4.95,12.81 7.95,10.5 11.5,10.5C13.45,10.5 15.23,11.22 16.62,12.38L13,16H22V7L18.4,10.6Z
-
-$mol_icon_folder $mol_icon path \M10,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V8C22,6.89 21.1,6 20,6H12L10,4Z
-
-$mol_icon_folder_music $mol_icon path \M22 8V11H16.5V16.11C14.66 16.53 13.26 18.09 13.04 20H4C2.9 20 2 19.11 2 18V6C2 4.89 2.89 4 4 4H10L12 6H20C21.1 6 22 6.89 22 8M18.5 13V18.21C18.19 18.07 17.86 18 17.5 18C16.12 18 15 19.12 15 20.5S16.12 23 17.5 23 20 21.88 20 20.5V15H22V13H18.5Z
-
-$mol_check $mol_button_minor
-	attr *
-		^
-		mol_check_checked <= checked? false
-		aria-checked <= aria_checked \false
-		role <= aria_role \checkbox
-	sub /$mol_view_content
-		<= Icon null
-		<= label /
-			<= Title $mol_view
-				sub /
-					<= title \
-
-$mol_check_icon $mol_check
-
-$mol_icon_layers $mol_icon path \M12,16L19.36,10.27L21,9L12,2L3,9L4.63,10.27M12,18.54L4.62,12.81L3,14.07L12,21.07L21,14.07L19.37,12.8L12,18.54Z
-
-$mol_icon_tune $mol_icon path \M3,17V19H9V17H3M3,5V7H13V5H3M13,21V19H21V17H13V15H11V21H13M7,9V11H3V13H7V15H9V9H7M21,13V11H11V13H21M15,9H17V7H21V5H17V3H15V9Z
-
-$mol_icon_brush $mol_icon path \M20.71,4.63L19.37,3.29C19,2.9 18.35,2.9 17.96,3.29L9,12.25L11.75,15L20.71,6.04C21.1,5.65 21.1,5 20.71,4.63M7,14A3,3 0 0,0 4,17C4,18.31 2.84,19 2,19C2.92,20.22 4.5,21 6,21A4,4 0 0,0 10,17A3,3 0 0,0 7,14Z
-
-$mol_icon_eraser $mol_icon path \M16.24,3.56L21.19,8.5C21.97,9.29 21.97,10.55 21.19,11.34L12,20.53C10.44,22.09 7.91,22.09 6.34,20.53L2.81,17C2.03,16.21 2.03,14.95 2.81,14.16L13.41,3.56C14.2,2.78 15.46,2.78 16.24,3.56M4.22,15.58L7.76,19.11C8.54,19.9 9.8,19.9 10.59,19.11L14.12,15.58L9.17,10.63L4.22,15.58Z
-
-$mol_icon_cursor_default $mol_icon path \M13.64,21.97C13.14,22.21 12.54,22 12.31,21.5L10.13,16.76L7.62,18.78C7.45,18.92 7.24,19 7,19A1,1 0 0,1 6,18V3A1,1 0 0,1 7,2C7.24,2 7.47,2.09 7.64,2.23L7.65,2.22L19.14,11.86C19.57,12.22 19.62,12.85 19.27,13.27C19.12,13.45 18.91,13.57 18.7,13.61L15.54,14.23L17.74,18.96C18,19.46 17.76,20.05 17.26,20.28L13.64,21.97Z
-
-$mol_icon_pan $mol_icon path \M12,2.5L8,7H16L12,2.5M7,8L2.5,12L7,16V8M17,8V16L21.5,12L17,8M12,10A2,2 0 0,0 10,12A2,2 0 0,0 12,14A2,2 0 0,0 14,12A2,2 0 0,0 12,10M8,17L12,21.5L16,17H8Z
-
-$bog_doodle_slider $mol_view
-	dom_name \input
-	value? 0
-	min 0
-	max 100
-	step 1
-	attr *
-		^
-		type \range
-		min <= min
-		max <= max
-		step <= step
-		title <= hint \
-	field *
-		^
-		value <= value_text \0
-	event *
-		input? <=> changed? null
-
-$mol_icon_palette $mol_icon path \M17.5,12A1.5,1.5 0 0,1 16,10.5A1.5,1.5 0 0,1 17.5,9A1.5,1.5 0 0,1 19,10.5A1.5,1.5 0 0,1 17.5,12M14.5,8A1.5,1.5 0 0,1 13,6.5A1.5,1.5 0 0,1 14.5,5A1.5,1.5 0 0,1 16,6.5A1.5,1.5 0 0,1 14.5,8M9.5,8A1.5,1.5 0 0,1 8,6.5A1.5,1.5 0 0,1 9.5,5A1.5,1.5 0 0,1 11,6.5A1.5,1.5 0 0,1 9.5,8M6.5,12A1.5,1.5 0 0,1 5,10.5A1.5,1.5 0 0,1 6.5,9A1.5,1.5 0 0,1 8,10.5A1.5,1.5 0 0,1 6.5,12M12,3A9,9 0 0,0 3,12A9,9 0 0,0 12,21A1.5,1.5 0 0,0 13.5,19.5C13.5,19.11 13.35,18.76 13.11,18.5C12.88,18.23 12.73,17.88 12.73,17.5A1.5,1.5 0 0,1 14.23,16H16A5,5 0 0,0 21,11C21,6.58 16.97,3 12,3Z
-
-$bog_doodle_picker $mol_view
-	value? \#1f1d1a
-	swatches /string
-	sub /
-		<= Area $mol_view
-			style *
-				^
-				--bog_doodle_picker_hue <= hue_css \red
-			event *
-				pointerdown? <=> area_down? null
-				pointermove? <=> area_move? null
-				pointerup? <=> area_up? null
-			sub /
-				<= Area_knob $mol_view
-					style *
-						^
-						left <= area_left \0%
-						top <= area_top \0%
-		<= Hue $mol_view
-			event *
-				pointerdown? <=> hue_down? null
-				pointermove? <=> hue_move? null
-				pointerup? <=> hue_up? null
-			sub /
-				<= Hue_knob $mol_view
-					style *
-						^
-						left <= hue_left \0%
-		<= Swatches $mol_view
-			sub <= swatch_list /
-				<= Swatch* $mol_button_minor
-					hint <= swatch_color* \
-					click? <=> swatch_pick*? null
-					style *
-						^
-						--bog_doodle_picker_swatch <= swatch_color* \
-					sub /
-		<= Hex_row $mol_view
-			sub /
-				<= Preview $mol_view
-					style *
-						^
-						--bog_doodle_picker_swatch <= value? \#1f1d1a
-				<= Hex $mol_string
-					hint \#rrggbb
-					value? <=> hex? \
-
-$mol_ghost $mol_view
-	Sub $mol_view
-
-$mol_follower $mol_ghost
-	Anchor $mol_view
-	align /number
-		-.5
-		-.5
-	offset /number
-		0
-		0
-	style *
-		^
-		transform <= transform \
-
-$mol_pop $mol_view
-	showed? false
-	align_vert \
-	align_hor \
-	direction \ltr
-	align_enriched <= align \bottom_center
-	prefer \vert
-	auto /
-		<= bubble null
-	sub /
-		<= Anchor null
-	sub_visible /
-		<= Anchor
-		<= Follower $mol_follower
-			offset <= bubble_offset /number
-				0
-				1
-			align <= bubble_align /number
-				0
-				0
-			Anchor <= Anchor
-			Sub <= Bubble $mol_pop_bubble
-				content <= bubble_content /$mol_view_content
-				height_max <= height_max 9999
-
-$mol_pop_bubble $mol_view
-	sub <= content /$mol_view_content
-	style *
-		^
-		maxHeight <= height_max 9999
-	attr *
-		^
-		tabindex 0
-		popover \manual
-
-$mol_scroll $mol_view
-	scroll_top? 0
-	scroll_left? 0
-	attr *
-		^
-		tabindex <= tabindex -1
-	event *
-		^
-		scroll? <=> event_scroll? null
-
-$mol_pick $mol_pop
-	event *
-		^
-		keydown? <=> keydown? null
-	Anchor <= Trigger $mol_check
-		minimal_width 40
-		minimal_height 40
-		enabled <= trigger_enabled true
-		checked? <=> showed?
-		clicks? <=> clicks? null
-		sub <= trigger_content /$mol_view_content
-			<= title
-		hint <= hint \
-
-$mol_icon_magnify $mol_icon path \M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z
-
-$mol_icon_magnify_minus $mol_icon path \M9,2A7,7 0 0,1 16,9C16,10.57 15.5,12 14.61,13.19L15.41,14H16L22,20L20,22L14,16V15.41L13.19,14.61C12,15.5 10.57,16 9,16A7,7 0 0,1 2,9A7,7 0 0,1 9,2M5,8V10H13V8H5Z
-
-$mol_icon_magnify_plus $mol_icon path \M9,2A7,7 0 0,1 16,9C16,10.57 15.5,12 14.61,13.19L15.41,14H16L22,20L20,22L14,16V15.41L13.19,14.61C12,15.5 10.57,16 9,16A7,7 0 0,1 2,9A7,7 0 0,1 9,2M8,5V8H5V10H8V13H10V10H13V8H10V5H8Z
-
-$mol_icon_content_duplicate $mol_icon path \M11,17H4A2,2 0 0,1 2,15V3A2,2 0 0,1 4,1H16V3H4V15H11V13L15,16L11,19V17M19,21V7H8V13H6V7A2,2 0 0,1 8,5H19A2,2 0 0,1 21,7V21A2,2 0 0,1 19,23H8A2,2 0 0,1 6,21V19H8V21H19Z
-
-$mol_icon_delete $mol_icon path \M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z
-
-$mol_icon_plus $mol_icon path \M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z
-
-$bog_doodle_board $mol_view
-	dom_name \canvas
-	sketch $bog_doodle_sketch
-	notes /number
-	steps 16
-	beat_steps 2
-	bar_steps 8
-	axis \time_y
-	tool? \draw
-	ink \#1f1d1a
-	brush 1
-	eraser 24
-	snap false
-	pen_only false
-	back \
-	layer_order /string
-		\l1
-	layer_active \l1
-	layer_default \l1
-	layer_focus false
-	selected? /string
-	playhead null
-	playing false
-	note_hover? null
-	attr *
-		^
-		bog_doodle_board_tool <= tool?
-	event *
-		pointerdown? <=> pointer_down? null
-		pointermove? <=> pointer_move? null
-		pointerup? <=> pointer_up? null
-		pointercancel? <=> pointer_cancel? null
-		pointerleave? <=> pointer_leave? null
-		wheel? <=> wheel? null
-		contextmenu? <=> context_menu? null
-
-$mol_list $mol_view
-	render_visible_only true
-	render_over 0.1
-	sub <= rows /$mol_view
-		<= Gap_before $mol_view style * paddingTop <= gap_before 0
-		<= Empty $mol_view
-		<= Gap_after $mol_view style * paddingTop <= gap_after 0
-	item_height_min* 1
-	item_width_min* 1
-	view_window_shift? 0
-	view_window /
-		0
-		0
-
-$mol_icon_tick $mol_icon path \M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z
-
-$mol_check_box $mol_check
-	Icon $mol_icon_tick
-
-$mol_labeler $mol_list
-	rows /
-		<= Label $mol_view
-			minimal_height 32
-			sub <= label /$mol_view_content
-				<= title
-		<= Content $mol_view
-			minimal_height 24
-			sub <= content /
-
-$mol_icon_eye $mol_icon path \M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z
-
-$mol_icon_arrow_up $mol_icon path \M13,20H11V8L5.5,13.5L4.08,12.08L12,4.16L19.92,12.08L18.5,13.5L13,8V20Z
-
-$mol_icon_arrow_down $mol_icon path \M11,4H13V16L18.5,10.5L19.92,11.92L12,19.84L4.08,11.92L5.5,10.5L11,16V4Z
-
-$mol_paragraph $mol_view
-	line_height 24
-	letter_width 7
-	width_limit +Infinity
-	row_width 0
-	sub / <= title
-
-$mol_dimmer $mol_paragraph
-	haystack \
-	needle \
-	sub <= parts /$mol_view_content
-	Low* $mol_paragraph
-		sub /
-			<= string* \
-	High* $mol_paragraph
-		sub /
-			<= string* \
-
-$mol_nav $mol_plugin
-	cycle? false
-	-
-	mod_ctrl false
-	mod_shift false
-	mod_alt false
-	-
-	keys_x? /
-	keys_y? /
-	-
-	current_x? null
-	current_y? null
-	-
-	event_up? null
-	event_down? null
-	event_left? null
-	event_right? null
-	event *
-		^
-		keydown? <=> event_key? null
-
-$mol_icon_close $mol_icon path \M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z
-
-$mol_search $mol_pop
-	query? \
-	suggests /string
-	plugins /$mol_plugin
-		^
-		<= Hotkey $mol_hotkey
-			key * escape? <=> clear? null
-		<= Nav $mol_nav
-			keys_y <= nav_components /$mol_view
-			current_y? <=> nav_focused? null
-	showed? <=> suggests_showed? false
-	align_hor \right
-	Anchor $mol_view
-		sub <= anchor_content /
-			<= Query $mol_string
-				value? <=> query? \
-				hint <= hint @ \Search...
-				submit? <=> submit? null
-				enabled <= enabled true
-				keyboard <= keyboard \search
-				enter <= enter \search
-				bring => bring
-			<= Clear $mol_button_minor
-				hint @ \Clear
-				enabled <= enabled true
-				click? <=> clear? null
-				sub /
-					<= Clear_icon $mol_icon_close
-	bubble_content /$mol_view_content
-		<= Bubble_pane $mol_scroll
-			sub /
-				<= Menu $mol_list
-					rows <= menu_items /$mol_view
-	Suggest* $mol_button_minor
-		click? <=> suggest_select*? null
-		sub <= suggest_content* /$mol_view_content
-			<= Suggest_label* $mol_dimmer
-				haystack <= suggest_label* \
-				needle <= query? \
-
-$mol_icon_dots_vertical $mol_icon path \M12,16A2,2 0 0,1 14,18A2,2 0 0,1 12,20A2,2 0 0,1 10,18A2,2 0 0,1 12,16M12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12A2,2 0 0,1 12,10M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4Z
-
-$mol_select $mol_pick
-	dictionary? *
-	options /string
-	value? \
-	option_label_default \
-	Option_row* $mol_button_minor
-		enabled <= enabled true
-		event_click? <=> event_select*? null
-		hint <= option_hint* null
-		sub <= option_content* /
-			<= Option_label* $mol_dimmer
-				haystack <= option_label* \
-				needle <= filter_pattern? \
-	No_options $mol_view
-		sub /
-			<= no_options_message @ \No options
-	plugins /
-		^
-		<= Nav $mol_nav
-			keys_y <= nav_components /$mol_view
-			current_y? <=> option_focused? null
-			cycle? <=> nav_cycle? true
-	hint @ \Pick..
-	bubble_content /
-		<= Filter
-		<= Bubble_pane $mol_scroll
-			sub /
-				<= Menu $mol_list
-					rows <= menu_content /$mol_view
-	Filter $mol_search
-		query? <=> filter_pattern? \
-		hint <= filter_hint @ \Filter..
-		submit? <=> submit? null
-		enabled <= enabled true
-	Trigger_icon $mol_icon_dots_vertical
-	trigger_enabled <= enabled
-
-$mol_check_list $mol_view
-	dictionary *
-	Option* $mol_check
-		checked? <=> option_checked*? false
-		label <= option_label* /
-			<= option_title* \
-		enabled <= option_enabled* <= enabled true
-		hint <= option_hint* \
-		minimal_height 24
-	options *
-	keys /string
-	sub <= items /$mol_check
-
-$mol_switch $mol_check_list
-	value? \
-
-$mol_icon_menu $mol_icon path \M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z
-
-$mol_icon_menu_down $mol_icon path \M7,10L12,15L17,10H7Z
-
-$mol_icon_menu_down_outline $mol_icon path \M18,9V10.5L12,16.5L6,10.5V9H18M12,13.67L14.67,11H9.33L12,13.67Z
-
-$mol_icon_menu_up $mol_icon path \M7,15L12,10L17,15H7Z
-
-$mol_icon_menu_up_outline $mol_icon path \M18,16V14.5L12,8.5L6,14.5V16H18M12,11.33L14.67,14H9.33L12,11.33Z
-
-$mol_number $mol_view
-	precision_view <= precision 0
-	precision_change <= precision 0
-	boost 10
-	value_min -Infinity
-	value_max +Infinity
-	value? +NaN
-	enabled true
-	plugins /
-		<= Hotkey $mol_hotkey
-			key *
-				down? <=> event_dec? null
-				up? <=> event_inc? null
-				pageDown? <=> event_dec_boost? null
-				pageUp? <=> event_inc_boost? null
-	sub /
-		<= String $mol_string
-			- \ we don't want native number controls in mobile devices
-			- \ https://stackoverflow.com/questions/3790935/can-i-hide-the-html5-number-input-s-spin-box
-			type <= type \text
-			keyboard \decimal
-			value? <=> value_string? \
-			hint <= hint \ 
-			enabled <= string_enabled <= enabled
-			submit? <=> submit? null
-			selection? <=> selection? /number
-		<= Dec $mol_button_minor
-			event_click? <=> event_dec? null
-			enabled <= dec_enabled <= enabled
-			sub / <= dec_icon $mol_icon_menu_down_outline
-		<= Inc $mol_button_minor
-			event_click? <=> event_inc? null
-			enabled <= inc_enabled <= enabled
-			sub / <= inc_icon $mol_icon_menu_up_outline
-
-$mol_icon_upload $mol_icon path \M9,16V10H5L12,3L19,10H15V16H9M5,20V18H19V20H5Z
-
-$mol_button_open $mol_button_minor
-	sub /
-		<= Icon $mol_icon_upload
-		<= Native $mol_button_open_native
-			files? <=> files_handled? <=> files? /File
-			accept <= accept \
-			multiple <= multiple true
-
-$mol_button_open_native $mol_view
-	dom_name \input
-	files? /File
-	attr *
-		type \file
-		accept <= accept \
-		multiple <= multiple true
-	event *
-		change? <=> picked? null
-
-$mol_icon_clipboard $mol_icon path \M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3
-
-$mol_icon_clipboard_outline $mol_icon path \M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M7,7H17V5H19V19H5V5H7V7Z
-
-$mol_button_copy $mol_button_minor
-	blobs /$mol_blob
-		<= text_blob? $mol_blob /
-			/BlobPart <= text <= title
-			* type \text/plain
-		<= html_blob? $mol_blob /
-			/BlobPart <= html \
-			* type \text/html
-	data *
-	sub /
-		<= Icon $mol_icon_clipboard_outline
-		<= title \
-
-$mol_stack $mol_view
-
-$mol_text_code_token $mol_dimmer
-	attr *
-		^
-		mol_text_code_token_type <= type \
-
-$mol_text_code_token_link $mol_text_code_token
-	dom_name \a
-	type \code-link
-	attr *
-		^
-		href <= uri \
-		target \_blank
-
-$mol_text_code_line $mol_paragraph
-	text \
-	minimal_height 24
-	numb_showed true
-	syntax null
-	uri_resolve* \
-	Numb $mol_view
-		sub /
-			<= numb 0
-	Token* $mol_text_code_token
-		type <= token_type* \
-		haystack <= token_text* \
-		needle <= highlight \
-	Token_link* $mol_text_code_token_link
-		haystack <= token_text* \
-		needle <= highlight \
-		uri <= token_uri* \
-	find_pos* null
-
-$mol_text_code $mol_stack
-	attr *
-		^
-		mol_text_code_sidebar_showed <= sidebar_showed false
-	text \
-	text_lines /string
-	find_pos* null
-	uri_base \
-	row_themes /string
-	sub /
-		<= Rows $mol_list
-			render_visible_only <= render_visible_only false
-			rows <= rows /
-				<= Row*0 $mol_text_code_line
-					numb_showed <= sidebar_showed
-					numb <= row_numb* 0
-					theme <= row_theme* \
-					text <= row_text* \
-					syntax <= syntax null
-					uri_resolve* <= uri_resolve* \
-					highlight <= highlight \
-		<= Copy $mol_button_copy
-			hint @ \Copy whole code
-			text <= text_export \
-
-$mol_float $mol_view
-	style *
-		^
-		minHeight \auto
-
-$mol_icon_chevron $mol_icon path \M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z
-
-$mol_check_expand $mol_check
-	Icon $mol_icon_chevron
-	level 0
-	style *
-		^
-		paddingLeft <= level_style \0px
-	checked? <=> expanded? false
-	enabled <= expandable false
-
-$mol_grid $mol_view
-	row_height 32
-	row_ids /string[]
-	row_id* null
-	col_ids /
-	records *
-	record* null
-	hierarchy null
-	hierarchy_col \
-	minimal_width 0
-	-
-	sub /
-		<= Head
-		<= Table $mol_grid_table
-			sub <= rows /$mol_view
-	Head $mol_grid_row
-		cells <= head_cells /$mol_view
-	Row* $mol_grid_row
-		minimal_height <= row_height
-		minimal_width <= minimal_width
-		cells <= cells* /$mol_view
-	-
-	Cell* $mol_view
-	cell* null
-	Cell_text* $mol_grid_cell
-		sub <= cell_content_text* <= cell_content* /$mol_view_content
-	Cell_number* $mol_grid_number
-		sub <= cell_content_number* <= cell_content* /$mol_view_content
-	Col_head* $mol_float
-		dom_name \th
-		sub <= col_head_content* /$mol_view_content
-	Cell_branch* $mol_check_expand
-		level <= cell_level* 0
-		label <= cell_content* /$mol_view_content
-		expanded? <=> cell_expanded*? false
-	Cell_content* /
-		<= Cell_dimmer* $mol_dimmer
-			needle <= needle \
-			haystack <= cell_value* \
-
-$mol_grid_table $mol_list
-	- dom_name \table
-
-$mol_grid_row $mol_view
-	- dom_name \tr
-	sub <= cells /$mol_view
-
-$mol_grid_cell $mol_view
-	- dom_name \td
-	minimal_height 40
-
-$mol_grid_number $mol_grid_cell
 
 $mol_link $mol_view
 	uri \
@@ -743,677 +40,366 @@ $mol_link $mol_view
 		^
 		click? <=> click? <=> event_click? null
 
-$mol_image $mol_view
-	dom_name \img
-	attr *any
+$mol_svg $mol_view
+	dom_name \svg
+	dom_name_space \http://www.w3.org/2000/svg
+	font_size 16
+	font_family \
+	style_size *
+
+$mol_svg_rect $mol_svg
+	dom_name \rect
+	pos /
+	attr *
 		^
-		src <= uri \
-		title <= hint
-		alt <= title \
-		loading <= loading \lazy
-		decoding <= decoding \async
-		crossOrigin <= cors null
-		width <= natural_width 0
-		height <= natural_height 0
-	event *any
-		load? <=> load? null
+		width <= width \0
+		height <= height \0
+		x <= pos_x \
+		y <= pos_y \
+
+$mol_svg_path $mol_svg
+	dom_name \path
+	attr *
+		^
+		d <= geometry \
+
+
+$mol_svg_root $mol_svg
+	dom_name \svg
+	attr *
+		^
+		viewBox <= view_box \0 0 100 100
+		preserveAspectRatio <= aspect \xMidYMid
+
+$mol_icon $mol_svg_root
+	view_box \0 0 24 24
 	minimal_width 16
 	minimal_height 16
-
-$mol_link_iconed $mol_link
 	sub /
-		<= Icon $mol_image
-			uri <= icon \
-			title \
-	content /
-		<= title <= uri
-	host \
+		<= Path $mol_svg_path
+			geometry <= path \
 
-$mol_embed_native $mol_scroll
-	dom_name \iframe
-	window null
-	attr *
-		^
-		src <= uri? \about:config
-	sub /
-		<= Fallback $mol_link
-			uri <= uri
-			sub /
-				<= title \
-	message *
-		hashchange? <=> uri_change? null
+$mol_icon_music $mol_icon path \M21,3V15.5A3.5,3.5 0 0,1 17.5,19A3.5,3.5 0 0,1 14,15.5A3.5,3.5 0 0,1 17.5,12C18.04,12 18.55,12.12 19,12.34V6.47L9,8.6V17.5A3.5,3.5 0 0,1 5.5,21A3.5,3.5 0 0,1 2,17.5A3.5,3.5 0 0,1 5.5,14C6.04,14 6.55,14.12 7,14.34V6L21,3Z
 
-$mol_icon_youtube $mol_icon path \M10,15L15.19,12L10,9V15M21.56,7.17C21.69,7.64 21.78,8.27 21.84,9.07C21.91,9.87 21.94,10.56 21.94,11.16L22,12C22,14.19 21.84,15.8 21.56,16.83C21.31,17.73 20.73,18.31 19.83,18.56C19.36,18.69 18.5,18.78 17.18,18.84C15.88,18.91 14.69,18.94 13.59,18.94L12,19C7.81,19 5.2,18.84 4.17,18.56C3.27,18.31 2.69,17.73 2.44,16.83C2.31,16.36 2.22,15.73 2.16,14.93C2.09,14.13 2.06,13.44 2.06,12.84L2,12C2,9.81 2.16,8.2 2.44,7.17C2.69,6.27 3.27,5.69 4.17,5.44C4.64,5.31 5.5,5.22 6.82,5.16C8.12,5.09 9.31,5.06 10.41,5.06L12,5C16.19,5 18.8,5.16 19.83,5.44C20.73,5.69 21.31,6.27 21.56,7.17Z
+$mol_icon_music_note $mol_icon path \M12 3V13.55C11.41 13.21 10.73 13 10 13C7.79 13 6 14.79 6 17S7.79 21 10 21 14 19.21 14 17V7H18V3H12Z
 
-$mol_frame $mol_embed_native
-	attr *
-		tabindex <= tabindex
-		allow <= allow \
-		src <= uri
-		srcdoc <= html null
-	fullscreen true
-	accelerometer true
-	autoplay true
-	encription true
-	gyroscope true
-	pip true
-	clipboard_read true
-	clipboard_write true
+$mol_icon_palette $mol_icon path \M17.5,12A1.5,1.5 0 0,1 16,10.5A1.5,1.5 0 0,1 17.5,9A1.5,1.5 0 0,1 19,10.5A1.5,1.5 0 0,1 17.5,12M14.5,8A1.5,1.5 0 0,1 13,6.5A1.5,1.5 0 0,1 14.5,5A1.5,1.5 0 0,1 16,6.5A1.5,1.5 0 0,1 14.5,8M9.5,8A1.5,1.5 0 0,1 8,6.5A1.5,1.5 0 0,1 9.5,5A1.5,1.5 0 0,1 11,6.5A1.5,1.5 0 0,1 9.5,8M6.5,12A1.5,1.5 0 0,1 5,10.5A1.5,1.5 0 0,1 6.5,9A1.5,1.5 0 0,1 8,10.5A1.5,1.5 0 0,1 6.5,12M12,3A9,9 0 0,0 3,12A9,9 0 0,0 12,21A1.5,1.5 0 0,0 13.5,19.5C13.5,19.11 13.35,18.76 13.11,18.5C12.88,18.23 12.73,17.88 12.73,17.5A1.5,1.5 0 0,1 14.23,16H16A5,5 0 0,0 21,11C21,6.58 16.97,3 12,3Z
 
-$mol_embed_service $mol_check
-	uri \
-	video_preview \
-	video_id \
-	checked? <=> active? false
-	sub /
-		<= Image $mol_image
-			title <= title \
-			uri <= video_preview \
-		<= Hint $mol_icon_youtube
-		<= Frame $mol_frame
-			title <= title \
-			uri <= video_embed \
+$mol_icon_brush $mol_icon path \M20.71,4.63L19.37,3.29C19,2.9 18.35,2.9 17.96,3.29L9,12.25L11.75,15L20.71,6.04C21.1,5.65 21.1,5 20.71,4.63M7,14A3,3 0 0,0 4,17C4,18.31 2.84,19 2,19C2.92,20.22 4.5,21 6,21A4,4 0 0,0 10,17A3,3 0 0,0 7,14Z
 
+$mol_icon_layers $mol_icon path \M12,16L19.36,10.27L21,9L12,2L3,9L4.63,10.27M12,18.54L4.62,12.81L3,14.07L12,21.07L21,14.07L19.37,12.8L12,18.54Z
 
-$mol_embed_youtube $mol_embed_service
+$mol_icon_tune $mol_icon path \M3,17V19H9V17H3M3,5V7H13V5H3M13,21V19H21V17H13V15H11V21H13M7,9V11H3V13H7V15H9V9H7M21,13V11H11V13H21M15,9H17V7H21V5H17V3H15V9Z
 
-$mol_embed_rutube $mol_embed_service
+$mol_icon_cloud $mol_icon path \M6.5 20Q4.22 20 2.61 18.43 1 16.85 1 14.58 1 12.63 2.17 11.1 3.35 9.57 5.25 9.15 5.88 6.85 7.75 5.43 9.63 4 12 4 14.93 4 16.96 6.04 19 8.07 19 11 20.73 11.2 21.86 12.5 23 13.78 23 15.5 23 17.38 21.69 18.69 20.38 20 18.5 20Z
 
-$mol_embed_vklive $mol_embed_service
+$mol_icon_cloud_off $mol_icon path \M19.8 22.6L17.15 20H6.5Q4.2 20 2.6 18.4T1 14.5Q1 12.58 2.19 11.08 3.38 9.57 5.25 9.15 5.33 8.95 5.4 8.76 5.5 8.57 5.55 8.35L1.4 4.2L2.8 2.8L21.2 21.2M21.6 18.75L8.05 5.23Q8.93 4.63 9.91 4.31 10.9 4 12 4 14.93 4 16.96 6.04 19 8.07 19 11 20.73 11.2 21.86 12.5 23 13.78 23 15.5 23 16.5 22.63 17.31 22.25 18.15 21.6 18.75Z
 
-$mol_embed_any $mol_view
-	Image $mol_image
-		title <= title \
-		uri <= uri \
-	Object $mol_embed_native
-		title <= title \
-		uri <= uri \
-	Youtube $mol_embed_youtube
-		title <= title \
-		uri <= uri \
-	Rutube $mol_embed_rutube
-		title <= title \
-		uri <= uri \
-	Vklive $mol_embed_vklive
-		title <= title \
-		uri <= uri \
+$mol_icon_cloud_off_outline $mol_icon path \M19.8 22.6L17.15 20H6.5Q4.2 20 2.6 18.4T1 14.5Q1 12.58 2.19 11.08 3.38 9.57 5.25 9.15 5.33 8.95 5.4 8.76 5.5 8.57 5.55 8.35L1.4 4.2L2.8 2.8L21.2 21.2M6.5 18H15.15L7.1 9.95Q7.05 10.23 7.03 10.5 7 10.73 7 11H6.5Q5.05 11 4.03 12.03 3 13.05 3 14.5 3 15.95 4.03 17 5.05 18 6.5 18M11.13 14M21.6 18.75L20.15 17.35Q20.58 17 20.79 16.54 21 16.08 21 15.5 21 14.45 20.27 13.73 19.55 13 18.5 13H17V11Q17 8.93 15.54 7.46 14.08 6 12 6 11.33 6 10.7 6.16 10.07 6.33 9.5 6.68L8.05 5.23Q8.93 4.63 9.91 4.31 10.9 4 12 4 14.93 4 16.96 6.04 19 8.07 19 11 20.73 11.2 21.86 12.5 23 13.78 23 15.5 23 16.5 22.63 17.31 22.25 18.15 21.6 18.75M14.83 12.03Z
 
-$mol_expander $mol_list
-	rows /
-		<= Label $mol_view
-			sub /
-				<= Trigger $mol_check_expand
-					checked? <=> expanded? false
-					expandable <= expandable true
-					label <= label /
-						<= title
-				<= Tools null
-		<= Content $mol_list
-			rows <= content /
+$mol_icon_download $mol_icon path \M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z
 
-$mol_text $mol_list
-	uri_base \
-	text \
-	param \
-	flow_tokens /
-	block_text* \
-	auto /
-		<= auto_scroll null
-	- \Blocks
-	Paragraph* $mol_paragraph
-		sub <= block_content* /
-	Quote* $mol_text
-		uri_resolve* <= uri_resolve* \
-		text <= quote_text* \
-		highlight <= highlight \
-		auto_scroll null
-	List* $mol_text_list
-		uri_resolve* <= uri_resolve* \
-		type <= list_type* \-
-		text <= list_text* \
-		highlight <= highlight \
-	item_index* 0
-	Header* $mol_text_header
-		minimal_height 40
-		level <= header_level* 1
-		content <= block_content* /
-		arg <= header_arg* *
-	Pre* $mol_text_code
-		text <= pre_text* \
-		row_themes <= pre_themes* /string
-		highlight <= highlight \
-		uri_resolve* <= uri_resolve* \
-		sidebar_showed <= pre_sidebar_showed <= code_sidebar_showed true
-	Cut* $mol_view dom_name \hr
-	- \Table
-	Table* $mol_grid
-		head_cells <= table_head_cells* /
-		rows <= table_rows* /
-	Table_row* $mol_grid_row
-		cells <= table_cells* /
-	Table_cell* $mol_text
-		auto_scroll null
-		highlight <= highlight \
-		uri_resolve* <= uri_resolve* \
-		text <= table_cell_text* \
-	- \Grid
-	Grid* $mol_grid
-		rows <= grid_rows* /
-	Grid_row* $mol_grid_row
-		cells <= grid_cells* /
-	Grid_cell* $mol_text
-		auto_scroll null
-		highlight <= highlight \
-		uri_resolve* <= uri_resolve* \
-		text <= grid_cell_text* \
-	- \Lines
-	String* $mol_dimmer
-		dom_name \span
-		needle <= highlight \
-		haystack <= line_text* \
-	Span* $mol_text_span
-		dom_name \span
-		type <= line_type* \
-		sub <= line_content* /
-	Code_line* $mol_text_code_line
-		numb_showed false
-		highlight <= highlight \
-		text <= line_text* \
-		uri_resolve* <= uri_resolve* \
-		syntax <= code_syntax null
-	Link* $mol_link_iconed
-		uri <= link_uri* \
-		content <= line_content* /
-	Link_http* $mol_link_iconed
-		uri <= link_uri* \
-		content / <= link_host* \
-	Embed* $mol_embed_any
-		uri <= link_uri* \
-		title <= line_text* \
-	- \Spoilers
-	Spoiler* $mol_expander
-		label /
-			<= Spoiler_label* $mol_text
-				text <= spoiler_label* \
-		content /
-			<= Spoiler_content* $mol_text
-				text <= spoiler_content* \
+$mol_icon_share $mol_icon path \M21,12L14,5V9C7,10 4,15 3,20C5.5,16.5 9,14.9 14,14.9V19L21,12Z
 
-$mol_text_header $mol_paragraph
-	level 1
-	sub /
-		<= Link $mol_link
-			arg <= arg *
-			hint @ \Permalink to this section
-			sub <= content /
+$mol_icon_share_variant $mol_icon path \M18,16.08C17.24,16.08 16.56,16.38 16.04,16.85L8.91,12.7C8.96,12.47 9,12.24 9,12C9,11.76 8.96,11.53 8.91,11.3L15.96,7.19C16.5,7.69 17.21,8 18,8A3,3 0 0,0 21,5A3,3 0 0,0 18,2A3,3 0 0,0 15,5C15,5.24 15.04,5.47 15.09,5.7L8.04,9.81C7.5,9.31 6.79,9 6,9A3,3 0 0,0 3,12A3,3 0 0,0 6,15C6.79,15 7.5,14.69 8.04,14.19L15.16,18.34C15.11,18.55 15.08,18.77 15.08,19C15.08,20.61 16.39,21.91 18,21.91C19.61,21.91 20.92,20.61 20.92,19A2.92,2.92 0 0,0 18,16.08Z
 
-$mol_text_span $mol_paragraph
-	dom_name \span
-	attr *
-		^
-		mol_text_type <= type \
-
-$mol_text_list $mol_text
-	auto_scroll null
-	attr *
-		^
-		mol_text_list_type <= type \
-	Paragraph* $mol_text_list_item
-		index <= item_index*
-		sub <= block_content*
-
-$mol_text_list_item $mol_paragraph
-	attr *
-		^
-		mol_text_list_item_index <= index 0
-
-$bog_doodle_app $mol_view
-	title @ \Doodle
-	untitled @ \Untitled
-	layer_prefix @ \Layer
-	voice_names *
-		0 @ \Piano
-		1 @ \Pluck
-		2 @ \Pad
-		3 @ \Marimba
-		4 @ \Lead
-		5 @ \Bell
-	vibe_names *
-		calm @ \Calm
-		sad @ \Sad
-		dream @ \Dream
-		lullaby @ \Lullaby
-		meditation @ \Meditation
-		rain @ \Rain
-		sunrise @ \Sunrise
-		space @ \Space
-		fairy @ \Fairy tale
-		epic @ \Epic
-		blues @ \Blues
-		jazz @ \Jazz
-		noir @ \Noir
-		lofi @ \Lo-fi
-		funk @ \Funk
-		dance @ \Dance
-		rock @ \Rock
-		tango @ \Tango
-		march @ \March
-		celtic @ \Celtic
-		east @ \East
-		anxiety @ \Anxiety
-		horror @ \Horror
-		cyber @ \Cyberpunk
-		game @ \Pixel game
-		impressionism @ \Impressionism
-		minimalism @ \Minimalism
-		baroque @ \Baroque
-		avantgarde @ \Avant-garde
-	Store $bog_doodle_gallery
+$bog_doodle_land $mol_view
+	title @ \Doodle: draw music
+	app_uri \app/
 	plugins /
 		<= Theme $mol_theme_auto
-	auto /
-		<= hotkeys null
-		<= midi_listen null
 	sub /
-		<= Bar $mol_view
+		<= Nav $mol_view
 			sub /
-				<= Brand $mol_view
+				<= Nav_brand $mol_view
 					sub /
-						<= title
-				<= Title_input $mol_string
-					hint @ \Untitled
-					value? <=> piece_title? \
-				<= Play $mol_button_major
-					hint @ \Play or stop (Space)
-					click? <=> play_toggle? null
-					sub <= play_icon /
-						<= Play_icon $mol_icon_play
-						<= Stop_icon $mol_icon_stop
-				<= Undo $mol_button_minor
-					hint @ \Undo (Ctrl+Z)
-					enabled <= undo_enabled false
-					click? <=> undo? null
+						<= Nav_logo $mol_image
+							uri \bog/doodle/assets/logo.svg
+						<= Nav_name $mol_view
+							sub /
+								\Doodle
+				<= Nav_source $mol_link
+					uri \https://github.com/b-on-g/doodle
+					target \_blank
+					title @ \Source code
+				<= Nav_open $mol_link
+					uri <= app_uri
+					title @ \Open the app
+		<= Hero $mol_view
+			sub /
+				<= Hero_text $mol_view
 					sub /
-						<= Undo_icon $mol_icon_undo
-				<= Redo $mol_button_minor
-					hint @ \Redo (Ctrl+Y)
-					enabled <= redo_enabled false
-					click? <=> redo? null
+						<= Hero_badge $mol_view
+							sub /
+								<= hero_badge @ \Free forever · no account · works offline
+						<= Hero_title $mol_view
+							dom_name \h1
+							sub /
+								<= hero_title @ \Draw a line. Hear a melody.
+						<= Hero_lead $mol_view
+							dom_name \p
+							sub /
+								<= hero_lead @ \Doodle turns drawings into music. Every stroke snaps to a scale, every color is an instrument, pen pressure is volume. No notes to learn, no wrong notes to play.
+						<= Hero_actions $mol_view
+							sub /
+								<= Hero_open $mol_link
+									uri <= app_uri
+									title @ \Start drawing
+								<= Hero_how $mol_link
+									uri \#how
+									title @ \How it works
+				<= Art $mol_svg_root
+					view_box \0 0 400 300
+					aspect \xMidYMid meet
 					sub /
-						<= Redo_icon $mol_icon_redo
-				<= Gallery_open $mol_check_icon
-					hint @ \My drawings
-					checked? <=> gallery_opened? false
-					Icon <= Gallery_open_icon $mol_icon_folder_music
-				<= Layers_open $mol_check_icon
-					hint @ \Layers
-					checked? <=> layers_opened? false
-					Icon <= Layers_open_icon $mol_icon_layers
-				<= Settings_open $mol_check_icon
-					hint @ \Mood, scale, tempo, export and link
-					checked? <=> settings_opened? false
-					Icon <= Settings_open_icon $mol_icon_tune
-				<= Tools $mol_view
+						<= Art_sheet $mol_svg_rect
+							pos_x \0
+							pos_y \0
+							width \400
+							height \300
+						<= Art_grid $mol_svg_path
+							geometry \M50 0V300M100 0V300M150 0V300M200 0V300M250 0V300M300 0V300M350 0V300
+						<= Art_blue $mol_svg_path
+							geometry \M20 230 C 80 230 100 70 170 70 S 260 190 380 170
+						<= Art_violet $mol_svg_path
+							geometry \M40 110 C 90 60 130 150 190 120 S 280 60 330 100
+						<= Art_green $mol_svg_path
+							geometry \M30 270 L 370 270
+						<= Art_red $mol_svg_path
+							geometry \M300 40 l 0 0
+						<= Art_head $mol_svg_path
+							geometry \M0 0V300
+		<= Features $mol_view
+			sub /
+				<= Features_title $mol_view
+					dom_name \h2
 					sub /
-						<= Tool_draw $mol_check_icon
-							hint @ \Brush (B)
-							checked? <=> tool_draw? false
-							Icon <= Tool_draw_icon $mol_icon_brush
-						<= Tool_erase $mol_check_icon
-							hint @ \Eraser (E), right button or pen button
-							checked? <=> tool_erase? false
-							Icon <= Tool_erase_icon $mol_icon_eraser
-						<= Tool_select $mol_check_icon
-							hint @ \Select (V): drag a box or tap, then drag
-							checked? <=> tool_select? false
-							Icon <= Tool_select_icon $mol_icon_cursor_default
-						<= Tool_pan $mol_check_icon
-							hint @ \Hand (H): move the canvas
-							checked? <=> tool_pan? false
-							Icon <= Tool_pan_icon $mol_icon_pan
-				<= Size $mol_view
-					sub <= size_tools /
-						<= Brush_size $bog_doodle_slider
-							hint @ \Brush size ( [ and ] )
-							value? <=> brush_value? 10
-							min 2
-							max 40
-						<= Eraser_size $bog_doodle_slider
-							hint @ \Eraser size ( [ and ] )
-							value? <=> eraser? 24
-							min 6
-							max 120
-				<= Palette $mol_view
-					sub <= palette /
-						<= Color* $mol_check
-							hint <= color_name* \
-							checked? <=> color_checked*? false
-							style *
-								^
-								--bog_doodle_app_ink <= color_ink* \
-							sub /
-								<= Color_dot* $mol_view
-						<= Ink_pick $mol_pick
-							hint @ \Any color: the hue picks the instrument
-							align_hor \left
-							trigger_content /
-								<= Ink_dot $mol_view
-									style *
-										^
-										--bog_doodle_app_ink <= ink? \#1f1d1a
-								<= Ink_icon $mol_icon_palette
-							bubble_content /
-								<= Picker $bog_doodle_picker
-									value? <=> ink? \#1f1d1a
-									swatches <= ink_recent /string
-						<= Voice $mol_view
-							sub /
-								<= voice_name \
-				<= Zoom $mol_view
+						<= features_title @ \Everything a paid app has, and then some
+				<= Feature_grid $mol_view
 					sub /
-						<= Zoom_out $mol_button_minor
-							hint @ \Zoom out (−)
-							click? <=> zoom_out? null
-							sub /
-								<= Zoom_out_icon $mol_icon_magnify_minus
-						<= Zoom_level $mol_button_minor
-							hint @ \Whole loop (0)
-							click? <=> zoom_reset? null
-							title <= zoom_percent \100%
-						<= Zoom_in $mol_button_minor
-							hint @ \Zoom in (+)
-							click? <=> zoom_in? null
-							sub /
-								<= Zoom_in_icon $mol_icon_magnify_plus
-				<= Selection $mol_view
-					sub <= selection_tools /
-						<= Copy $mol_button_minor
-							hint @ \Duplicate selection (D)
-							click? <=> selection_copy? null
-							sub /
-								<= Copy_icon $mol_icon_content_duplicate
-						<= Drop $mol_button_minor
-							hint @ \Delete selection (Delete)
-							click? <=> selection_drop? null
-							sub /
-								<= Drop_icon $mol_icon_delete
-				<= Patterns $mol_view
-					sub <= pattern_tabs /
-						<= Pattern* $mol_check
-							hint @ \Pattern: a separate loop, patterns can play as a chain
-							checked? <=> pattern_checked*? false
-							title <= pattern_title* \
-						<= Pattern_add $mol_button_minor
-							hint @ \New pattern
-							click? <=> pattern_add? null
-							sub /
-								<= Pattern_add_icon $mol_icon_plus
-		<= Main $mol_view
-			sub <= main /
-				<= Board $bog_doodle_board
-					sketch <= sketch $bog_doodle_sketch
-					notes <= notes /number
-					steps <= steps 16
-					beat_steps <= beat_steps 2
-					bar_steps <= bar_steps 8
-					axis <= axis \time_y
-					tool? <=> tool? \draw
-					ink <= ink? \#1f1d1a
-					brush <= brush 1
-					eraser <= eraser? 24
-					snap <= snap false
-					pen_only <= pen_only false
-					back <= back \
-					layer_order <= layer_order /string
-					layer_active <= layer_active? \l1
-					layer_default <= layer_default \l1
-					layer_focus <= layer_focus? false
-					selected? <=> selected? /string
-					playhead <= playhead null
-					playing <= playing false
-					note_hover? <=> note_preview? null
-				<= Panel $mol_scroll
+						<= Feature_music $bog_doodle_land_card
+							Icon <= Feature_music_icon $mol_icon_music_note
+							head @ \Drawing is music
+							text @ \One axis is time, the other is pitch. Lines snap to the notes of the key you picked, so everything sounds right.
+						<= Feature_color $bog_doodle_land_card
+							Icon <= Feature_color_icon $mol_icon_palette
+							head @ \Any color, any voice
+							text @ \Pick any color from a full picker. Its hue chooses the instrument: piano, pluck, pad, marimba, lead or bell.
+						<= Feature_pen $bog_doodle_land_card
+							Icon <= Feature_pen_icon $mol_icon_brush
+							head @ \Real drawing tools
+							text @ \Pen pressure, smooth strokes, brush and eraser sizes, selection, undo, zoom and pan, palm rejection for tablets.
+						<= Feature_layers $bog_doodle_land_card
+							Icon <= Feature_layers_icon $mol_icon_layers
+							head @ \Layers and patterns
+							text @ \Keep bass and melody on separate layers. Chain patterns into verse and chorus and let the editor follow the music.
+						<= Feature_moods $bog_doodle_land_card
+							Icon <= Feature_moods_icon $mol_icon_tune
+							head @ \Moods instead of theory
+							text @ \Pick a mood from calm to cyberpunk and the scale, tempo, swing and instrument are set for you.
+						<= Feature_offline $bog_doodle_land_card
+							Icon <= Feature_offline_icon $mol_icon_cloud_off_outline
+							head @ \Works offline
+							text @ \Install it to your home screen. Drawings stay on your device, the app runs without a network.
+						<= Feature_export $bog_doodle_land_card
+							Icon <= Feature_export_icon $mol_icon_download
+							head @ \Export for free
+							text @ \Save your piece as WAV audio, a MIDI file for your DAW, or a PNG picture. No watermark, no paywall.
+						<= Feature_share $bog_doodle_land_card
+							Icon <= Feature_share_icon $mol_icon_share_variant
+							head @ \Share a link
+							text @ \The whole drawing fits into a link. Send it and your friend hears and edits it, no server and no sign up.
+		<= Moods $mol_view
+			sub /
+				<= Moods_title $mol_view
+					dom_name \h2
 					sub /
-						<= Panel_content $mol_list
-							rows <= panel_rows /
-	Layers $mol_list
-		rows /
-			<= Layer_tools $mol_view
-				sub /
-					<= Layer_add $mol_button_major
-						title @ \New layer
-						click? <=> layer_add? null
-					<= Layer_focus $mol_check_box
-						title @ \Dim the others
-						checked? <=> layer_focus? false
-			<= Layer_name_field $mol_labeler
-				title @ \Active layer name
-				content /
-					<= Layer_name $mol_string
-						hint <= layer_name_hint \
-						value? <=> layer_name? \
-			<= Layer_list $mol_list
-				rows <= layer_rows /
-					<= Layer* $mol_view
-						sub /
-							<= Layer_visible* $mol_check_icon
-								hint @ \Visible
-								checked? <=> layer_visible*? true
-								Icon <= Layer_visible_icon* $mol_icon_eye
-							<= Layer_pick* $mol_check
-								hint @ \Draw on this layer
-								checked? <=> layer_picked*? false
-								title <= layer_title* \
-							<= Layer_up* $mol_button_minor
-								hint @ \Up
-								click? <=> layer_up*? null
-								sub /
-									<= Layer_up_icon* $mol_icon_arrow_up
-							<= Layer_down* $mol_button_minor
-								hint @ \Down
-								click? <=> layer_down*? null
-								sub /
-									<= Layer_down_icon* $mol_icon_arrow_down
-							<= Layer_drop* $mol_button_minor
-								hint @ \Delete the layer with all its strokes
-								enabled <= layer_drop_enabled false
-								click? <=> layer_drop*? null
-								sub /
-									<= Layer_drop_icon* $mol_icon_delete
-	Settings $mol_list
-		rows /
-			<= Vibe_field $mol_labeler
-				title @ \Mood: pick one and scale, tempo and instrument follow
-				content /
-					<= Vibes $mol_view
-						sub <= vibe_list /
-							<= Vibe* $mol_check
-								title <= vibe_name* \
-								checked? <=> vibe_checked*? false
-			<= Key_field $mol_labeler
-				title @ \Key
-				content /
-					<= Key_input $mol_select
-						value? <=> key_value? \0
-						dictionary <= key_options *
-			<= Scale_field $mol_labeler
-				title @ \Scale
-				content /
-					<= Scale_input $mol_select
-						value? <=> scale_value? \major_penta
-						dictionary *
-							major_penta @ \Major pentatonic
-							minor_penta @ \Minor pentatonic
-							major @ \Major
-							minor @ \Minor
-							harmonic @ \Harmonic minor
-							dorian @ \Dorian
-							phrygian @ \Phrygian
-							lydian @ \Lydian
-							mixolydian @ \Mixolydian
-							blues @ \Blues
-							chromatic @ \Chromatic
-			<= Axis_field $mol_labeler
-				title @ \Layout
-				content /
-					<= Axis_input $mol_switch
-						value? <=> axis_value? \time_y
-						options *
-							time_y @ \Notes left to right, time down
-							time_x @ \Notes bottom to top, time right
-			<= Range_field $mol_labeler
-				title @ \Range, octaves
-				content /
-					<= Range_input $mol_switch
-						value? <=> range_value? \2
-						options *
-							1 \1
-							2 \2
-							3 \3
-			<= Octave_field $mol_labeler
-				title @ \Lowest octave
-				content /
-					<= Octave_input $mol_number
-						value? <=> octave_value? 3
-						value_min 1
-						value_max 6
-			<= Tempo_field $mol_labeler
-				title @ \Tempo, beats per minute
-				content /
-					<= Tempo_row $mol_view
-						sub /
-							<= Tempo_input $mol_number
-								value? <=> bpm_value? 100
-								value_min 30
-								value_max 300
-							<= Tap $mol_button_minor
-								hint @ \Tap the tempo
-								title @ \Tap
-								click? <=> tap? null
-			<= Bars_field $mol_labeler
-				title @ \Bars per pattern
-				content /
-					<= Bars_input $mol_switch
-						value? <=> bars_value? \2
-						options *
-							1 \1
-							2 \2
-							4 \4
-			<= Grid_field $mol_labeler
-				title @ \Quantize
-				content /
-					<= Grid_input $mol_switch
-						value? <=> grid_value? \8
-						options *
-							4 \1/4
-							8 \1/8
-							8t @ \1/8t
-							16 \1/16
-							16t @ \1/16t
-							32 \1/32
-							free @ \free
-			<= Swing_field $mol_labeler
-				title @ \Swing
-				content /
-					<= Swing_input $mol_switch
-						value? <=> swing_value? \0
-						options *
-							0 @ \off
-							0.33 @ \light
-							0.66 @ \medium
-							1 @ \hard
-			<= Flags $mol_view
-				sub /
-					<= Draw_sound_input $mol_check_box
-						title @ \Play the note while drawing
-						checked? <=> draw_sound? false
-					<= Click_input $mol_check_box
-						title @ \Metronome
-						checked? <=> click? false
-					<= Snap_input $mol_check_box
-						title @ \Snap to notes
-						checked? <=> snap? false
-					<= Pen_input $mol_check_box
-						title @ \Pen only: fingers move the canvas
-						checked? <=> pen_only? false
-					<= Chain_input $mol_check_box
-						title @ \Play all patterns in a chain
-						checked? <=> chain? false
-					<= Midi_input $mol_check_box
-						title @ \MIDI keyboard
-						checked? <=> midi_in? false
-			<= Pattern_field $mol_labeler
-				title @ \Pattern
-				content /
-					<= Pattern_tools $mol_view
-						sub /
-							<= Pattern_copy $mol_button_minor
-								title @ \Duplicate
-								click? <=> pattern_copy? null
-							<= Pattern_clear $mol_button_minor
-								title @ \Clear
-								click? <=> pattern_clear? null
-							<= Pattern_drop $mol_button_minor
-								title @ \Delete
-								enabled <= pattern_drop_enabled false
-								click? <=> pattern_drop? null
-			<= Back_field $mol_labeler
-				title @ \Background
-				content /
-					<= Back_tools $mol_view
-						sub /
-							<= Back_open $mol_button_open
-								title @ \Photo
-								accept \image/*
-								multiple false
-								files? <=> back_files? /File
-							<= Back_drop $mol_button_minor
-								title @ \Remove
-								enabled <= back_enabled false
-								click? <=> back_drop? null
-			<= Export_field $mol_labeler
-				title @ \Export
-				content /
-					<= Export_tools $mol_view
-						sub /
-							<= Share $mol_button_copy
-								title @ \Link
-								hint @ \Copy a link to the drawing
-								text <= share_link \
-							<= Png $mol_button_minor
-								title \PNG
-								click? <=> export_png? null
-							<= Wav $mol_button_minor
-								title \WAV
-								click? <=> export_wav? null
-							<= Midi $mol_button_minor
-								title \MIDI
-								click? <=> export_midi? null
-			<= About $mol_text
-				text @ \
-					\Draw, and your lines will sound. One axis is time, the other is a note of the chosen scale. The line color is the instrument, pen pressure is the volume.
-					\
-					\Everything is free, works offline, drawings stay on this device only. [Source code](https://github.com/b-on-g/doodle).
-	Gallery $mol_list
-		rows <= gallery_rows /
-			<= Gallery_new $mol_button_major
-				title @ \New drawing
-				click? <=> piece_new? null
-			<= Piece* $mol_view
-				sub /
-					<= Piece_open* $mol_button_minor
-						click? <=> piece_open*? null
-						sub /
-							<= Piece_title* $mol_view
-								sub /
-									<= piece_name* \
-							<= Piece_info* $mol_view
-								sub /
-									<= piece_info* \
-					<= Piece_drop* $mol_button_minor
-						hint @ \Delete the drawing
-						click? <=> piece_drop*? null
-						sub /
-							<= Piece_drop_icon* $mol_icon_delete
+						<= moods_title @ \Art comes in every mood
+				<= Moods_lead $mol_view
+					dom_name \p
+					sub /
+						<= moods_lead @ \Twenty nine presets, from a lullaby to the avant-garde. One tap and you are in the right key.
+				<= Mood_list $mol_view
+					sub /
+						<= Mood_calm $mol_view
+							sub /
+								<= mood_calm @ \Calm
+						<= Mood_rain $mol_view
+							sub /
+								<= mood_rain @ \Rain
+						<= Mood_space $mol_view
+							sub /
+								<= mood_space @ \Space
+						<= Mood_noir $mol_view
+							sub /
+								<= mood_noir @ \Noir
+						<= Mood_lofi $mol_view
+							sub /
+								<= mood_lofi @ \Lo-fi
+						<= Mood_jazz $mol_view
+							sub /
+								<= mood_jazz @ \Jazz
+						<= Mood_tango $mol_view
+							sub /
+								<= mood_tango @ \Tango
+						<= Mood_celtic $mol_view
+							sub /
+								<= mood_celtic @ \Celtic
+						<= Mood_horror $mol_view
+							sub /
+								<= mood_horror @ \Horror
+						<= Mood_cyber $mol_view
+							sub /
+								<= mood_cyber @ \Cyberpunk
+						<= Mood_impressionism $mol_view
+							sub /
+								<= mood_impressionism @ \Impressionism
+						<= Mood_baroque $mol_view
+							sub /
+								<= mood_baroque @ \Baroque
+						<= Mood_avantgarde $mol_view
+							sub /
+								<= mood_avantgarde @ \Avant-garde
+		<= How $mol_view
+			attr *
+				^
+				id \how
+			sub /
+				<= How_title $mol_view
+					dom_name \h2
+					sub /
+						<= how_title @ \Three steps to your first song
+				<= Steps $mol_view
+					sub /
+						<= Step_mood $bog_doodle_land_step
+							num \1
+							head @ \Pick a mood
+							text @ \Calm, blues, pixel game or baroque. It sets the key, scale and tempo.
+						<= Step_draw $bog_doodle_land_step
+							num \2
+							head @ \Draw
+							text @ \Waves, dots, zigzags. Press harder for louder, change color for a new instrument.
+						<= Step_play $bog_doodle_land_step
+							num \3
+							head @ \Play and share
+							text @ \Hit play, stack patterns into a song, export WAV or MIDI, or send a link.
+		<= Compare $mol_view
+			sub /
+				<= Compare_title $mol_view
+					dom_name \h2
+					sub /
+						<= compare_title @ \No subscription. Really.
+				<= Compare_table $mol_view
+					sub /
+						<= Compare_head $bog_doodle_land_row
+							name \
+							ours @ \Doodle
+							theirs @ \Typical paid app
+						<= Compare_price $bog_doodle_land_row
+							name @ \Price
+							ours @ \Free
+							theirs @ \Subscription or unlock
+						<= Compare_export $bog_doodle_land_row
+							name @ \WAV and MIDI export
+							ours @ \Yes
+							theirs @ \Paid
+						<= Compare_colors $bog_doodle_land_row
+							name @ \Any color as an instrument
+							ours @ \Yes
+							theirs @ \Fixed palette
+						<= Compare_layers $bog_doodle_land_row
+							name @ \Layers, undo, eraser size
+							ours @ \Yes
+							theirs @ \Rarely
+						<= Compare_offline $bog_doodle_land_row
+							name @ \Works offline
+							ours @ \Yes
+							theirs @ \Often not
+						<= Compare_account $bog_doodle_land_row
+							name @ \Account needed
+							ours @ \No
+							theirs @ \Often
+		<= Faq $mol_view
+			sub /
+				<= Faq_title $mol_view
+					dom_name \h2
+					sub /
+						<= faq_title @ \Questions
+				<= Faq_free $bog_doodle_land_faq
+					head @ \Is it really free?
+					text @ \Yes. No ads, no subscription, no locked features. The code is open under the MIT license.
+				<= Faq_music $bog_doodle_land_faq
+					head @ \Do I need to know music theory?
+					text @ \No. Pick a mood and draw. The notes always come from the chosen scale, so nothing sounds off.
+				<= Faq_devices $bog_doodle_land_faq
+					head @ \Which devices does it run on?
+					text @ \Any modern browser: phone, tablet with a pen, laptop. Install it from the browser menu to use it like an app.
+				<= Faq_data $bog_doodle_land_faq
+					head @ \Where are my drawings stored?
+					text @ \Only on your device. Nothing is uploaded unless you share a link yourself.
+		<= Final $mol_view
+			sub /
+				<= Final_title $mol_view
+					dom_name \h2
+					sub /
+						<= final_title @ \Your next melody is one line away
+				<= Final_open $mol_link
+					uri <= app_uri
+					title @ \Open Doodle
+		<= Foot $mol_view
+			sub /
+				<= foot_text @ \Doodle is free and open source. MIT license.
+				<= Foot_source $mol_link
+					uri \https://github.com/b-on-g/doodle
+					target \_blank
+					title \GitHub
 
-$mol_icon_eye_off $mol_icon path \M11.83,9L15,12.16C15,12.11 15,12.05 15,12A3,3 0 0,0 12,9C11.94,9 11.89,9 11.83,9M7.53,9.8L9.08,11.35C9.03,11.56 9,11.77 9,12A3,3 0 0,0 12,15C12.22,15 12.44,14.97 12.65,14.92L14.2,16.47C13.53,16.8 12.79,17 12,17A5,5 0 0,1 7,12C7,11.21 7.2,10.47 7.53,9.8M2,4.27L4.28,6.55L4.73,7C3.08,8.3 1.78,10 1,12C2.73,16.39 7,19.5 12,19.5C13.55,19.5 15.03,19.2 16.38,18.66L16.81,19.08L19.73,22L21,20.73L3.27,3M12,7A5,5 0 0,1 17,12C17,12.64 16.87,13.26 16.64,13.82L19.57,16.75C21.07,15.5 22.27,13.86 23,12C21.27,7.61 17,4.5 12,4.5C10.6,4.5 9.26,4.75 8,5.2L10.17,7.35C10.74,7.13 11.35,7 12,7Z
+$bog_doodle_land_card $mol_view
+	sub /
+		<= Icon $mol_icon
+		<= Head $mol_view
+			dom_name \h3
+			sub /
+				<= head \
+		<= Text $mol_view
+			dom_name \p
+			sub /
+				<= text \
+
+$bog_doodle_land_step $mol_view
+	sub /
+		<= Num $mol_view
+			sub /
+				<= num \
+		<= Head $mol_view
+			dom_name \h3
+			sub /
+				<= head \
+		<= Text $mol_view
+			dom_name \p
+			sub /
+				<= text \
+
+$bog_doodle_land_row $mol_view
+	sub /
+		<= Name $mol_view
+			sub /
+				<= name \
+		<= Ours $mol_view
+			sub /
+				<= ours \
+		<= Theirs $mol_view
+			sub /
+				<= theirs \
+
+$bog_doodle_land_faq $mol_view
+	dom_name \details
+	sub /
+		<= Head $mol_view
+			dom_name \summary
+			sub /
+				<= head \
+		<= Text $mol_view
+			dom_name \p
+			sub /
+				<= text \

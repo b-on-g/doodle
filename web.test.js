@@ -782,39 +782,6 @@ var $;
 
 ;
 "use strict";
-var $;
-(function ($) {
-    $mol_test({
-        'C major over one octave ends on the upper tonic'() {
-            $mol_assert_like($bog_doodle_scale_notes(0, 'major', 4, 1), [60, 62, 64, 65, 67, 69, 71, 72]);
-        },
-        'A minor pentatonic over two octaves'() {
-            const notes = $bog_doodle_scale_notes(9, 'minor_penta', 3, 2);
-            $mol_assert_equal(notes.length, 11);
-            $mol_assert_equal(notes[0], 57);
-            $mol_assert_equal(notes[10], 81);
-        },
-        'top of the canvas is the highest row'() {
-            $mol_assert_equal($bog_doodle_scale_row(0, 8), 7);
-            $mol_assert_equal($bog_doodle_scale_row(1, 8), 0);
-            $mol_assert_equal($bog_doodle_scale_row(0.5, 8), 4);
-        },
-        'row center maps back to the same row'() {
-            for (let row = 0; row < 8; ++row) {
-                $mol_assert_equal($bog_doodle_scale_row($bog_doodle_scale_row_y(row, 8), 8), row);
-            }
-        },
-        'note names and frequencies'() {
-            $mol_assert_equal($bog_doodle_scale_name(60), 'C4');
-            $mol_assert_equal($bog_doodle_scale_name(70), 'B♭4');
-            $mol_assert_equal($bog_doodle_scale_freq(69), 440);
-            $mol_assert_equal(Math.round($bog_doodle_scale_freq(81)), 880);
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
 
 ;
 "use strict";
@@ -1121,6 +1088,9 @@ var $;
 
 ;
 "use strict";
+
+;
+"use strict";
 var $;
 (function ($_1) {
     $mol_test_mocks.push($ => {
@@ -1308,6 +1278,24 @@ var $;
             $.$mol_wait_timeout_async = async function $mol_wait_timeout_async_mock(timeout) { };
         });
     })($$ = $_1.$$ || ($_1.$$ = {}));
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_wait_timeout_async(timeout) {
+        const promise = new $mol_promise();
+        const task = new this.$mol_after_timeout(timeout, () => promise.done());
+        return Object.assign(promise, {
+            destructor: () => task.destructor()
+        });
+    }
+    $.$mol_wait_timeout_async = $mol_wait_timeout_async;
+    function $mol_wait_timeout(timeout) {
+        return this.$mol_wire_sync(this).$mol_wait_timeout_async(timeout);
+    }
+    $.$mol_wait_timeout = $mol_wait_timeout;
 })($ || ($ = {}));
 
 ;
@@ -2462,81 +2450,53 @@ var $;
 "use strict";
 var $;
 (function ($_1) {
-    const line = (id, x1, y1, x2, y2) => ({
-        id, color: 0, points: [x1, y1, 0.5, x2, y2, 0.5],
+    $mol_test_mocks.push(context => {
+        class $mol_state_arg_mock extends $mol_state_arg {
+            static $ = context;
+            static href(next) { return next || ''; }
+            static go(next) {
+                this.href(this.link(next));
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_state_arg_mock, "href", null);
+        __decorate([
+            $mol_action
+        ], $mol_state_arg_mock, "go", null);
+        context.$mol_state_arg = $mol_state_arg_mock;
     });
     $mol_test({
-        'draw, undo and redo'($) {
-            const sketch = $bog_doodle_sketch.make({ $ });
-            sketch.add(line('a', 0, 0, 1, 1));
-            sketch.add(line('b', 0, 1, 1, 0));
-            $mol_assert_equal(sketch.strokes().length, 2);
-            sketch.undo();
-            $mol_assert_like(sketch.strokes().map(s => s.id), ['a']);
-            $mol_assert_ok(sketch.redo_enabled());
-            sketch.redo();
-            $mol_assert_like(sketch.strokes().map(s => s.id), ['a', 'b']);
-            $mol_assert_not(sketch.redo_enabled());
+        'args as dictionary'($) {
+            $.$mol_state_arg.href('#!foo=bar/xxx');
+            $mol_assert_equal($.$mol_state_arg.dict(), { foo: 'bar', xxx: '' });
+            $.$mol_state_arg.dict({ foo: null, yyy: '', lol: '123' });
+            $mol_assert_equal($.$mol_state_arg.href().replace(/.*#/, '#'), '#!yyy/lol=123');
         },
-        'new stroke after undo drops the redo branch'($) {
-            const sketch = $bog_doodle_sketch.make({ $ });
-            sketch.add(line('a', 0, 0, 1, 1));
-            sketch.undo();
-            sketch.add(line('c', 0, 0, 1, 0));
-            $mol_assert_not(sketch.redo_enabled());
-            $mol_assert_like(sketch.strokes().map(s => s.id), ['c']);
+        'one value from args'($) {
+            $.$mol_state_arg.href('#!foo=bar/xxx');
+            $mol_assert_equal($.$mol_state_arg.value('foo'), 'bar');
+            $mol_assert_equal($.$mol_state_arg.value('xxx'), '');
+            $.$mol_state_arg.value('foo', 'lol');
+            $mol_assert_equal($.$mol_state_arg.href().replace(/.*#/, '#'), '#!foo=lol/xxx');
+            $.$mol_state_arg.value('foo', '');
+            $mol_assert_equal($.$mol_state_arg.href().replace(/.*#/, '#'), '#!foo/xxx');
+            $.$mol_state_arg.value('foo', null);
+            $mol_assert_equal($.$mol_state_arg.href().replace(/.*#/, '#'), '#!xxx');
         },
-        'eraser hits a stroke between its points'($) {
-            const sketch = $bog_doodle_sketch.make({ $ });
-            sketch.add(line('a', 0.1, 0.5, 0.9, 0.5));
-            sketch.add(line('b', 0.1, 0.1, 0.9, 0.1));
-            $mol_assert_like(sketch.hits(0.5, 0.51, 0.02), ['a']);
-            sketch.remove(sketch.hits(0.5, 0.51, 0.02));
-            $mol_assert_like(sketch.strokes().map(s => s.id), ['b']);
-        },
-        'select by box, move and copy'($) {
-            const sketch = $bog_doodle_sketch.make({ $ });
-            sketch.add(line('a', 0.1, 0.5, 0.2, 0.5));
-            sketch.add(line('b', 0.7, 0.5, 0.8, 0.5));
-            const picked = sketch.inside(0, 0, 0.3, 1);
-            $mol_assert_like(picked, ['a']);
-            sketch.shift(picked, 0.1, -0.1);
-            $mol_assert_like(sketch.strokes()[0].points, [0.2, 0.4, 0.5, 0.30000000000000004, 0.4, 0.5]);
-            const copies = sketch.copy(picked, 0.5, 0);
-            $mol_assert_equal(sketch.strokes().length, 3);
-            $mol_assert_unique(copies[0], 'a');
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    const notes = [60, 62, 64, 65, 67, 69, 71, 72];
-    $mol_test({
-        'horizontal line is one long note'() {
-            const events = $bog_doodle_score([{ id: 'a', color: 2, points: [0, 0.94, 1, 0.5, 0.94, 1] }], notes, 8);
-            $mol_assert_like(events, [{ stroke: 'a', color: 2, step: 0, length: 4, midi: 60, velocity: 1 }]);
-        },
-        'rising line splits into ascending notes'() {
-            const events = $bog_doodle_score([{ id: 'a', color: 0, points: [0, 1, 0, 0.9999, 0, 0] }], notes, 8);
-            $mol_assert_like(events.map(e => e.midi), notes);
-            $mol_assert_like(events.map(e => e.length), [1, 1, 1, 1, 1, 1, 1, 1]);
-            $mol_assert_equal(events[0].velocity, 0.25);
-        },
-        'dot plays on its step'() {
-            const events = $bog_doodle_score([{ id: 'a', color: 0, points: [0.3, 0.06, 0.5] }], notes, 8);
-            $mol_assert_like(events.map(e => [e.step, e.midi]), [[2, 72]]);
-        },
-        'vertical stroke inside a step is a chord'() {
-            const events = $bog_doodle_score([{ id: 'a', color: 0, points: [0.51, 0.94, 0.5, 0.51, 0.69, 0.5] }], notes, 8);
-            $mol_assert_like(events.map(e => [e.step, e.midi]), [[4, 60], [4, 62], [4, 64]]);
-        },
-        'swing delays only offbeats of straight grids'() {
-            $mol_assert_equal($bog_doodle_score_time(2, 8, 2, 0.5), 0.5);
-            $mol_assert_equal($bog_doodle_score_time(1, 8, 2, 0.75), 0.25 + 0.0625);
-            $mol_assert_equal($bog_doodle_score_time(1, 12, 3, 1), 0.25);
+        'nested args'($) {
+            const base = new $.$mol_state_arg('nested.');
+            class Nested extends $mol_state_arg {
+                constructor(prefix) {
+                    super(base.prefix + prefix);
+                }
+                static value = (key, next) => base.value(key, next);
+            }
+            $.$mol_state_arg.href('#!foo=bar/nested.xxx=123');
+            $mol_assert_equal(Nested.value('foo'), null);
+            $mol_assert_equal(Nested.value('xxx'), '123');
+            Nested.value('foo', 'lol');
+            $mol_assert_equal($.$mol_state_arg.href().replace(/.*#/, '#'), '#!foo=bar/nested.xxx=123/nested.foo=lol');
         },
     });
 })($ || ($ = {}));
@@ -2546,23 +2506,13 @@ var $;
 var $;
 (function ($) {
     $mol_test({
-        'encode empty'() {
-            $mol_assert_equal($mol_charset_encode(''), new Uint8Array([]));
-        },
-        'encode 1 octet'() {
-            $mol_assert_equal($mol_charset_encode('F'), new Uint8Array([0x46]));
-        },
-        'encode 2 octet'() {
-            $mol_assert_equal($mol_charset_encode('Б'), new Uint8Array([0xd0, 0x91]));
-        },
-        'encode 3 octet'() {
-            $mol_assert_equal($mol_charset_encode('ह'), new Uint8Array([0xe0, 0xa4, 0xb9]));
-        },
-        'encode 4 octet'() {
-            $mol_assert_equal($mol_charset_encode('𐍈'), new Uint8Array([0xf0, 0x90, 0x8d, 0x88]));
-        },
-        'encode surrogate pair'() {
-            $mol_assert_equal($mol_charset_encode('😀'), new Uint8Array([0xf0, 0x9f, 0x98, 0x80]));
+        'local get set delete'() {
+            var key = '$mol_state_local_test:' + Math.random();
+            $mol_assert_equal($mol_state_local.value(key), null);
+            $mol_state_local.value(key, 123);
+            $mol_assert_equal($mol_state_local.value(key), 123);
+            $mol_state_local.value(key, null);
+            $mol_assert_equal($mol_state_local.value(key), null);
         },
     });
 })($ || ($ = {}));
@@ -2571,142 +2521,47 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    const png = new Uint8Array([0x1a, 0x0a, 0x00, 0x49, 0x48, 0x78, 0xda]);
-    $mol_test({
-        'base64 encode string'() {
-            $mol_assert_equal($mol_base64_encode($mol_charset_encode('Hello, ΧΨΩЫ')), 'SGVsbG8sIM6nzqjOqdCr');
-        },
-        'base64 encode binary'() {
-            $mol_assert_equal($mol_base64_encode(png), 'GgoASUh42g==');
-        },
-        'base64 encode string with plus'() {
-            $mol_assert_equal($mol_base64_encode($mol_charset_encode('шоешпо')), '0YjQvtC10YjQv9C+');
-        },
+    $mol_test_mocks.push(context => {
+        class $mol_state_local_mock extends $mol_state_local {
+            static state = {};
+            static value(key, next = this.state[key]) {
+                return this.state[key] = (next || null);
+            }
+        }
+        __decorate([
+            $mol_mem_key
+        ], $mol_state_local_mock, "value", null);
+        context.$mol_state_local = $mol_state_local_mock;
     });
 })($ || ($ = {}));
 
 ;
 "use strict";
-var $;
-(function ($) {
-    const png = new Uint8Array([0x1a, 0x0a, 0x00, 0x49, 0x48, 0x78, 0xda]);
-    const with_plus = new TextEncoder().encode('шоешпо');
-    $mol_test({
-        'base64 decode string'() {
-            $mol_assert_equal($mol_base64_decode('SGVsbG8sIM6nzqjOqdCr'), new TextEncoder().encode('Hello, ΧΨΩЫ'));
-        },
-        'base64 decode binary'() {
-            $mol_assert_equal($mol_base64_decode('GgoASUh42g=='), png);
-        },
-        'base64 decode binary - without equals'() {
-            $mol_assert_equal($mol_base64_decode('GgoASUh42g'), png);
-        },
-        'base64 decode with plus'() {
-            $mol_assert_equal($mol_base64_decode('0YjQvtC10YjQv9C+'), with_plus);
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
+/** @jsx $mol_jsx */
+/** @jsxFrag $mol_jsx_frag */
 var $;
 (function ($) {
     $mol_test({
-        'piece survives the share link'() {
-            const piece = {
-                ...$bog_doodle_piece_empty(),
-                title: 'Дождь',
-                key: 9,
-                scale: 'dorian',
-                bpm: 132,
-                grid: '16t',
-                swing: 0.5,
-                chain: true,
-                patterns: [
-                    [{ id: 'a', color: 3, points: [0, 0, 0, 0.5, 0.25, 1, 0.9999, 1, 0.5] }],
-                    [],
-                ],
-            };
-            const back = $bog_doodle_piece_unpack($bog_doodle_piece_pack(piece));
-            $mol_assert_equal(back.title, 'Дождь');
-            $mol_assert_equal(back.key, 9);
-            $mol_assert_equal(back.scale, 'dorian');
-            $mol_assert_equal(back.grid, '16t');
-            $mol_assert_equal(back.chain, true);
-            $mol_assert_equal(back.patterns.length, 2);
-            const stroke = back.patterns[0][0];
-            $mol_assert_equal(stroke.color, 3);
-            $mol_assert_like(stroke.points.map((v) => Math.round(v * 100) / 100), [0, 0, 0, 0.5, 0.25, 1, 1, 1, 0.5]);
+        'safe tag'() {
+            $mol_assert_equal($mol_dom_serialize($$.$mol_dom_safe([$mol_jsx("div", null, "foo")])[0]), $mol_dom_serialize($mol_jsx("div", null, "foo")));
         },
-        'ink, size, layers and axis survive the link'() {
-            const piece = {
-                ...$bog_doodle_piece_empty(),
-                axis: 'time_x',
-                layers: [
-                    { id: 'l1', name: 'Бас', visible: true },
-                    { id: 'l2', name: '', visible: false },
-                ],
-                patterns: [[{ id: 'a', color: 2, ink: '#3399ff', size: 2.5, layer: 'l2', points: [0.5, 0.5, 0.5] }]],
-            };
-            const back = $bog_doodle_piece_unpack($bog_doodle_piece_pack(piece));
-            $mol_assert_equal(back.axis, 'time_x');
-            $mol_assert_like(back.layers, piece.layers);
-            const stroke = back.patterns[0][0];
-            $mol_assert_equal(stroke.ink, '#3399ff');
-            $mol_assert_equal(stroke.size, 2.5);
-            $mol_assert_equal(stroke.layer, 'l2');
-            $mol_assert_equal($bog_doodle_piece_layer_of(back, stroke).name, '');
+        'bad tag'() {
+            $mol_assert_equal($mol_dom_serialize($$.$mol_dom_safe([$mol_jsx("script", null, "alert('ahtung!')")])[0]), $mol_dom_serialize($mol_jsx($mol_jsx_frag, null, "alert('ahtung!')")));
         },
-        'first version links still open'() {
-            const back = $bog_doodle_piece_unpack('{"v":1,"k":2,"p":[["3.AAAAgA"]]}');
-            $mol_assert_equal(back.key, 2);
-            $mol_assert_equal(back.patterns[0][0].color, 3);
-            $mol_assert_equal(back.patterns[0][0].points.length, 3);
-            $mol_assert_equal(back.layers.length, 1);
-            $mol_assert_equal($bog_doodle_piece_layer_of(back, back.patterns[0][0]).id, 'l1');
+        'common attr'() {
+            $mol_assert_equal($mol_dom_serialize($$.$mol_dom_safe([$mol_jsx("a", { id: "foo" }, "foo")])[0]), $mol_dom_serialize($mol_jsx("a", { id: "foo" }, "foo")));
         },
-        'broken fields fall back to defaults'() {
-            const back = $bog_doodle_piece_unpack('{"s":"nope","g":"x"}');
-            $mol_assert_equal(back.scale, 'major_penta');
-            $mol_assert_equal(back.grid, '8');
-            $mol_assert_equal(back.patterns.length, 1);
+        'safe attr'() {
+            $mol_assert_equal($mol_dom_serialize($$.$mol_dom_safe([$mol_jsx("a", { href: "https://example.org/" }, "foo")])[0]), $mol_dom_serialize($mol_jsx("a", { href: "https://example.org/" }, "foo")));
         },
-        'straight line keeps only its ends'() {
-            const points = [0, 0, 0.5, 0.25, 0.25, 0.5, 0.5, 0.5, 0.5, 1, 1, 0.5];
-            $mol_assert_like($bog_doodle_piece_simplify(points, 0.001), [0, 0, 0.5, 1, 1, 0.5]);
+        'bad attr'() {
+            $mol_assert_equal($mol_dom_serialize($$.$mol_dom_safe([$mol_jsx("a", { onclick: "alert('ahtung!')" }, "foo")])[0]), $mol_dom_serialize($mol_jsx("a", null, "foo")));
         },
-        'corner survives simplification'() {
-            const points = [0, 0, 0.5, 0.5, 0, 0.5, 0.5, 0.5, 0.5];
-            $mol_assert_equal($bog_doodle_piece_simplify(points, 0.001).length, 9);
+        'danger attr'() {
+            $mol_assert_equal($mol_dom_serialize($$.$mol_dom_safe([$mol_jsx("a", { href: "javascript:alert('ahtung!')" }, "foo")])[0]), $mol_dom_serialize($mol_jsx("a", { href: "about:blank#javascript:alert('ahtung!')" }, "foo")));
         },
     });
 })($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_test({
-        'palette colors keep their instruments'() {
-            $mol_assert_like($bog_doodle_synth_colors.map(c => $bog_doodle_synth_timbre(c.ink)), [0, 1, 2, 3, 4, 5]);
-        },
-        'any color maps to an instrument by hue'() {
-            $mol_assert_equal($bog_doodle_synth_timbre('#808080'), 0);
-            $mol_assert_equal($bog_doodle_synth_timbre('#ff0000'), 1);
-            $mol_assert_equal($bog_doodle_synth_timbre('#ffee00'), 4);
-            $mol_assert_equal($bog_doodle_synth_timbre('#00ff66'), 3);
-            $mol_assert_equal($bog_doodle_synth_timbre('#0066ff'), 2);
-            $mol_assert_equal($bog_doodle_synth_timbre('#ff00ff'), 5);
-        },
-        'stroke ink falls back to its palette color'() {
-            $mol_assert_equal($bog_doodle_synth_ink({ color: 2 }), '#2f6fd8');
-            $mol_assert_equal($bog_doodle_synth_ink({ color: 2, ink: '#123456' }), '#123456');
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
 
 ;
 "use strict";
@@ -2992,246 +2847,6 @@ var $;
 ;
 "use strict";
 var $;
-(function ($_1) {
-    var $$;
-    (function ($$) {
-        const pointer = (x, y, extra = {}) => ({
-            pointerId: 1,
-            pointerType: 'pen',
-            pressure: 0.8,
-            button: 0,
-            buttons: 1,
-            clientX: x,
-            clientY: y,
-            preventDefault() { },
-            ...extra,
-        });
-        const board = ($) => {
-            const board = $bog_doodle_board.make({ $ });
-            board.rect = () => ({ left: 0, top: 0, width: 100, height: 100 });
-            board.notes = () => [60, 62, 64, 65, 67, 69, 71, 72];
-            board.redraw = () => { };
-            board.axis = () => 'time_x';
-            return board;
-        };
-        $mol_test({
-            'pen stroke becomes a stroke with pressure'($) {
-                const view = board($);
-                view.pointer_down(pointer(10, 90));
-                for (let x = 11; x <= 60; ++x)
-                    view.pointer_move(pointer(x, 90));
-                view.pointer_up(pointer(60, 90));
-                const strokes = view.sketch().strokes();
-                $mol_assert_equal(strokes.length, 1);
-                $mol_assert_equal(strokes[0].points[2], 0.8);
-                $mol_assert_equal(strokes[0].points.length, 6);
-                $mol_assert_equal(view.note_hover(), null);
-            },
-            'snap puts the stroke on the row center'($) {
-                const view = board($);
-                view.snap = () => true;
-                view.pointer_down(pointer(10, 91));
-                view.pointer_up(pointer(10, 91));
-                $mol_assert_equal(view.sketch().strokes()[0].points[1], $bog_doodle_scale_row_y(0, 8));
-            },
-            'eraser removes touched strokes in one undo step'($) {
-                const view = board($);
-                view.sketch().add({ id: 'a', color: 0, points: [0.1, 0.5, 0.5, 0.9, 0.5, 0.5] });
-                view.sketch().add({ id: 'b', color: 0, points: [0.1, 0.2, 0.5, 0.9, 0.2, 0.5] });
-                view.tool('erase');
-                view.pointer_down(pointer(50, 50));
-                view.pointer_move(pointer(50, 20));
-                view.pointer_up(pointer(50, 20));
-                $mol_assert_equal(view.sketch().strokes().length, 0);
-                view.sketch().undo();
-                $mol_assert_equal(view.sketch().strokes().length, 2);
-            },
-            'select by box and drag moves strokes'($) {
-                const view = board($);
-                view.sketch().add({ id: 'a', color: 0, points: [0.1, 0.5, 0.5, 0.2, 0.5, 0.5] });
-                view.sketch().add({ id: 'b', color: 0, points: [0.7, 0.5, 0.5, 0.8, 0.5, 0.5] });
-                view.tool('select');
-                view.pointer_down(pointer(0, 0));
-                view.pointer_move(pointer(30, 100));
-                view.pointer_up(pointer(30, 100));
-                $mol_assert_like(view.selected(), ['a']);
-                view.pointer_down(pointer(15, 50));
-                view.pointer_move(pointer(25, 40));
-                view.pointer_up(pointer(25, 40));
-                const moved = view.sketch().strokes()[0].points;
-                $mol_assert_equal(Math.round(moved[0] * 100), 20);
-                $mol_assert_equal(Math.round(moved[1] * 100), 40);
-            },
-            'touch pans in pen only mode and pinch zooms'($) {
-                const view = board($);
-                view.pen_only = () => true;
-                view.pointer_down(pointer(50, 50, { pointerType: 'touch' }));
-                view.pointer_move(pointer(40, 50, { pointerType: 'touch' }));
-                view.pointer_up(pointer(40, 50, { pointerType: 'touch' }));
-                $mol_assert_equal(view.sketch().strokes().length, 0);
-                view.pointer_down(pointer(40, 50, { pointerType: 'touch' }));
-                view.pointer_down(pointer(60, 50, { pointerType: 'touch', pointerId: 2 }));
-                view.pointer_move(pointer(80, 50, { pointerType: 'touch', pointerId: 2 }));
-                $mol_assert_equal(Math.round(view.view().zoom * 10), 20);
-            },
-            'notes run across and time runs down by default'($) {
-                const view = board($);
-                view.axis = () => 'time_y';
-                view.pointer_down(pointer(90, 10));
-                view.pointer_up(pointer(90, 10));
-                const [x, y] = view.sketch().strokes()[0].points;
-                $mol_assert_equal(Math.round(x * 100), 10);
-                $mol_assert_equal(Math.round(y * 100), 10);
-                $mol_assert_equal($bog_doodle_scale_row(y, 8), 7);
-            },
-            'board zooms out past the sheet and stays centered'($) {
-                const view = board($);
-                view.zoom_out();
-                view.zoom_out();
-                view.zoom_out();
-                const zoomed = view.view();
-                $mol_assert_ok(zoomed.zoom < 1);
-                $mol_assert_equal(zoomed.x, (1 - 1 / zoomed.zoom) / 2);
-                for (let i = 0; i < 20; ++i)
-                    view.zoom_out();
-                $mol_assert_equal(view.view().zoom, view.zoom_min());
-                view.zoom_reset();
-                $mol_assert_equal(view.zoom_percent(), '100%');
-            },
-            'stroke keeps ink, brush size and active layer'($) {
-                const view = board($);
-                view.ink = () => '#0066ff';
-                view.brush = () => 3;
-                view.layer_order = () => ['l1', 'l2'];
-                view.layer_active = () => 'l2';
-                view.pointer_down(pointer(50, 50));
-                view.pointer_up(pointer(50, 50));
-                const stroke = view.sketch().strokes()[0];
-                $mol_assert_equal(stroke.ink, '#0066ff');
-                $mol_assert_equal(stroke.color, 2);
-                $mol_assert_equal(stroke.size, 3);
-                $mol_assert_equal(stroke.layer, 'l2');
-            },
-            'eraser touches only the active visible layer'($) {
-                const view = board($);
-                view.sketch().add({ id: 'a', color: 0, points: [0.1, 0.5, 0.5, 0.9, 0.5, 0.5] });
-                view.sketch().add({ id: 'b', color: 0, layer: 'l2', points: [0.1, 0.5, 0.5, 0.9, 0.5, 0.5] });
-                view.layer_order = () => ['l1', 'l2'];
-                view.layer_active = () => 'l2';
-                view.tool('erase');
-                view.pointer_down(pointer(50, 50));
-                view.pointer_up(pointer(50, 50));
-                $mol_assert_like(view.sketch().strokes().map(s => s.id), ['a']);
-            },
-            'bigger eraser reaches farther'($) {
-                const view = board($);
-                view.sketch().add({ id: 'a', color: 0, points: [0.1, 0.5, 0.5, 0.9, 0.5, 0.5] });
-                view.tool('erase');
-                view.eraser = () => 10;
-                view.pointer_down(pointer(50, 40));
-                view.pointer_up(pointer(50, 40));
-                $mol_assert_equal(view.sketch().strokes().length, 1);
-                view.eraser = () => 30;
-                view.pointer_down(pointer(50, 40));
-                view.pointer_up(pointer(50, 40));
-                $mol_assert_equal(view.sketch().strokes().length, 0);
-            },
-        });
-    })($$ = $_1.$$ || ($_1.$$ = {}));
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($_1) {
-    $mol_test_mocks.push(context => {
-        class $mol_state_arg_mock extends $mol_state_arg {
-            static $ = context;
-            static href(next) { return next || ''; }
-            static go(next) {
-                this.href(this.link(next));
-            }
-        }
-        __decorate([
-            $mol_mem
-        ], $mol_state_arg_mock, "href", null);
-        __decorate([
-            $mol_action
-        ], $mol_state_arg_mock, "go", null);
-        context.$mol_state_arg = $mol_state_arg_mock;
-    });
-    $mol_test({
-        'args as dictionary'($) {
-            $.$mol_state_arg.href('#!foo=bar/xxx');
-            $mol_assert_equal($.$mol_state_arg.dict(), { foo: 'bar', xxx: '' });
-            $.$mol_state_arg.dict({ foo: null, yyy: '', lol: '123' });
-            $mol_assert_equal($.$mol_state_arg.href().replace(/.*#/, '#'), '#!yyy/lol=123');
-        },
-        'one value from args'($) {
-            $.$mol_state_arg.href('#!foo=bar/xxx');
-            $mol_assert_equal($.$mol_state_arg.value('foo'), 'bar');
-            $mol_assert_equal($.$mol_state_arg.value('xxx'), '');
-            $.$mol_state_arg.value('foo', 'lol');
-            $mol_assert_equal($.$mol_state_arg.href().replace(/.*#/, '#'), '#!foo=lol/xxx');
-            $.$mol_state_arg.value('foo', '');
-            $mol_assert_equal($.$mol_state_arg.href().replace(/.*#/, '#'), '#!foo/xxx');
-            $.$mol_state_arg.value('foo', null);
-            $mol_assert_equal($.$mol_state_arg.href().replace(/.*#/, '#'), '#!xxx');
-        },
-        'nested args'($) {
-            const base = new $.$mol_state_arg('nested.');
-            class Nested extends $mol_state_arg {
-                constructor(prefix) {
-                    super(base.prefix + prefix);
-                }
-                static value = (key, next) => base.value(key, next);
-            }
-            $.$mol_state_arg.href('#!foo=bar/nested.xxx=123');
-            $mol_assert_equal(Nested.value('foo'), null);
-            $mol_assert_equal(Nested.value('xxx'), '123');
-            Nested.value('foo', 'lol');
-            $mol_assert_equal($.$mol_state_arg.href().replace(/.*#/, '#'), '#!foo=bar/nested.xxx=123/nested.foo=lol');
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_test({
-        'local get set delete'() {
-            var key = '$mol_state_local_test:' + Math.random();
-            $mol_assert_equal($mol_state_local.value(key), null);
-            $mol_state_local.value(key, 123);
-            $mol_assert_equal($mol_state_local.value(key), 123);
-            $mol_state_local.value(key, null);
-            $mol_assert_equal($mol_state_local.value(key), null);
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_test_mocks.push(context => {
-        class $mol_state_local_mock extends $mol_state_local {
-            static state = {};
-            static value(key, next = this.state[key]) {
-                return this.state[key] = (next || null);
-            }
-        }
-        __decorate([
-            $mol_mem_key
-        ], $mol_state_local_mock, "value", null);
-        context.$mol_state_local = $mol_state_local_mock;
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
 (function ($) {
     class TestClass extends Uint8Array {
     }
@@ -3261,6 +2876,32 @@ var $;
         'decode empty string'() {
             const encoded = new Uint8Array([]);
             $mol_assert_equal($mol_charset_decode(encoded), '');
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'encode empty'() {
+            $mol_assert_equal($mol_charset_encode(''), new Uint8Array([]));
+        },
+        'encode 1 octet'() {
+            $mol_assert_equal($mol_charset_encode('F'), new Uint8Array([0x46]));
+        },
+        'encode 2 octet'() {
+            $mol_assert_equal($mol_charset_encode('Б'), new Uint8Array([0xd0, 0x91]));
+        },
+        'encode 3 octet'() {
+            $mol_assert_equal($mol_charset_encode('ह'), new Uint8Array([0xe0, 0xa4, 0xb9]));
+        },
+        'encode 4 octet'() {
+            $mol_assert_equal($mol_charset_encode('𐍈'), new Uint8Array([0xf0, 0x90, 0x8d, 0x88]));
+        },
+        'encode surrogate pair'() {
+            $mol_assert_equal($mol_charset_encode('😀'), new Uint8Array([0xf0, 0x9f, 0x98, 0x80]));
         },
     });
 })($ || ($ = {}));
@@ -3335,49 +2976,6 @@ var $;
 
 ;
 "use strict";
-var $;
-(function ($_1) {
-    var $$;
-    (function ($$) {
-        $mol_test({
-            'handle clicks by default'($) {
-                let clicked = false;
-                const clicker = $mol_button.make({
-                    $,
-                    click: (event) => { clicked = true; },
-                });
-                const element = clicker.dom_tree();
-                const event = $mol_dom_context.document.createEvent('mouseevent');
-                event.initEvent('click', true, true);
-                element.dispatchEvent(event);
-                $mol_assert_ok(clicked);
-            },
-            'no handle clicks if disabled'($) {
-                let clicked = false;
-                const clicker = $mol_button.make({
-                    $,
-                    click: (event) => { clicked = true; },
-                    enabled: () => false,
-                });
-                const element = clicker.dom_tree();
-                const event = $mol_dom_context.document.createEvent('mouseevent');
-                event.initEvent('click', true, true);
-                element.dispatchEvent(event);
-                $mol_assert_not(clicked);
-            },
-            async 'Store error'($) {
-                const clicker = $mol_button.make({
-                    $,
-                    click: (event) => $.$mol_fail(new Error('Test error')),
-                });
-                const event = $mol_dom_context.document.createEvent('mouseevent');
-                $mol_assert_fail(() => clicker.event_activate(event), 'Test error');
-                await Promise.resolve();
-                $mol_assert_equal(clicker.status()[0].message, 'Test error');
-            },
-        });
-    })($$ = $_1.$$ || ($_1.$$ = {}));
-})($ || ($ = {}));
 
 ;
 "use strict";
@@ -3386,845 +2984,16 @@ var $;
     var $$;
     (function ($$) {
         $mol_test({
-            'slider writes the picked number'($) {
-                const slider = $bog_doodle_slider.make({ $ });
-                slider.changed({ target: { value: '42' } });
-                $mol_assert_equal(slider.value(), 42);
-                $mol_assert_equal(slider.value_text(), '42');
-            },
-        });
-    })($$ = $_1.$$ || ($_1.$$ = {}));
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($_1) {
-    var $$;
-    (function ($$) {
-        const at = (x, y) => ({
-            pointerId: 1, clientX: x, clientY: y, preventDefault() { },
-        });
-        const picker = ($) => {
-            const view = $bog_doodle_picker.make({ $ });
-            const rect = () => ({ left: 0, top: 0, width: 100, height: 100 });
-            view.Area().dom_node().getBoundingClientRect = rect;
-            view.Hue().dom_node().getBoundingClientRect = rect;
-            return view;
-        };
-        $mol_test({
-            'hex and hsv round trip'() {
-                for (const hex of ['#000000', '#ffffff', '#ff0000', '#2f6fd8', '#8a44c8', '#e39a1b']) {
-                    const { h, s, v } = $bog_doodle_picker_hsv(hex);
-                    $mol_assert_equal($bog_doodle_picker_hex(h, s, v), hex);
+            'every call to action leads to the app'($) {
+                const land = $bog_doodle_land.make({ $ });
+                for (const link of [land.Nav_open(), land.Hero_open(), land.Final_open()]) {
+                    $mol_assert_equal(link.uri(), 'app/');
                 }
             },
-            'area picks saturation and brightness in the current hue'($) {
-                const view = picker($);
-                view.value('#0000ff');
-                view.area_down(at(100, 0));
-                $mol_assert_equal(view.value(), '#0000ff');
-                view.area_move(at(0, 0));
-                $mol_assert_equal(view.value(), '#ffffff');
-                view.area_move(at(50, 100));
-                $mol_assert_equal(view.value(), '#000000');
-                view.area_up(at(50, 100));
-                $mol_assert_equal(view.hue(), 240);
-            },
-            'hue strip turns gray into a color'($) {
-                const view = picker($);
-                view.value('#808080');
-                view.hue_down(at(0, 5));
-                view.hue_up(at(0, 5));
-                $mol_assert_equal($bog_doodle_synth_timbre(view.value()), 1);
-            },
-            'hex field accepts only valid colors'($) {
-                const view = picker($);
-                view.value('#123456');
-                view.hex('zz');
-                $mol_assert_equal(view.value(), '#123456');
-                view.hex('AABBCC');
-                $mol_assert_equal(view.value(), '#aabbcc');
-            },
-        });
-    })($$ = $_1.$$ || ($_1.$$ = {}));
-})($ || ($ = {}));
-
-;
-"use strict";
-
-;
-"use strict";
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_test({
-        'escape'() {
-            const specials = $mol_regexp.from('.*+?^${}()|[]\\');
-            $mol_assert_equal(specials.source, '\\.\\*\\+\\?\\^\\$\\{\\}\\(\\)\\|\\[\\]\\\\');
-        },
-        'char code'() {
-            const space = $mol_regexp.from(32);
-            $mol_assert_like(' '.match(space), [' ']);
-        },
-        'repeat fixed'() {
-            const { repeat, decimal_only: digit } = $mol_regexp;
-            const year = repeat(digit, 4, 4);
-            $mol_assert_like('#2020#'.match(year), ['2020']);
-        },
-        'greedy repeat'() {
-            const { repeat, repeat_greedy, latin_only: letter } = $mol_regexp;
-            $mol_assert_like('abc'.match(repeat(letter, 1, 2)), ['a', 'b', 'c']);
-            $mol_assert_like('abc'.match(repeat_greedy(letter, 1, 2)), ['ab', 'c']);
-        },
-        'repeat range'() {
-            const { repeat_greedy, decimal_only: digit } = $mol_regexp;
-            const year = repeat_greedy(digit, 2, 4);
-            $mol_assert_like('#2#'.match(year), null);
-            $mol_assert_like('#20#'.match(year), ['20']);
-            $mol_assert_like('#2020#'.match(year), ['2020']);
-            $mol_assert_like('#20201#'.match(year), ['2020']);
-        },
-        'repeat from'() {
-            const { repeat_greedy, latin_only: letter } = $mol_regexp;
-            const name = repeat_greedy(letter, 2);
-            $mol_assert_like('##'.match(name), null);
-            $mol_assert_like('#a#'.match(name), null);
-            $mol_assert_like('#ab#'.match(name), ['ab']);
-            $mol_assert_like('#abc#'.match(name), ['abc']);
-        },
-        'from string'() {
-            const regexp = $mol_regexp.from('[\\d]');
-            $mol_assert_equal(regexp.source, '\\[\\\\d\\]');
-            $mol_assert_equal(regexp.flags, 'gsu');
-        },
-        'from regexp'() {
-            const regexp = $mol_regexp.from(/[\d]/i);
-            $mol_assert_equal(regexp.source, '[\\d]');
-            $mol_assert_equal(regexp.flags, 'i');
-        },
-        'split'() {
-            const regexp = $mol_regexp.from(';');
-            $mol_assert_like('aaa;bbb;ccc'.split(regexp), ['aaa', ';', 'bbb', ';', 'ccc']);
-            $mol_assert_like('aaa;;ccc'.split(regexp), ['aaa', ';', '', ';', 'ccc']);
-            $mol_assert_like('aaa'.split(regexp), ['aaa']);
-            $mol_assert_like(''.split(regexp), ['']);
-        },
-        'test for matching'() {
-            const regexp = $mol_regexp.from('foo');
-            $mol_assert_like(regexp.test(''), false);
-            $mol_assert_like(regexp.test('fo'), false);
-            $mol_assert_like(regexp.test('foo'), true);
-            $mol_assert_like(regexp.test('foobar'), true);
-            $mol_assert_like(regexp.test('barfoo'), true);
-        },
-        'case ignoring'() {
-            const xxx = $mol_regexp.from('x', { ignoreCase: true });
-            $mol_assert_like(xxx.flags, 'gisu');
-            $mol_assert_like(xxx.exec('xx')[0], 'x');
-            $mol_assert_like(xxx.exec('XX')[0], 'X');
-        },
-        'multiline mode'() {
-            const { end, from } = $mol_regexp;
-            const xxx = from(['x', end], { multiline: true });
-            $mol_assert_like(xxx.exec('x\ny')[0], 'x');
-            $mol_assert_like(xxx.flags, 'gmsu');
-        },
-        'flags override'() {
-            const triplet = $mol_regexp.from($mol_regexp.from(/.../, { ignoreCase: true }), { multiline: true });
-            $mol_assert_like(triplet.toString(), '/.../gmsu');
-        },
-        'sequence'() {
-            const { begin, end, decimal_only: digit, repeat, from } = $mol_regexp;
-            const year = repeat(digit, 4, 4);
-            const dash = '-';
-            const month = repeat(digit, 2, 2);
-            const day = repeat(digit, 2, 2);
-            const date = from([begin, year, dash, month, dash, day, end]);
-            $mol_assert_like(date.exec('2020-01-02')[0], '2020-01-02');
-        },
-        'optional'() {
-            const name = $mol_regexp.from(['A', ['4']]);
-            $mol_assert_equal('AB'.match(name)[0], 'A');
-            $mol_assert_equal('A4'.match(name)[0], 'A4');
-        },
-        'anon variants'() {
-            const name = $mol_regexp.from(['A', $mol_regexp.vary(['4', '5'])]);
-            $mol_assert_equal('AB'.match(name), null);
-            $mol_assert_equal('A4'.match(name)[0], 'A4');
-            $mol_assert_equal('A5'.match(name)[0], 'A5');
-        },
-        'only groups'() {
-            const regexp = $mol_regexp.from({ dog: '@' });
-            $mol_assert_like([...'#'.matchAll(regexp)][0].groups, undefined);
-            $mol_assert_like([...'@'.matchAll(regexp)][0].groups, { dog: '@' });
-        },
-        'catch skipped'() {
-            const regexp = $mol_regexp.from(/(@)(\d?)/g);
-            $mol_assert_like([...'[[@]]'.matchAll(regexp)].map(f => [...f]), [
-                ['[['],
-                ['@', '@', ''],
-                [']]'],
-            ]);
-        },
-        'enum variants'() {
-            let Sex;
-            (function (Sex) {
-                Sex["male"] = "male";
-                Sex["female"] = "female";
-            })(Sex || (Sex = {}));
-            const sexism = $mol_regexp.from(Sex);
-            $mol_assert_like([...''.matchAll(sexism)].length, 0);
-            $mol_assert_like([...'trans'.matchAll(sexism)][0].groups, undefined);
-            $mol_assert_like([...'male'.matchAll(sexism)][0].groups, { male: 'male', female: '' });
-            $mol_assert_like([...'female'.matchAll(sexism)][0].groups, { male: '', female: 'female' });
-        },
-        'recursive only groups'() {
-            let Sex;
-            (function (Sex) {
-                Sex["male"] = "male";
-                Sex["female"] = "female";
-            })(Sex || (Sex = {}));
-            const sexism = $mol_regexp.from({ Sex });
-            $mol_assert_like([...''.matchAll(sexism)].length, 0);
-            $mol_assert_like([...'male'.matchAll(sexism)][0].groups, { Sex: 'male', male: 'male', female: '' });
-            $mol_assert_like([...'female'.matchAll(sexism)][0].groups, { Sex: 'female', male: '', female: 'female' });
-        },
-        'sequence with groups'() {
-            const { begin, end, decimal_only: digit, repeat, from } = $mol_regexp;
-            const year = repeat(digit, 4, 4);
-            const dash = '-';
-            const month = repeat(digit, 2, 2);
-            const day = repeat(digit, 2, 2);
-            const regexp = from([begin, { year }, dash, { month }, dash, { day }, end]);
-            const found = [...'2020-01-02'.matchAll(regexp)];
-            $mol_assert_like(found[0].groups, {
-                year: '2020',
-                month: '01',
-                day: '02',
-            });
-        },
-        'sequence with groups of mixed type'() {
-            const prefix = '/';
-            const postfix = '/';
-            const regexp = $mol_regexp.from([{ prefix }, /(\w+)/, { postfix }, /([gumi]*)/]);
-            $mol_assert_like([...'/foo/mi'.matchAll(regexp)], [
-                Object.assign(["/foo/mi", "/", "foo", "/", "mi"], {
-                    groups: {
-                        prefix: '/',
-                        postfix: '/',
-                    },
-                    index: 0,
-                    input: "/",
-                }),
-            ]);
-        },
-        'recursive sequence with groups'() {
-            const { begin, end, decimal_only: digit, repeat, from } = $mol_regexp;
-            const year = repeat(digit, 4, 4);
-            const dash = '-';
-            const month = repeat(digit, 2, 2);
-            const day = repeat(digit, 2, 2);
-            const regexp = from([
-                begin, { date: [{ year }, dash, { month }] }, dash, { day }, end
-            ]);
-            const found = [...'2020-01-02'.matchAll(regexp)];
-            $mol_assert_like(found[0].groups, {
-                date: '2020-01',
-                year: '2020',
-                month: '01',
-                day: '02',
-            });
-        },
-        'parse multiple'() {
-            const { decimal_only: digit, from } = $mol_regexp;
-            const regexp = from({ digit });
-            $mol_assert_like([...'123'.matchAll(regexp)].map(f => f.groups), [
-                { digit: '1' },
-                { digit: '2' },
-                { digit: '3' },
-            ]);
-        },
-        'named variants'() {
-            const { begin, or, end, from } = $mol_regexp;
-            const sexism = from([
-                begin, 'sex = ', { sex: ['male', or, 'female'] }, end
-            ]);
-            $mol_assert_like([...'sex = male'.matchAll(sexism)][0].groups, { sex: 'male' });
-            $mol_assert_like([...'sex = female'.matchAll(sexism)][0].groups, { sex: 'female' });
-            $mol_assert_like([...'sex = malefemale'.matchAll(sexism)][0].groups, undefined);
-        },
-        'force after'() {
-            const { latin_only: letter, force_after, from } = $mol_regexp;
-            const regexp = from([letter, force_after('.')]);
-            $mol_assert_like('x.'.match(regexp), ['x']);
-            $mol_assert_like('x,'.match(regexp), null);
-        },
-        'forbid after'() {
-            const { latin_only: letter, forbid_after, from } = $mol_regexp;
-            const regexp = from([letter, forbid_after('.')]);
-            $mol_assert_like('x.'.match(regexp), null);
-            $mol_assert_like('x,'.match(regexp), ['x']);
-        },
-        'char except'() {
-            const { char_except, latin_only, tab } = $mol_regexp;
-            const name = char_except(latin_only, tab);
-            $mol_assert_like('a'.match(name), null);
-            $mol_assert_like('\t'.match(name), null);
-            $mol_assert_like('('.match(name), ['(']);
-        },
-        'unicode only'() {
-            const { unicode_only, from } = $mol_regexp;
-            const name = from([
-                unicode_only('Script', 'Cyrillic'),
-                unicode_only('Hex_Digit'),
-            ]);
-            $mol_assert_like('FF'.match(name), null);
-            $mol_assert_like('ФG'.match(name), null);
-            $mol_assert_like('ФF'.match(name), ['ФF']);
-        },
-        'generate by optional with inner group'() {
-            const { begin, end, from } = $mol_regexp;
-            const animals = from([begin, '#', ['^', { dog: '@' }], end]);
-            $mol_assert_equal(animals.generate({}), '#');
-            $mol_assert_equal(animals.generate({ dog: false }), '#');
-            $mol_assert_equal(animals.generate({ dog: true }), '#^@');
-            $mol_assert_fail(() => animals.generate({ dog: '$' }), 'Wrong param: dog=$');
-        },
-        'generate by optional with inner group with variants'() {
-            const { begin, end, from } = $mol_regexp;
-            const animals = from([begin, '#', ['^', { animal: { dog: '@', fox: '&' } }], end]);
-            $mol_assert_equal(animals.generate({}), '#');
-            $mol_assert_equal(animals.generate({ dog: true }), '#^@');
-            $mol_assert_equal(animals.generate({ fox: true }), '#^&');
-            $mol_assert_fail(() => animals.generate({ dog: '$' }), 'Wrong param: dog=$');
-        },
-        'complex example'() {
-            const { begin, end, char_only, char_range, latin_only, slash_back, repeat_greedy, from, } = $mol_regexp;
-            const atom_char = char_only(latin_only, "!#$%&'*+/=?^`{|}~-");
-            const atom = repeat_greedy(atom_char, 1);
-            const dot_atom = from([atom, repeat_greedy(['.', atom])]);
-            const name_letter = char_only(char_range(0x01, 0x08), 0x0b, 0x0c, char_range(0x0e, 0x1f), 0x21, char_range(0x23, 0x5b), char_range(0x5d, 0x7f));
-            const quoted_pair = from([
-                slash_back,
-                char_only(char_range(0x01, 0x09), 0x0b, 0x0c, char_range(0x0e, 0x7f))
-            ]);
-            const name = repeat_greedy({ name_letter, quoted_pair });
-            const quoted_name = from(['"', { name }, '"']);
-            const local_part = from({ dot_atom, quoted_name });
-            const domain = dot_atom;
-            const mail = from([begin, local_part, '@', { domain }, end]);
-            $mol_assert_equal('foo..bar@example.org'.match(mail), null);
-            $mol_assert_equal('foo..bar"@example.org'.match(mail), null);
-            $mol_assert_like([...'foo.bar@example.org'.matchAll(mail)][0].groups, {
-                dot_atom: "foo.bar",
-                quoted_name: "",
-                name: "",
-                name_letter: "",
-                quoted_pair: "",
-                domain: "example.org",
-            });
-            $mol_assert_like([...'"foo..bar"@example.org'.matchAll(mail)][0].groups, {
-                dot_atom: "",
-                quoted_name: '"foo..bar"',
-                name: "foo..bar",
-                name_letter: "r",
-                quoted_pair: "",
-                domain: "example.org",
-            });
-            $mol_assert_equal(mail.generate({ dot_atom: 'foo.bar', domain: 'example.org' }), 'foo.bar@example.org');
-            $mol_assert_equal(mail.generate({ name: 'foo..bar', domain: 'example.org' }), '"foo..bar"@example.org');
-            $mol_assert_fail(() => mail.generate({ dot_atom: 'foo..bar', domain: 'example.org' }), 'Wrong param: dot_atom=foo..bar');
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    var $$;
-    (function ($$) {
-        $mol_test({
-            'Empty needle'() {
-                const app = new $mol_dimmer;
-                app.needle = () => '  ';
-                app.haystack = () => 'foo  bar';
-                $mol_assert_like(app.strings(), ['foo  bar']);
-            },
-            'Empty haystack'() {
-                const app = new $mol_dimmer;
-                app.needle = () => 'foo  bar';
-                app.haystack = () => '';
-                $mol_assert_like(app.strings(), ['']);
-            },
-            'Not found'() {
-                const app = new $mol_dimmer;
-                app.needle = () => 'foo';
-                app.haystack = () => ' bar ';
-                $mol_assert_like(app.strings(), [' bar ']);
-            },
-            'One found'() {
-                const app = new $mol_dimmer;
-                app.needle = () => 'foo';
-                app.haystack = () => ' barfoo ';
-                $mol_assert_like(app.strings(), [' bar', 'foo', ' ']);
-            },
-            'Multiple found'() {
-                const app = new $mol_dimmer;
-                app.needle = () => 'foo';
-                app.haystack = () => ' foobarfoo foo';
-                $mol_assert_like(app.strings(), [' ', 'foo', 'bar', 'foo', ' ', 'foo']);
-            },
-            'Fuzzy search'() {
-                const app = new $mol_dimmer;
-                app.needle = () => 'foo bar';
-                app.haystack = () => ' barfoo ';
-                $mol_assert_like(app.strings(), [' ', 'bar', '', 'foo', ' ']);
-            },
-        });
-    })($$ = $.$$ || ($.$$ = {}));
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_test({
-        'null by default'() {
-            const key = String(Math.random());
-            $mol_assert_equal($mol_state_session.value(key), null);
-        },
-        'storing'() {
-            const key = String(Math.random());
-            $mol_state_session.value(key, '$mol_state_session_test');
-            $mol_assert_equal($mol_state_session.value(key), '$mol_state_session_test');
-            $mol_state_session.value(key, null);
-            $mol_assert_equal($mol_state_session.value(key), null);
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_test({
-        '$mol_syntax2_md_flow'() {
-            const check = (input, right) => {
-                const tokens = [];
-                $mol_syntax2_md_flow.tokenize(input, (...token) => tokens.push(token));
-                $mol_assert_equal(tokens, right);
-            };
-            check('Hello,\nWorld..\r\n\r\n\nof Love!', [
-                ['block', 'Hello,\n', ['Hello,', '\n'], 0],
-                ['block', 'World..\r\n\r\n\n', ['World..', '\r\n\r\n\n'], 7],
-                ['block', 'of Love!', ['of Love!', ''], 19],
-            ]);
-            check('# Header1\n\nHello!\n\n## Header2', [
-                ['header', '# Header1\n\n', ['#', ' ', 'Header1', '\n\n'], 0],
-                ['block', 'Hello!\n\n', ['Hello!', '\n\n'], 11],
-                ['header', '## Header2', ['##', ' ', 'Header2', ''], 19],
-            ]);
-            check('```\nstart()\n```\n\n```jam.js\nrestart()\n```\n\nHello!\n\n```\nstop()\n```', [
-                ['code', '```\nstart()\n```\n\n', ['```', '', 'start()\n', '```', '\n\n'], 0],
-                ['code', '```jam.js\nrestart()\n```\n\n', ['```', 'jam.js', 'restart()\n', '```', '\n\n'], 17],
-                ['block', 'Hello!\n\n', ['Hello!', '\n\n'], 42],
-                ['code', '```\nstop()\n```', ['```', '', 'stop()\n', '```', ''], 50],
-            ]);
-            check('| header1 | header2\n|----|----\n| Cell11 | Cell12\n| Cell21 | Cell22\n\n| Cell11 | Cell12\n| Cell21 | Cell22\n', [
-                ['table', '| header1 | header2\n|----|----\n| Cell11 | Cell12\n| Cell21 | Cell22\n\n', ['| header1 | header2\n|----|----\n| Cell11 | Cell12\n| Cell21 | Cell22\n', '\n'], 0],
-                ['table', '| Cell11 | Cell12\n| Cell21 | Cell22\n', ['| Cell11 | Cell12\n| Cell21 | Cell22\n', ''], 68],
-            ]);
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-/** @jsx $mol_jsx */
-/** @jsxFrag $mol_jsx_frag */
-var $;
-(function ($) {
-    $mol_test({
-        'safe tag'() {
-            $mol_assert_equal($mol_dom_serialize($$.$mol_dom_safe([$mol_jsx("div", null, "foo")])[0]), $mol_dom_serialize($mol_jsx("div", null, "foo")));
-        },
-        'bad tag'() {
-            $mol_assert_equal($mol_dom_serialize($$.$mol_dom_safe([$mol_jsx("script", null, "alert('ahtung!')")])[0]), $mol_dom_serialize($mol_jsx($mol_jsx_frag, null, "alert('ahtung!')")));
-        },
-        'common attr'() {
-            $mol_assert_equal($mol_dom_serialize($$.$mol_dom_safe([$mol_jsx("a", { id: "foo" }, "foo")])[0]), $mol_dom_serialize($mol_jsx("a", { id: "foo" }, "foo")));
-        },
-        'safe attr'() {
-            $mol_assert_equal($mol_dom_serialize($$.$mol_dom_safe([$mol_jsx("a", { href: "https://example.org/" }, "foo")])[0]), $mol_dom_serialize($mol_jsx("a", { href: "https://example.org/" }, "foo")));
-        },
-        'bad attr'() {
-            $mol_assert_equal($mol_dom_serialize($$.$mol_dom_safe([$mol_jsx("a", { onclick: "alert('ahtung!')" }, "foo")])[0]), $mol_dom_serialize($mol_jsx("a", null, "foo")));
-        },
-        'danger attr'() {
-            $mol_assert_equal($mol_dom_serialize($$.$mol_dom_safe([$mol_jsx("a", { href: "javascript:alert('ahtung!')" }, "foo")])[0]), $mol_dom_serialize($mol_jsx("a", { href: "about:blank#javascript:alert('ahtung!')" }, "foo")));
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($_1) {
-    $mol_test({
-        'create, save, switch and remove pieces'($) {
-            const gallery = $bog_doodle_gallery.make({ $ });
-            $mol_assert_equal(gallery.current(), '');
-            const first = gallery.create();
-            const second = gallery.create({ ...$bog_doodle_piece_empty(), title: 'Второй' });
-            $mol_assert_like(gallery.ids(), [second, first]);
-            $mol_assert_equal(gallery.current(), second);
-            $mol_assert_equal(gallery.piece(second).title, 'Второй');
-            gallery.save(first, { ...$bog_doodle_piece_empty(), bpm: 150 });
-            $mol_assert_equal(gallery.piece(first).bpm, 150);
-            gallery.remove(second);
-            $mol_assert_like(gallery.ids(), [first]);
-            $mol_assert_equal(gallery.current(), first);
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_test({
-        'stereo pcm16 header and samples'() {
-            const file = $bog_doodle_wav([new Float32Array([1, -1]), new Float32Array([0, 2])], 8000);
-            const view = new DataView(file.buffer);
-            $mol_assert_equal(file.length, 44 + 8);
-            $mol_assert_equal(String.fromCharCode(...file.slice(0, 4)), 'RIFF');
-            $mol_assert_equal(view.getUint16(22, true), 2);
-            $mol_assert_equal(view.getUint32(24, true), 8000);
-            $mol_assert_like([0, 1, 2, 3].map(i => view.getInt16(44 + i * 2, true)), [32767, 0, -32768, 32767]);
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_test({
-        'one note file'() {
-            const file = $bog_doodle_midi_file([{ time: 0, length: 1, midi: 60, velocity: 1, channel: 0 }], 120, 96);
-            $mol_assert_like(Array.from(file), [
-                0x4d, 0x54, 0x68, 0x64, 0, 0, 0, 6, 0, 0, 0, 1, 0, 96,
-                0x4d, 0x54, 0x72, 0x6b, 0, 0, 0, 19,
-                0, 0xff, 0x51, 3, 0x07, 0xa1, 0x20,
-                0, 0x90, 60, 127,
-                96, 0x80, 60, 0,
-                0, 0xff, 0x2f, 0,
-            ]);
-        },
-        'long delta is written as variable length'() {
-            const file = $bog_doodle_midi_file([{ time: 0, length: 2, midi: 64, velocity: 0.5, channel: 1 }], 60, 480);
-            $mol_assert_like(Array.from(file.slice(-9)), [0x87, 0x40, 0x81, 64, 0, 0, 0xff, 0x2f, 0]);
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($_1) {
-    const piece = (chain) => ({
-        ...$bog_doodle_piece_empty(),
-        key: 0,
-        scale: 'major',
-        octave: 4,
-        range: 1,
-        bars: 1,
-        grid: '8',
-        chain,
-        patterns: [
-            [{ id: 'a', color: 0, points: [0, 0.94, 0.5, 0.25, 0.94, 0.5] }],
-            [{ id: 'b', color: 2, points: [0.5, 0.06, 1, 0.75, 0.06, 1] }],
-        ],
-    });
-    $mol_test({
-        'only the edited pattern plays without chain'($) {
-            const player = $bog_doodle_player.make({ $, piece: () => piece(false), pattern: () => 1 });
-            $mol_assert_like(player.midi_notes(), [{ time: 2, length: 1, midi: 72, velocity: 1, channel: 2 }]);
-        },
-        'every layer sounds, hidden too'($) {
-            const layered = {
-                ...piece(true),
-                layers: [
-                    { id: 'l1', name: '', visible: true },
-                    { id: 'l2', name: '', visible: false },
-                ],
-            };
-            layered.patterns = [[layered.patterns[0][0], { ...layered.patterns[1][0], layer: 'l2' }]];
-            const player = $bog_doodle_player.make({ $, piece: () => layered, pattern: () => 0 });
-            $mol_assert_like(player.midi_notes().map(n => n.midi), [60, 72]);
-        },
-        'chain starts from the active pattern and wraps around'($) {
-            const three = { ...piece(true), patterns: [...piece(true).patterns, []] };
-            const player = $bog_doodle_player.make({ $, piece: () => three, pattern: () => 1 });
-            player.from = 1;
-            $mol_assert_like(player.order(), [1, 2, 0]);
-            $mol_assert_like(player.order(0), [0, 1, 2]);
-        },
-        'chain plays patterns one after another'($) {
-            const player = $bog_doodle_player.make({ $, piece: () => piece(true), pattern: () => 1 });
-            $mol_assert_like(player.midi_notes().map(n => [n.time, n.midi]), [[0, 60], [6, 72]]);
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_test({
-        'vibe sets music settings and keeps the drawing'() {
-            const piece = { ...$bog_doodle_piece_empty(), title: 'x', patterns: [[{ id: 'a', color: 0, points: [0, 0, 0] }]] };
-            const blues = $bog_doodle_vibe_apply(piece, 'blues');
-            $mol_assert_equal(blues.scale, 'blues');
-            $mol_assert_equal(blues.swing, 1);
-            $mol_assert_equal(blues.title, 'x');
-            $mol_assert_equal(blues.patterns, piece.patterns);
-            $mol_assert_equal($bog_doodle_vibe_current(blues), 'blues');
-        },
-        'hand tuned settings are no vibe'() {
-            const piece = { ...$bog_doodle_vibe_apply($bog_doodle_piece_empty(), 'calm'), bpm: 73 };
-            $mol_assert_equal($bog_doodle_vibe_current(piece), '');
-        },
-        'vibe ids are unique and every ink has a voice'() {
-            const ids = new Set($bog_doodle_vibe_list.map(v => v.id));
-            $mol_assert_equal(ids.size, $bog_doodle_vibe_list.length);
-            for (const vibe of $bog_doodle_vibe_list) {
-                $mol_assert_ok($bog_doodle_synth_timbre(vibe.ink) >= 0);
-            }
-        },
-        'every vibe has its own settings'() {
-            const seen = new Set($bog_doodle_vibe_list.map(v => JSON.stringify(v.settings)));
-            $mol_assert_equal(seen.size, $bog_doodle_vibe_list.length);
-            for (const vibe of $bog_doodle_vibe_list) {
-                $mol_assert_equal($bog_doodle_vibe_current($bog_doodle_vibe_apply($bog_doodle_piece_empty(), vibe.id)), vibe.id);
-            }
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($_1) {
-    var $$;
-    (function ($$) {
-        const pointer = (x, y) => ({
-            pointerId: 1,
-            pointerType: 'mouse',
-            pressure: 0.5,
-            button: 0,
-            buttons: 1,
-            clientX: x,
-            clientY: y,
-            preventDefault() { },
-        });
-        let sounded = [];
-        const app = ($) => {
-            sounded = [];
-            const app = $bog_doodle_app.make({ $ });
-            const board = app.Board();
-            board.rect = () => ({ left: 0, top: 0, width: 100, height: 100 });
-            board.redraw = () => { };
-            app.note_sound = (midi) => { sounded.push(midi); };
-            return app;
-        };
-        const draw = (app, y) => {
-            const board = app.Board();
-            board.pointer_down(pointer(100 - y, 10));
-            board.pointer_move(pointer(100 - y, 40));
-            board.pointer_up(pointer(100 - y, 40));
-        };
-        $mol_test({
-            'first stroke creates a piece in the gallery'($) {
-                const view = app($);
-                $mol_assert_equal(view.Store().ids().length, 0);
-                draw(view, 90);
-                $mol_assert_equal(view.Store().ids().length, 1);
-                $mol_assert_equal(view.piece().patterns[0].length, 1);
-                $mol_assert_ok(view.undo_enabled());
-                view.undo();
-                $mol_assert_equal(view.piece().patterns[0].length, 0);
-            },
-            'color picks the timbre of the next stroke'($) {
-                const view = app($);
-                view.color_checked(3, true);
-                draw(view, 50);
-                $mol_assert_equal(view.piece().patterns[0][0].color, 3);
-                $mol_assert_ok(view.Color(3).checked());
-            },
-            'patterns: add, draw separately, chain'($) {
-                const view = app($);
-                draw(view, 90);
-                view.pattern_add();
-                $mol_assert_equal(view.pattern(), 1);
-                $mol_assert_equal(view.pattern_tabs().length, 3);
-                $mol_assert_equal(view.sketch().strokes().length, 0);
-                draw(view, 20);
-                $mol_assert_equal(view.pattern(), 1);
-                $mol_assert_equal(view.piece().patterns[1].length, 1);
-                view.chain(true);
-                $mol_assert_equal(view.pattern(), 1);
-                const notes = view.Player().midi_notes();
-                $mol_assert_equal(notes.length, 2);
-                $mol_assert_ok(notes[1].midi > notes[0].midi);
-                view.pattern_drop();
-                $mol_assert_equal(view.pattern(), 0);
-                $mol_assert_equal(view.piece().patterns.length, 1);
-            },
-            'settings change the grid'($) {
-                const view = app($);
-                view.grid_value('16');
-                view.bars_value('1');
-                $mol_assert_equal(view.steps(), 16);
-                view.scale_value('blues');
-                view.range_value('1');
-                $mol_assert_equal(view.notes().length, 7);
-            },
-            'share link opens the same piece'($) {
-                const view = app($);
-                view.piece_title('Ручей');
-                draw(view, 60);
-                const link = view.share_link();
-                const share = link.match(/share=([^/]*)/)[1];
-                $mol_assert_equal($bog_doodle_piece_unpack(decodeURIComponent(share)).title, 'Ручей');
-                $.$mol_state_arg.dict({});
-            },
-            'gallery keeps pieces apart'($) {
-                const view = app($);
-                draw(view, 90);
-                const first = view.Store().current();
-                view.piece_new();
-                $mol_assert_equal(view.piece().patterns[0].length, 0);
-                draw(view, 30);
-                view.piece_open(first);
-                $mol_assert_equal(view.Store().current(), first);
-                $mol_assert_equal(view.piece().patterns[0].length, 1);
-                $mol_assert_equal(view.gallery_rows().length, 3);
-            },
-            'selection tools appear with selection'($) {
-                const view = app($);
-                draw(view, 50);
-                $mol_assert_equal(view.selection_tools().length, 0);
-                view.tool_select(true);
-                const board = view.Board();
-                board.pointer_down(pointer(0, 0));
-                board.pointer_move(pointer(100, 100));
-                board.pointer_up(pointer(100, 100));
-                $mol_assert_equal(view.selection_tools().length, 2);
-                view.selection_copy();
-                $mol_assert_equal(view.piece().patterns[0].length, 2);
-                view.selection_drop();
-                $mol_assert_equal(view.piece().patterns[0].length, 1);
-            },
-            'vibe tunes music and brush in one tap'($) {
-                const view = app($);
-                view.vibe_checked('blues', true);
-                $mol_assert_equal(view.piece().scale, 'blues');
-                $mol_assert_equal(view.piece().swing, 1);
-                $mol_assert_ok(view.Vibe('blues').checked());
-                $mol_assert_not(view.Vibe('calm').checked());
-                $mol_assert_equal(view.voice_name(), view.color_name(1));
-                $mol_assert_ok(view.voice_name());
-                view.bpm_value(93);
-                $mol_assert_not(view.Vibe('blues').checked());
-            },
-            'any color draws with the instrument of its hue'($) {
-                const view = app($);
-                view.ink('#33cc99');
-                draw(view, 50);
-                const stroke = view.piece().patterns[0][0];
-                $mol_assert_equal(stroke.ink, '#33cc99');
-                $mol_assert_equal(stroke.color, 3);
-                $mol_assert_like(view.ink_recent(), ['#33cc99']);
-            },
-            'brush size goes into the stroke and slider follows the tool'($) {
-                const view = app($);
-                view.brush_value(25);
-                draw(view, 50);
-                $mol_assert_equal(view.piece().patterns[0][0].size, 2.5);
-                $mol_assert_like(view.size_tools(), [view.Brush_size()]);
-                view.tool_erase(true);
-                $mol_assert_like(view.size_tools(), [view.Eraser_size()]);
-                view.size_step(1);
-                $mol_assert_equal(view.eraser(), 30);
-            },
-            'layers: draw on the new one, hide it, mute it, drop it'($) {
-                const view = app($);
-                draw(view, 90);
-                view.layer_add();
-                const top = view.layer_active();
-                $mol_assert_equal(view.layers().length, 2);
-                $mol_assert_equal(view.layer_rows()[0], view.Layer(top));
-                draw(view, 20);
-                $mol_assert_equal(view.piece().patterns[0][1].layer, top);
-                view.layer_visible(top, false);
-                $mol_assert_like(view.layer_order(), [view.layer_default()]);
-                $mol_assert_equal(view.Player().midi_notes().length, 2);
-                view.layer_name('Мелодия');
-                $mol_assert_equal(view.layer_title(top), 'Мелодия');
-                view.layer_drop(top);
-                $mol_assert_equal(view.layers().length, 1);
-                $mol_assert_equal(view.piece().patterns[0].length, 1);
-                $mol_assert_equal(view.layer_active(), view.layer_default());
-            },
-            'moving the bottom layer up keeps its strokes'($) {
-                const view = app($);
-                draw(view, 90);
-                const bottom = view.layer_default();
-                view.layer_add();
-                view.layer_up(bottom);
-                $mol_assert_equal(view.layers()[1].id, bottom);
-                $mol_assert_equal(view.piece().patterns[0][0].layer, bottom);
-            },
-            'zoom buttons and axis setting'($) {
-                const view = app($);
-                view.zoom_out();
-                $mol_assert_equal(view.zoom_percent(), '80%');
-                view.zoom_reset();
-                $mol_assert_equal(view.axis(), 'time_y');
-                view.axis_value('time_x');
-                $mol_assert_equal(view.Board().axis(), 'time_x');
-            },
-            'drawing is silent until the setting is on'($) {
-                const view = app($);
-                $mol_assert_not(view.draw_sound());
-                draw(view, 50);
-                $mol_assert_equal(sounded.length, 0);
-                view.draw_sound(true);
-                draw(view, 50);
-                $mol_assert_ok(sounded.length > 0);
-            },
-            'chain playback drags the editor to the playing pattern'($) {
-                const view = app($);
-                draw(view, 90);
-                view.pattern_add();
-                view.pattern_checked(0, true);
-                view.Player().playhead = () => ({ pattern: 1, x: 0.5 });
-                $mol_assert_equal(view.playhead(), null);
-                $mol_assert_equal(view.pattern(), 0);
-                view.chain(true);
-                $mol_assert_equal(view.playhead(), 0.5);
-                $mol_assert_equal(view.pattern(), 1);
-            },
-            'title lives in the top bar'($) {
-                const view = app($);
-                $mol_assert_ok(view.Bar().sub().includes(view.Title_input()));
-                view.Title_input().value('Дождь');
-                $mol_assert_equal(view.piece().title, 'Дождь');
+            'how it works anchor exists'($) {
+                const land = $bog_doodle_land.make({ $ });
+                $mol_assert_equal(land.Hero_how().uri(), '#how');
+                $mol_assert_equal(land.How().attr().id, 'how');
             },
         });
     })($$ = $_1.$$ || ($_1.$$ = {}));

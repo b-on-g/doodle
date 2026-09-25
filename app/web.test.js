@@ -2506,178 +2506,41 @@ var $;
             $mol_assert_equal(sketch.strokes().length, 3);
             $mol_assert_unique(copies[0], 'a');
         },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    const notes = [60, 62, 64, 65, 67, 69, 71, 72];
-    $mol_test({
-        'horizontal line is one long note'() {
-            const events = $bog_doodle_score([{ id: 'a', color: 2, points: [0, 0.94, 1, 0.5, 0.94, 1] }], notes, 8);
-            $mol_assert_like(events, [{ stroke: 'a', color: 2, step: 0, length: 4, midi: 60, velocity: 1 }]);
+        'eraser cuts a hole in the middle of a line'($) {
+            const sketch = $bog_doodle_sketch.make({ $ });
+            sketch.add(line('a', 0.1, 0.5, 0.9, 0.5));
+            const next = sketch.erased(0.5, 0.5, 0.05, () => true);
+            $mol_assert_equal(next.length, 2);
+            const [left, right] = next;
+            $mol_assert_ok(Math.max(...left.points.filter((_, i) => i % 3 === 0)) < 0.46);
+            $mol_assert_ok(Math.min(...right.points.filter((_, i) => i % 3 === 0)) > 0.54);
+            $mol_assert_equal(sketch.strokes().length, 1);
         },
-        'rising line splits into ascending notes'() {
-            const events = $bog_doodle_score([{ id: 'a', color: 0, points: [0, 1, 0, 0.9999, 0, 0] }], notes, 8);
-            $mol_assert_like(events.map(e => e.midi), notes);
-            $mol_assert_like(events.map(e => e.length), [1, 1, 1, 1, 1, 1, 1, 1]);
-            $mol_assert_equal(events[0].velocity, 0.25);
+        'eraser removes a dot and leaves far lines untouched'($) {
+            const sketch = $bog_doodle_sketch.make({ $ });
+            sketch.add({ id: 'dot', color: 0, points: [0.5, 0.5, 0.5] });
+            sketch.add(line('far', 0.1, 0.1, 0.9, 0.1));
+            const next = sketch.erased(0.5, 0.5, 0.05, () => true);
+            $mol_assert_like(next.map(s => s.id), ['far']);
+            $mol_assert_equal(next[0], sketch.strokes()[1]);
         },
-        'dot plays on its step'() {
-            const events = $bog_doodle_score([{ id: 'a', color: 0, points: [0.3, 0.06, 0.5] }], notes, 8);
-            $mol_assert_like(events.map(e => [e.step, e.midi]), [[2, 72]]);
+        'lasso picks the part of a line inside the loop'($) {
+            const sketch = $bog_doodle_sketch.make({ $ });
+            sketch.add(line('a', 0.1, 0.5, 0.9, 0.5));
+            sketch.add(line('b', 0.1, 0.9, 0.9, 0.9));
+            const picked = sketch.lasso([0.4, 0.4, 0.6, 0.4, 0.6, 0.6, 0.4, 0.6], () => true);
+            $mol_assert_equal(picked.length, 1);
+            $mol_assert_equal(sketch.strokes().length, 4);
+            const part = sketch.strokes().find(s => s.id === picked[0]);
+            const xs = part.points.filter((_, i) => i % 3 === 0);
+            $mol_assert_ok(Math.min(...xs) >= 0.4 && Math.max(...xs) <= 0.6);
+            sketch.undo();
+            $mol_assert_equal(sketch.strokes().length, 2);
         },
-        'vertical stroke inside a step is a chord'() {
-            const events = $bog_doodle_score([{ id: 'a', color: 0, points: [0.51, 0.94, 0.5, 0.51, 0.69, 0.5] }], notes, 8);
-            $mol_assert_like(events.map(e => [e.step, e.midi]), [[4, 60], [4, 62], [4, 64]]);
-        },
-        'swing delays only offbeats of straight grids'() {
-            $mol_assert_equal($bog_doodle_score_time(2, 8, 2, 0.5), 0.5);
-            $mol_assert_equal($bog_doodle_score_time(1, 8, 2, 0.75), 0.25 + 0.0625);
-            $mol_assert_equal($bog_doodle_score_time(1, 12, 3, 1), 0.25);
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_test({
-        'encode empty'() {
-            $mol_assert_equal($mol_charset_encode(''), new Uint8Array([]));
-        },
-        'encode 1 octet'() {
-            $mol_assert_equal($mol_charset_encode('F'), new Uint8Array([0x46]));
-        },
-        'encode 2 octet'() {
-            $mol_assert_equal($mol_charset_encode('Б'), new Uint8Array([0xd0, 0x91]));
-        },
-        'encode 3 octet'() {
-            $mol_assert_equal($mol_charset_encode('ह'), new Uint8Array([0xe0, 0xa4, 0xb9]));
-        },
-        'encode 4 octet'() {
-            $mol_assert_equal($mol_charset_encode('𐍈'), new Uint8Array([0xf0, 0x90, 0x8d, 0x88]));
-        },
-        'encode surrogate pair'() {
-            $mol_assert_equal($mol_charset_encode('😀'), new Uint8Array([0xf0, 0x9f, 0x98, 0x80]));
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    const png = new Uint8Array([0x1a, 0x0a, 0x00, 0x49, 0x48, 0x78, 0xda]);
-    $mol_test({
-        'base64 encode string'() {
-            $mol_assert_equal($mol_base64_encode($mol_charset_encode('Hello, ΧΨΩЫ')), 'SGVsbG8sIM6nzqjOqdCr');
-        },
-        'base64 encode binary'() {
-            $mol_assert_equal($mol_base64_encode(png), 'GgoASUh42g==');
-        },
-        'base64 encode string with plus'() {
-            $mol_assert_equal($mol_base64_encode($mol_charset_encode('шоешпо')), '0YjQvtC10YjQv9C+');
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    const png = new Uint8Array([0x1a, 0x0a, 0x00, 0x49, 0x48, 0x78, 0xda]);
-    const with_plus = new TextEncoder().encode('шоешпо');
-    $mol_test({
-        'base64 decode string'() {
-            $mol_assert_equal($mol_base64_decode('SGVsbG8sIM6nzqjOqdCr'), new TextEncoder().encode('Hello, ΧΨΩЫ'));
-        },
-        'base64 decode binary'() {
-            $mol_assert_equal($mol_base64_decode('GgoASUh42g=='), png);
-        },
-        'base64 decode binary - without equals'() {
-            $mol_assert_equal($mol_base64_decode('GgoASUh42g'), png);
-        },
-        'base64 decode with plus'() {
-            $mol_assert_equal($mol_base64_decode('0YjQvtC10YjQv9C+'), with_plus);
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_test({
-        'piece survives the share link'() {
-            const piece = {
-                ...$bog_doodle_piece_empty(),
-                title: 'Дождь',
-                key: 9,
-                scale: 'dorian',
-                bpm: 132,
-                grid: '16t',
-                swing: 0.5,
-                chain: true,
-                patterns: [
-                    [{ id: 'a', color: 3, points: [0, 0, 0, 0.5, 0.25, 1, 0.9999, 1, 0.5] }],
-                    [],
-                ],
-            };
-            const back = $bog_doodle_piece_unpack($bog_doodle_piece_pack(piece));
-            $mol_assert_equal(back.title, 'Дождь');
-            $mol_assert_equal(back.key, 9);
-            $mol_assert_equal(back.scale, 'dorian');
-            $mol_assert_equal(back.grid, '16t');
-            $mol_assert_equal(back.chain, true);
-            $mol_assert_equal(back.patterns.length, 2);
-            const stroke = back.patterns[0][0];
-            $mol_assert_equal(stroke.color, 3);
-            $mol_assert_like(stroke.points.map((v) => Math.round(v * 100) / 100), [0, 0, 0, 0.5, 0.25, 1, 1, 1, 0.5]);
-        },
-        'ink, size, layers and axis survive the link'() {
-            const piece = {
-                ...$bog_doodle_piece_empty(),
-                axis: 'time_x',
-                layers: [
-                    { id: 'l1', name: 'Бас', visible: true },
-                    { id: 'l2', name: '', visible: false },
-                ],
-                patterns: [[{ id: 'a', color: 2, ink: '#3399ff', size: 2.5, layer: 'l2', points: [0.5, 0.5, 0.5] }]],
-            };
-            const back = $bog_doodle_piece_unpack($bog_doodle_piece_pack(piece));
-            $mol_assert_equal(back.axis, 'time_x');
-            $mol_assert_like(back.layers, piece.layers);
-            const stroke = back.patterns[0][0];
-            $mol_assert_equal(stroke.ink, '#3399ff');
-            $mol_assert_equal(stroke.size, 2.5);
-            $mol_assert_equal(stroke.layer, 'l2');
-            $mol_assert_equal($bog_doodle_piece_layer_of(back, stroke).name, '');
-        },
-        'first version links still open'() {
-            const back = $bog_doodle_piece_unpack('{"v":1,"k":2,"p":[["3.AAAAgA"]]}');
-            $mol_assert_equal(back.key, 2);
-            $mol_assert_equal(back.patterns[0][0].color, 3);
-            $mol_assert_equal(back.patterns[0][0].points.length, 3);
-            $mol_assert_equal(back.layers.length, 1);
-            $mol_assert_equal($bog_doodle_piece_layer_of(back, back.patterns[0][0]).id, 'l1');
-        },
-        'broken fields fall back to defaults'() {
-            const back = $bog_doodle_piece_unpack('{"s":"nope","g":"x"}');
-            $mol_assert_equal(back.scale, 'major_penta');
-            $mol_assert_equal(back.grid, '8');
-            $mol_assert_equal(back.patterns.length, 1);
-        },
-        'straight line keeps only its ends'() {
-            const points = [0, 0, 0.5, 0.25, 0.25, 0.5, 0.5, 0.5, 0.5, 1, 1, 0.5];
-            $mol_assert_like($bog_doodle_piece_simplify(points, 0.001), [0, 0, 0.5, 1, 1, 0.5]);
-        },
-        'corner survives simplification'() {
-            const points = [0, 0, 0.5, 0.5, 0, 0.5, 0.5, 0.5, 0.5];
-            $mol_assert_equal($bog_doodle_piece_simplify(points, 0.001).length, 9);
+        'point in polygon'() {
+            const square = [0, 0, 1, 0, 1, 1, 0, 1];
+            $mol_assert_ok($bog_doodle_sketch_polygon_has(square, 0.5, 0.5));
+            $mol_assert_not($bog_doodle_sketch_polygon_has(square, 1.5, 0.5));
         },
     });
 })($ || ($ = {}));
@@ -3034,26 +2897,37 @@ var $;
                 view.pointer_up(pointer(10, 91));
                 $mol_assert_equal(view.sketch().strokes()[0].points[1], $bog_doodle_scale_row_y(0, 8));
             },
-            'eraser removes touched strokes in one undo step'($) {
+            'eraser cuts only where it passes, in one undo step'($) {
                 const view = board($);
                 view.sketch().add({ id: 'a', color: 0, points: [0.1, 0.5, 0.5, 0.9, 0.5, 0.5] });
                 view.sketch().add({ id: 'b', color: 0, points: [0.1, 0.2, 0.5, 0.9, 0.2, 0.5] });
                 view.tool('erase');
+                view.eraser = () => 10;
                 view.pointer_down(pointer(50, 50));
+                view.pointer_move(pointer(50, 35));
                 view.pointer_move(pointer(50, 20));
                 view.pointer_up(pointer(50, 20));
-                $mol_assert_equal(view.sketch().strokes().length, 0);
+                const strokes = view.sketch().strokes();
+                $mol_assert_equal(strokes.length, 4);
+                for (const stroke of strokes) {
+                    for (let i = 0; i < stroke.points.length; i += 3) {
+                        $mol_assert_ok(Math.abs(stroke.points[i] - 0.5) > 0.04);
+                    }
+                }
+                $mol_assert_equal(view.preview(), null);
                 view.sketch().undo();
                 $mol_assert_equal(view.sketch().strokes().length, 2);
             },
-            'select by box and drag moves strokes'($) {
+            'lasso selects and drag moves strokes'($) {
                 const view = board($);
                 view.sketch().add({ id: 'a', color: 0, points: [0.1, 0.5, 0.5, 0.2, 0.5, 0.5] });
                 view.sketch().add({ id: 'b', color: 0, points: [0.7, 0.5, 0.5, 0.8, 0.5, 0.5] });
                 view.tool('select');
                 view.pointer_down(pointer(0, 0));
+                view.pointer_move(pointer(30, 0));
                 view.pointer_move(pointer(30, 100));
-                view.pointer_up(pointer(30, 100));
+                view.pointer_move(pointer(0, 100));
+                view.pointer_up(pointer(0, 100));
                 $mol_assert_like(view.selected(), ['a']);
                 view.pointer_down(pointer(15, 50));
                 view.pointer_move(pointer(25, 40));
@@ -3061,6 +2935,28 @@ var $;
                 const moved = view.sketch().strokes()[0].points;
                 $mol_assert_equal(Math.round(moved[0] * 100), 20);
                 $mol_assert_equal(Math.round(moved[1] * 100), 40);
+            },
+            'lasso cuts a piece out of a long line'($) {
+                const view = board($);
+                view.sketch().add({ id: 'a', color: 0, points: [0.1, 0.5, 0.5, 0.9, 0.5, 0.5] });
+                view.tool('select');
+                view.pointer_down(pointer(40, 25));
+                view.pointer_move(pointer(60, 25));
+                view.pointer_move(pointer(60, 75));
+                view.pointer_move(pointer(40, 75));
+                view.pointer_up(pointer(40, 75));
+                $mol_assert_equal(view.selected().length, 1);
+                $mol_assert_equal(view.sketch().strokes().length, 3);
+            },
+            'tap on the board while a panel is open only closes it'($) {
+                const view = board($);
+                let closed = 0;
+                view.blocked = () => true;
+                view.unblock = () => ++closed;
+                view.pointer_down(pointer(50, 50));
+                view.pointer_up(pointer(50, 50));
+                $mol_assert_equal(closed, 1);
+                $mol_assert_equal(view.sketch().strokes().length, 0);
             },
             'touch pans in pen only mode and pinch zooms'($) {
                 const view = board($);
@@ -3121,7 +3017,10 @@ var $;
                 view.tool('erase');
                 view.pointer_down(pointer(50, 50));
                 view.pointer_up(pointer(50, 50));
-                $mol_assert_like(view.sketch().strokes().map(s => s.id), ['a']);
+                const strokes = view.sketch().strokes();
+                $mol_assert_equal(strokes[0].id, 'a');
+                $mol_assert_equal(strokes.length, 3);
+                $mol_assert_ok(strokes.slice(1).every(s => s.layer === 'l2'));
             },
             'bigger eraser reaches farther'($) {
                 const view = board($);
@@ -3134,10 +3033,261 @@ var $;
                 view.eraser = () => 30;
                 view.pointer_down(pointer(50, 40));
                 view.pointer_up(pointer(50, 40));
-                $mol_assert_equal(view.sketch().strokes().length, 0);
+                $mol_assert_equal(view.sketch().strokes().length, 2);
             },
         });
     })($$ = $_1.$$ || ($_1.$$ = {}));
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    const notes = [60, 62, 64, 65, 67, 69, 71, 72];
+    $mol_test({
+        'horizontal line is one long note'() {
+            const events = $bog_doodle_score([{ id: 'a', color: 2, points: [0, 0.94, 1, 0.5, 0.94, 1] }], notes, 8);
+            $mol_assert_like(events, [{ stroke: 'a', color: 2, step: 0, length: 4, midi: 60, velocity: 1 }]);
+        },
+        'rising line splits into ascending notes'() {
+            const events = $bog_doodle_score([{ id: 'a', color: 0, points: [0, 1, 0, 0.9999, 0, 0] }], notes, 8);
+            $mol_assert_like(events.map(e => e.midi), notes);
+            $mol_assert_like(events.map(e => e.length), [1, 1, 1, 1, 1, 1, 1, 1]);
+            $mol_assert_equal(events[0].velocity, 0.25);
+        },
+        'dot plays on its step'() {
+            const events = $bog_doodle_score([{ id: 'a', color: 0, points: [0.3, 0.06, 0.5] }], notes, 8);
+            $mol_assert_like(events.map(e => [e.step, e.midi]), [[2, 72]]);
+        },
+        'vertical stroke inside a step is a chord'() {
+            const events = $bog_doodle_score([{ id: 'a', color: 0, points: [0.51, 0.94, 0.5, 0.51, 0.69, 0.5] }], notes, 8);
+            $mol_assert_like(events.map(e => [e.step, e.midi]), [[4, 60], [4, 62], [4, 64]]);
+        },
+        'swing delays only offbeats of straight grids'() {
+            $mol_assert_equal($bog_doodle_score_time(2, 8, 2, 0.5), 0.5);
+            $mol_assert_equal($bog_doodle_score_time(1, 8, 2, 0.75), 0.25 + 0.0625);
+            $mol_assert_equal($bog_doodle_score_time(1, 12, 3, 1), 0.25);
+        },
+        'thinning merges twins and caps voices per step'() {
+            const event = (step, midi, velocity, color = 0) => ({ stroke: 'a', color, step, length: 1, midi, velocity });
+            const thin = $bog_doodle_score_thin([
+                event(0, 60, 0.5), event(0, 60, 0.9), event(0, 60, 0.4, 2),
+                event(1, 60, 0.1), event(1, 62, 0.2), event(1, 64, 0.3),
+            ], 2);
+            $mol_assert_like(thin.map(e => [e.step, e.midi, e.velocity, e.color]), [
+                [0, 60, 0.9, 0], [0, 60, 0.4, 2],
+                [1, 62, 0.2, 0], [1, 64, 0.3, 0],
+            ]);
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'encode empty'() {
+            $mol_assert_equal($mol_charset_encode(''), new Uint8Array([]));
+        },
+        'encode 1 octet'() {
+            $mol_assert_equal($mol_charset_encode('F'), new Uint8Array([0x46]));
+        },
+        'encode 2 octet'() {
+            $mol_assert_equal($mol_charset_encode('Б'), new Uint8Array([0xd0, 0x91]));
+        },
+        'encode 3 octet'() {
+            $mol_assert_equal($mol_charset_encode('ह'), new Uint8Array([0xe0, 0xa4, 0xb9]));
+        },
+        'encode 4 octet'() {
+            $mol_assert_equal($mol_charset_encode('𐍈'), new Uint8Array([0xf0, 0x90, 0x8d, 0x88]));
+        },
+        'encode surrogate pair'() {
+            $mol_assert_equal($mol_charset_encode('😀'), new Uint8Array([0xf0, 0x9f, 0x98, 0x80]));
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    const png = new Uint8Array([0x1a, 0x0a, 0x00, 0x49, 0x48, 0x78, 0xda]);
+    $mol_test({
+        'base64 encode string'() {
+            $mol_assert_equal($mol_base64_encode($mol_charset_encode('Hello, ΧΨΩЫ')), 'SGVsbG8sIM6nzqjOqdCr');
+        },
+        'base64 encode binary'() {
+            $mol_assert_equal($mol_base64_encode(png), 'GgoASUh42g==');
+        },
+        'base64 encode string with plus'() {
+            $mol_assert_equal($mol_base64_encode($mol_charset_encode('шоешпо')), '0YjQvtC10YjQv9C+');
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    const png = new Uint8Array([0x1a, 0x0a, 0x00, 0x49, 0x48, 0x78, 0xda]);
+    const with_plus = new TextEncoder().encode('шоешпо');
+    $mol_test({
+        'base64 decode string'() {
+            $mol_assert_equal($mol_base64_decode('SGVsbG8sIM6nzqjOqdCr'), new TextEncoder().encode('Hello, ΧΨΩЫ'));
+        },
+        'base64 decode binary'() {
+            $mol_assert_equal($mol_base64_decode('GgoASUh42g=='), png);
+        },
+        'base64 decode binary - without equals'() {
+            $mol_assert_equal($mol_base64_decode('GgoASUh42g'), png);
+        },
+        'base64 decode with plus'() {
+            $mol_assert_equal($mol_base64_decode('0YjQvtC10YjQv9C+'), with_plus);
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'piece survives the share link'() {
+            const piece = {
+                ...$bog_doodle_piece_empty(),
+                title: 'Дождь',
+                key: 9,
+                scale: 'dorian',
+                bpm: 132,
+                grid: '16t',
+                swing: 0.5,
+                chain: true,
+                patterns: [
+                    [{ id: 'a', color: 3, points: [0, 0, 0, 0.5, 0.25, 1, 0.9999, 1, 0.5] }],
+                    [],
+                ],
+            };
+            const back = $bog_doodle_piece_unpack($bog_doodle_piece_pack(piece));
+            $mol_assert_equal(back.title, 'Дождь');
+            $mol_assert_equal(back.key, 9);
+            $mol_assert_equal(back.scale, 'dorian');
+            $mol_assert_equal(back.grid, '16t');
+            $mol_assert_equal(back.chain, true);
+            $mol_assert_equal(back.patterns.length, 2);
+            const stroke = back.patterns[0][0];
+            $mol_assert_equal(stroke.color, 3);
+            $mol_assert_like(stroke.points.map((v) => Math.round(v * 100) / 100), [0, 0, 0, 0.5, 0.25, 1, 1, 1, 0.5]);
+        },
+        'ink, size, layers and axis survive the link'() {
+            const piece = {
+                ...$bog_doodle_piece_empty(),
+                axis: 'time_x',
+                layers: [
+                    { id: 'l1', name: 'Бас', visible: true },
+                    { id: 'l2', name: '', visible: false, opacity: 0.4 },
+                ],
+                patterns: [[{ id: 'a', color: 2, ink: '#3399ff', size: 2.5, layer: 'l2', points: [0.5, 0.5, 0.5] }]],
+            };
+            const back = $bog_doodle_piece_unpack($bog_doodle_piece_pack(piece));
+            $mol_assert_equal(back.axis, 'time_x');
+            $mol_assert_like(back.layers, piece.layers);
+            const stroke = back.patterns[0][0];
+            $mol_assert_equal(stroke.ink, '#3399ff');
+            $mol_assert_equal(stroke.size, 2.5);
+            $mol_assert_equal(stroke.layer, 'l2');
+            $mol_assert_equal($bog_doodle_piece_layer_of(back, stroke).name, '');
+        },
+        'first version links still open'() {
+            const back = $bog_doodle_piece_unpack('{"v":1,"k":2,"p":[["3.AAAAgA"]]}');
+            $mol_assert_equal(back.key, 2);
+            $mol_assert_equal(back.patterns[0][0].color, 3);
+            $mol_assert_equal(back.patterns[0][0].points.length, 3);
+            $mol_assert_equal(back.layers.length, 1);
+            $mol_assert_equal($bog_doodle_piece_layer_of(back, back.patterns[0][0]).id, 'l1');
+        },
+        'broken fields fall back to defaults'() {
+            const back = $bog_doodle_piece_unpack('{"s":"nope","g":"x"}');
+            $mol_assert_equal(back.scale, 'major_penta');
+            $mol_assert_equal(back.grid, '8');
+            $mol_assert_equal(back.patterns.length, 1);
+        },
+        'straight line keeps only its ends'() {
+            const points = [0, 0, 0.5, 0.25, 0.25, 0.5, 0.5, 0.5, 0.5, 1, 1, 0.5];
+            $mol_assert_like($bog_doodle_sketch_simplify(points, 0.001), [0, 0, 0.5, 1, 1, 0.5]);
+        },
+        'corner survives simplification'() {
+            const points = [0, 0, 0.5, 0.5, 0, 0.5, 0.5, 0.5, 0.5];
+            $mol_assert_equal($bog_doodle_sketch_simplify(points, 0.001).length, 9);
+        },
+        'second version layers ignore the old sound flag'() {
+            const back = $bog_doodle_piece_unpack('{"v":2,"l":[["l1","",1,0]],"p":[[]]}');
+            $mol_assert_equal(back.layers[0].opacity, undefined);
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    const drawing = () => {
+        const strokes = [];
+        let seed = 3;
+        const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+        for (let i = 0; i < 100; ++i) {
+            const points = [];
+            let x = rnd() * 0.8, y = rnd();
+            for (let k = 0; k < 20; ++k) {
+                x = Math.min(0.9999, x + 0.01);
+                y = Math.min(1, Math.max(0, y + (rnd() - 0.5) * 0.02));
+                points.push(x, y, 0.5);
+            }
+            strokes.push({ id: 's' + i, color: 4, ink: ['#e39a1b', '#b55a2c', '#a2a4f9'][i % 3], size: 2, layer: 'lx', points });
+        }
+        return {
+            ...$bog_doodle_piece_empty(),
+            title: 'Пппп',
+            key: 11,
+            axis: 'time_x',
+            layers: [{ id: 'lx', name: 'Фон', visible: true, opacity: 0.5 }],
+            patterns: [strokes, [], []],
+        };
+    };
+    $mol_test({
+        'binary form keeps the drawing'() {
+            const piece = drawing();
+            const back = $bog_doodle_share.parse($bog_doodle_share.bytes(piece));
+            $mol_assert_equal(back.title, 'Пппп');
+            $mol_assert_equal(back.key, 11);
+            $mol_assert_equal(back.axis, 'time_x');
+            $mol_assert_like(back.layers, [{ id: 'l1', name: 'Фон', visible: true, opacity: 0.5 }]);
+            $mol_assert_equal(back.patterns.length, 3);
+            const [a, b] = [piece.patterns[0][7], back.patterns[0][7]];
+            $mol_assert_equal(b.ink, a.ink);
+            $mol_assert_equal(b.size, 2);
+            $mol_assert_equal(b.layer, 'l1');
+            $mol_assert_equal(b.color, $bog_doodle_synth_timbre(a.ink));
+            $mol_assert_ok(b.points.length <= a.points.length);
+            for (const [i, j] of [[0, 0], [1, 1], [a.points.length - 3, b.points.length - 3], [a.points.length - 2, b.points.length - 2]]) {
+                $mol_assert_ok(Math.abs(a.points[i] - b.points[j]) < 0.002);
+            }
+        },
+        async 'compressed link is several times shorter and opens back'() {
+            const piece = drawing();
+            const code = await $bog_doodle_share.encode(piece);
+            const old = encodeURIComponent($bog_doodle_piece_pack(piece));
+            $mol_assert_ok(code.length * 3 < old.length);
+            $mol_assert_ok(/^z[A-Za-z0-9_-]+$/.test(code));
+            const back = await $bog_doodle_share.decode(code);
+            $mol_assert_equal(back.patterns[0].length, 100);
+        },
+        async 'old json links still open'() {
+            const back = await $bog_doodle_share.decode('{"v":1,"k":2,"p":[["3.AAAAgA"]]}');
+            $mol_assert_equal(back.key, 2);
+            $mol_assert_equal(back.patterns[0].length, 1);
+        },
+    });
 })($ || ($ = {}));
 
 ;
@@ -4094,13 +4244,17 @@ var $;
                 view.range_value('1');
                 $mol_assert_equal(view.notes().length, 7);
             },
-            'share link opens the same piece'($) {
+            async 'share link is short and opens the same piece'($) {
                 const view = app($);
                 view.piece_title('Ручей');
                 draw(view, 60);
-                const link = view.share_link();
-                const share = link.match(/share=([^/]*)/)[1];
-                $mol_assert_equal($bog_doodle_piece_unpack(decodeURIComponent(share)).title, 'Ручей');
+                const link = await $mol_wire_async(view).share_link();
+                const code = decodeURIComponent(link.match(/share=([^/]*)/)[1]);
+                $mol_assert_ok(code.startsWith('z'));
+                $mol_assert_ok(link.length < 400);
+                const back = await $bog_doodle_share.decode(code);
+                $mol_assert_equal(back.title, 'Ручей');
+                $mol_assert_equal(back.patterns[0].length, 1);
                 $.$mol_state_arg.dict({});
             },
             'gallery keeps pieces apart'($) {
@@ -4122,9 +4276,11 @@ var $;
                 view.tool_select(true);
                 const board = view.Board();
                 board.pointer_down(pointer(0, 0));
+                board.pointer_move(pointer(100, 0));
                 board.pointer_move(pointer(100, 100));
-                board.pointer_up(pointer(100, 100));
-                $mol_assert_equal(view.selection_tools().length, 2);
+                board.pointer_move(pointer(0, 100));
+                board.pointer_up(pointer(0, 100));
+                $mol_assert_equal(view.selection_tools().length, 3);
                 view.selection_copy();
                 $mol_assert_equal(view.piece().patterns[0].length, 2);
                 view.selection_drop();
@@ -4225,6 +4381,36 @@ var $;
                 $mol_assert_ok(view.Bar().sub().includes(view.Title_input()));
                 view.Title_input().value('Дождь');
                 $mol_assert_equal(view.piece().title, 'Дождь');
+            },
+            'select all then move the whole picture'($) {
+                const view = app($);
+                draw(view, 90);
+                draw(view, 30);
+                view.select_all();
+                $mol_assert_equal(view.selected().length, 2);
+                const board = view.Board();
+                const before = view.piece().patterns[0].map(s => s.points[0]);
+                const [x, y] = [view.piece().patterns[0][0].points[0], view.piece().patterns[0][0].points[1]];
+                board.pointer_down(pointer((1 - y) * 100, x * 100));
+                board.pointer_move(pointer((1 - y) * 100, x * 100 + 10));
+                board.pointer_up(pointer((1 - y) * 100, x * 100 + 10));
+                const after = view.piece().patterns[0].map(s => s.points[0]);
+                $mol_assert_ok(after.every((value, index) => Math.abs(value - before[index] - 0.1) < 0.001));
+            },
+            'tap on the board closes an open panel without drawing'($) {
+                const view = app($);
+                view.layers_opened(true);
+                draw(view, 50);
+                $mol_assert_equal(view.panel(), '');
+                $mol_assert_equal(view.piece().patterns[0].length, 0);
+            },
+            'layer opacity is stored per layer'($) {
+                const view = app($);
+                const id = view.layer_default();
+                $mol_assert_equal(view.layer_opacity(id), 100);
+                view.layer_opacity(id, 40);
+                $mol_assert_equal(view.layer_alpha(id), 0.4);
+                $mol_assert_equal(view.layers()[0].opacity, 0.4);
             },
         });
     })($$ = $_1.$$ || ($_1.$$ = {}));

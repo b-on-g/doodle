@@ -7384,6 +7384,30 @@ var $;
 
 
 ;
+	($.$mol_icon_select) = class $mol_icon_select extends ($.$mol_icon) {
+		path(){
+			return "M4,3H5V5H3V4A1,1 0 0,1 4,3M20,3A1,1 0 0,1 21,4V5H19V3H20M15,5V3H17V5H15M11,5V3H13V5H11M7,5V3H9V5H7M21,20A1,1 0 0,1 20,21H19V19H21V20M15,21V19H17V21H15M11,21V19H13V21H11M7,21V19H9V21H7M4,21A1,1 0 0,1 3,20V19H5V21H4M3,15H5V17H3V15M21,15V17H19V15H21M3,11H5V13H3V11M21,11V13H19V11H21M3,7H5V9H3V7M21,7V9H19V7H21Z";
+		}
+	};
+
+
+;
+"use strict";
+
+
+;
+	($.$mol_icon_select_all) = class $mol_icon_select_all extends ($.$mol_icon) {
+		path(){
+			return "M9,9H15V15H9M7,17H17V7H7M15,5H17V3H15M15,21H17V19H15M19,17H21V15H19M19,9H21V7H19M19,21A2,2 0 0,0 21,19H19M19,13H21V11H19M11,21H13V19H11M9,3H7V5H9M3,17H5V15H3M5,21V19H3A2,2 0 0,0 5,21M19,3V5H21A2,2 0 0,0 19,3M13,3H11V5H13M3,9H5V7H3M7,21H9V19H7M3,13H5V11H3M3,5H5V3A2,2 0 0,0 3,5Z";
+		}
+	};
+
+
+;
+"use strict";
+
+
+;
 	($.$mol_icon_content_duplicate) = class $mol_icon_content_duplicate extends ($.$mol_icon) {
 		path(){
 			return "M11,17H4A2,2 0 0,1 2,15V3A2,2 0 0,1 4,1H16V3H4V15H11V13L15,16L11,19V17M19,21V7H8V13H6V7A2,2 0 0,1 8,5H19A2,2 0 0,1 21,7V21A2,2 0 0,1 19,23H8A2,2 0 0,1 6,21V19H8V21H19Z";
@@ -7474,6 +7498,93 @@ var $;
         return Math.random().toString(36).slice(2, 10);
     }
     $.$bog_doodle_sketch_stroke_id = $bog_doodle_sketch_stroke_id;
+    function $bog_doodle_sketch_simplify(points, tolerance) {
+        const count = points.length / 3;
+        if (count < 3)
+            return points;
+        const keep = new Uint8Array(count);
+        keep[0] = keep[count - 1] = 1;
+        const stack = [[0, count - 1]];
+        while (stack.length) {
+            const [from, to] = stack.pop();
+            const ax = points[from * 3], ay = points[from * 3 + 1];
+            const bx = points[to * 3], by = points[to * 3 + 1];
+            const len = Math.hypot(bx - ax, by - ay) || 1e-9;
+            let far = -1, dist = tolerance;
+            for (let i = from + 1; i < to; ++i) {
+                const px = points[i * 3], py = points[i * 3 + 1];
+                const d = Math.abs((bx - ax) * (ay - py) - (ax - px) * (by - ay)) / len;
+                const dp = Math.abs(points[i * 3 + 2] - points[from * 3 + 2]);
+                const score = Math.max(d, dp * tolerance * 4);
+                if (score > dist) {
+                    dist = score;
+                    far = i;
+                }
+            }
+            if (far < 0)
+                continue;
+            keep[far] = 1;
+            stack.push([from, far], [far, to]);
+        }
+        const result = [];
+        for (let i = 0; i < count; ++i) {
+            if (keep[i])
+                result.push(points[i * 3], points[i * 3 + 1], points[i * 3 + 2]);
+        }
+        return result;
+    }
+    $.$bog_doodle_sketch_simplify = $bog_doodle_sketch_simplify;
+    function $bog_doodle_sketch_resample(points, step) {
+        if (points.length <= 3)
+            return points.slice();
+        const result = [points[0], points[1], points[2]];
+        for (let i = 3; i < points.length; i += 3) {
+            const x0 = points[i - 3], y0 = points[i - 2], p0 = points[i - 1];
+            const x1 = points[i], y1 = points[i + 1], p1 = points[i + 2];
+            const parts = Math.max(1, Math.ceil(Math.hypot(x1 - x0, y1 - y0) / step));
+            for (let k = 1; k <= parts; ++k) {
+                const t = k / parts;
+                result.push(x0 + (x1 - x0) * t, y0 + (y1 - y0) * t, p0 + (p1 - p0) * t);
+            }
+        }
+        return result;
+    }
+    $.$bog_doodle_sketch_resample = $bog_doodle_sketch_resample;
+    function $bog_doodle_sketch_cut(stroke, inside, step) {
+        const points = $bog_doodle_sketch_resample(stroke.points, step);
+        const runs = [];
+        for (let i = 0; i < points.length; i += 3) {
+            const flag = inside(points[i], points[i + 1]);
+            const last = runs[runs.length - 1];
+            if (last && last.inside === flag)
+                last.points.push(points[i], points[i + 1], points[i + 2]);
+            else
+                runs.push({ inside: flag, points: [points[i], points[i + 1], points[i + 2]] });
+        }
+        if (runs.length === 1)
+            return runs[0].inside ? { inside: [stroke], outside: [] } : { inside: [], outside: [stroke] };
+        const piece = (run) => ({
+            ...stroke,
+            id: $bog_doodle_sketch_stroke_id(),
+            points: $bog_doodle_sketch_simplify(run.points, step / 4),
+        });
+        const single = stroke.points.length <= 3;
+        return {
+            inside: runs.filter(run => run.inside && (single || run.points.length > 3)).map(piece),
+            outside: runs.filter(run => !run.inside && (single || run.points.length > 3)).map(piece),
+        };
+    }
+    $.$bog_doodle_sketch_cut = $bog_doodle_sketch_cut;
+    function $bog_doodle_sketch_polygon_has(polygon, x, y) {
+        let has = false;
+        for (let i = 0, j = polygon.length - 2; i < polygon.length; j = i, i += 2) {
+            const xi = polygon[i], yi = polygon[i + 1], xj = polygon[j], yj = polygon[j + 1];
+            if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi)
+                has = !has;
+        }
+        return has;
+    }
+    $.$bog_doodle_sketch_polygon_has = $bog_doodle_sketch_polygon_has;
     class $bog_doodle_sketch extends $mol_object {
         strokes(next) {
             return next ?? [];
@@ -7549,6 +7660,40 @@ var $;
             if (rest.length === this.strokes().length)
                 return;
             this.commit(rest);
+        }
+        erased(x, y, radius, filter, strokes = this.strokes()) {
+            const r2 = radius * radius;
+            const inside = (px, py) => (px - x) ** 2 + (py - y) ** 2 <= r2;
+            let changed = false;
+            const next = [];
+            for (const stroke of strokes) {
+                if (!filter(stroke) || !$bog_doodle_sketch_stroke_near(stroke, x, y, radius)) {
+                    next.push(stroke);
+                    continue;
+                }
+                changed = true;
+                next.push(...$bog_doodle_sketch_cut(stroke, inside, radius / 3).outside);
+            }
+            return changed ? next : strokes;
+        }
+        lasso(polygon, filter) {
+            if (polygon.length < 6)
+                return [];
+            const inside = (x, y) => $bog_doodle_sketch_polygon_has(polygon, x, y);
+            const picked = [];
+            const next = [];
+            for (const stroke of this.strokes()) {
+                if (!filter(stroke)) {
+                    next.push(stroke);
+                    continue;
+                }
+                const cut = $bog_doodle_sketch_cut(stroke, inside, 0.004);
+                next.push(...cut.outside, ...cut.inside);
+                picked.push(...cut.inside.map(s => s.id));
+            }
+            if (picked.length)
+                this.commit(next);
+            return picked;
         }
         hits(x, y, radius, filter = () => true) {
             return this.strokes()
@@ -7662,6 +7807,16 @@ var $;
 		layer_focus(){
 			return false;
 		}
+		layer_alpha(id){
+			return 1;
+		}
+		blocked(){
+			return false;
+		}
+		unblock(next){
+			if(next !== undefined) return next;
+			return null;
+		}
 		selected(next){
 			if(next !== undefined) return next;
 			return [];
@@ -7700,6 +7855,7 @@ var $;
 	($mol_mem(($.$bog_doodle_board.prototype), "context_menu"));
 	($mol_mem(($.$bog_doodle_board.prototype), "sketch"));
 	($mol_mem(($.$bog_doodle_board.prototype), "tool"));
+	($mol_mem(($.$bog_doodle_board.prototype), "unblock"));
 	($mol_mem(($.$bog_doodle_board.prototype), "selected"));
 	($mol_mem(($.$bog_doodle_board.prototype), "note_hover"));
 
@@ -7757,305 +7913,6 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $.$bog_doodle_score_grids = {
-        '4': 4,
-        '8': 8,
-        '8t': 12,
-        '16': 16,
-        '16t': 24,
-        '32': 32,
-        'free': 96,
-    };
-    function rows_at(points, left, right, count) {
-        const center = (left + right) / 2;
-        const found = new Map();
-        for (let i = 0; i + 3 < points.length; i += 3) {
-            const x1 = points[i], x2 = points[i + 3];
-            if (Math.min(x1, x2) > center || Math.max(x1, x2) < center || x1 === x2)
-                continue;
-            const t = (center - x1) / (x2 - x1);
-            const y = points[i + 1] + t * (points[i + 4] - points[i + 1]);
-            const p = points[i + 2] + t * (points[i + 5] - points[i + 2]);
-            const row = $bog_doodle_scale_row(y, count);
-            found.set(row, Math.max(found.get(row) ?? 0, p));
-        }
-        if (found.size)
-            return found;
-        let low = Infinity, high = -Infinity, pressure = 0;
-        for (let i = 0; i < points.length; i += 3) {
-            if (points[i] < left || points[i] >= right)
-                continue;
-            const row = $bog_doodle_scale_row(points[i + 1], count);
-            low = Math.min(low, row);
-            high = Math.max(high, row);
-            pressure = Math.max(pressure, points[i + 2]);
-        }
-        for (let row = low; row <= high; ++row)
-            found.set(row, pressure);
-        return found;
-    }
-    function $bog_doodle_score(strokes, notes, steps) {
-        const events = [];
-        for (const stroke of strokes) {
-            const box = $bog_doodle_sketch_stroke_box(stroke);
-            const first = Math.max(0, Math.floor(box.left * steps));
-            const last = Math.min(steps - 1, Math.max(first, Math.ceil(box.right * steps) - 1));
-            let open = new Map();
-            for (let step = first; step <= last; ++step) {
-                const rows = rows_at(stroke.points, step / steps, (step + 1) / steps, notes.length);
-                const next = new Map();
-                for (const [row, pressure] of rows) {
-                    const prev = open.get(row);
-                    if (prev) {
-                        prev.length++;
-                        next.set(row, prev);
-                        continue;
-                    }
-                    const event = {
-                        stroke: stroke.id,
-                        color: stroke.color,
-                        step,
-                        length: 1,
-                        midi: notes[row],
-                        velocity: Math.round((0.25 + 0.75 * pressure) * 100) / 100,
-                    };
-                    events.push(event);
-                    next.set(row, event);
-                }
-                open = next;
-            }
-        }
-        return events.sort((a, b) => a.step - b.step || a.midi - b.midi);
-    }
-    $.$bog_doodle_score = $bog_doodle_score;
-    function $bog_doodle_score_time(step, steps_per_bar, bar_time, swing) {
-        const step_time = bar_time / steps_per_bar;
-        const swingable = steps_per_bar === 8 || steps_per_bar === 16;
-        const shift = swingable && step % 2 === 1 ? swing * step_time / 3 : 0;
-        return step * step_time + shift;
-    }
-    $.$bog_doodle_score_time = $bog_doodle_score_time;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_base64_encode(src) {
-        return src.toBase64();
-    }
-    $.$mol_base64_encode = $mol_base64_encode;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    function binary_string(bytes) {
-        let binary = '';
-        if (typeof bytes !== 'string') {
-            for (const byte of bytes)
-                binary += String.fromCharCode(byte);
-        }
-        else {
-            binary = unescape(encodeURIComponent(bytes));
-        }
-        return binary;
-    }
-    function $mol_base64_encode_web(str) {
-        return $mol_dom_context.btoa(binary_string(str));
-    }
-    $.$mol_base64_encode_web = $mol_base64_encode_web;
-    if (!('toBase64' in Uint8Array.prototype)) {
-        $.$mol_base64_encode = $mol_base64_encode_web;
-    }
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_base64_decode(base64) {
-        return Uint8Array.fromBase64(base64);
-    }
-    $.$mol_base64_decode = $mol_base64_decode;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_base64_decode_web(base64Str) {
-        const buf = Uint8Array.from($mol_dom_context.atob(base64Str), c => c.charCodeAt(0));
-        return buf;
-    }
-    $.$mol_base64_decode_web = $mol_base64_decode_web;
-    if (!('fromBase64' in Uint8Array)) {
-        $.$mol_base64_decode = $mol_base64_decode_web;
-    }
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    function $bog_doodle_piece_layer_of(piece, stroke) {
-        const id = stroke.layer;
-        return piece.layers.find(layer => layer.id === id) ?? piece.layers[0];
-    }
-    $.$bog_doodle_piece_layer_of = $bog_doodle_piece_layer_of;
-    function $bog_doodle_piece_empty() {
-        return {
-            title: '',
-            key: 0,
-            scale: 'major_penta',
-            octave: 3,
-            range: 2,
-            bpm: 100,
-            bars: 2,
-            grid: '8',
-            swing: 0,
-            patterns: [[]],
-            chain: false,
-            back: '',
-            layers: [{ id: 'l1', name: '', visible: true }],
-            axis: 'time_y',
-        };
-    }
-    $.$bog_doodle_piece_empty = $bog_doodle_piece_empty;
-    function points_pack(points) {
-        const bytes = new Uint8Array(points.length / 3 * 4);
-        for (let i = 0, j = 0; i < points.length; i += 3, j += 4) {
-            const x = Math.round(Math.max(0, Math.min(1, points[i])) * 4095);
-            const y = Math.round(Math.max(0, Math.min(1, points[i + 1])) * 4095);
-            const p = Math.round(Math.max(0, Math.min(1, points[i + 2])) * 255);
-            bytes[j] = x >> 4;
-            bytes[j + 1] = ((x & 15) << 4) | (y >> 8);
-            bytes[j + 2] = y & 255;
-            bytes[j + 3] = p;
-        }
-        return $mol_base64_encode(bytes).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-    }
-    function points_unpack(str) {
-        const base64 = str.replace(/-/g, '+').replace(/_/g, '/');
-        const bytes = $mol_base64_decode(base64 + '='.repeat((4 - base64.length % 4) % 4));
-        const points = [];
-        for (let j = 0; j + 3 < bytes.length; j += 4) {
-            const x = (bytes[j] << 4) | (bytes[j + 1] >> 4);
-            const y = ((bytes[j + 1] & 15) << 8) | bytes[j + 2];
-            points.push(x / 4095, y / 4095, bytes[j + 3] / 255);
-        }
-        return points;
-    }
-    function $bog_doodle_piece_pack(piece) {
-        return JSON.stringify({
-            v: 2,
-            t: piece.title,
-            k: piece.key,
-            s: piece.scale,
-            o: piece.octave,
-            r: piece.range,
-            b: piece.bpm,
-            n: piece.bars,
-            g: piece.grid,
-            w: piece.swing,
-            c: piece.chain ? 1 : 0,
-            a: piece.axis,
-            l: piece.layers.map(l => [l.id, l.name, l.visible ? 1 : 0]),
-            p: piece.patterns.map(strokes => strokes.map(s => [
-                s.color,
-                points_pack(s.points),
-                s.ink ?? '',
-                Math.round((s.size ?? 1) * 100) / 100,
-                s.layer ?? '',
-            ])),
-        });
-    }
-    $.$bog_doodle_piece_pack = $bog_doodle_piece_pack;
-    function stroke_unpack(item) {
-        if (typeof item === 'string') {
-            const [color, points] = item.split('.');
-            return { id: $bog_doodle_sketch_stroke_id(), color: Number(color) || 0, points: points_unpack(points ?? '') };
-        }
-        const [color, points, ink, size, layer] = item;
-        return {
-            id: $bog_doodle_sketch_stroke_id(),
-            color: Number(color) || 0,
-            points: points_unpack(String(points ?? '')),
-            ...ink ? { ink: String(ink) } : {},
-            ...size && Number(size) !== 1 ? { size: Number(size) } : {},
-            ...layer ? { layer: String(layer) } : {},
-        };
-    }
-    function $bog_doodle_piece_unpack(str) {
-        const raw = JSON.parse(str);
-        const empty = $bog_doodle_piece_empty();
-        const patterns = (raw.p ?? [[]]).map(strokes => strokes.map(stroke_unpack));
-        const layers = (raw.l ?? []).map(([id, name, visible]) => ({
-            id: String(id),
-            name: String(name ?? ''),
-            visible: Boolean(visible),
-        }));
-        return {
-            ...empty,
-            title: String(raw.t ?? ''),
-            key: Number(raw.k ?? empty.key),
-            scale: raw.s in $bog_doodle_scale_steps ? raw.s : empty.scale,
-            octave: Number(raw.o ?? empty.octave),
-            range: Number(raw.r ?? empty.range),
-            bpm: Number(raw.b ?? empty.bpm),
-            bars: Number(raw.n ?? empty.bars),
-            grid: raw.g in $bog_doodle_score_grids ? raw.g : empty.grid,
-            swing: Number(raw.w ?? 0),
-            chain: Boolean(raw.c),
-            axis: raw.a === 'time_x' ? 'time_x' : 'time_y',
-            layers: layers.length ? layers : empty.layers,
-            patterns: patterns.length ? patterns : [[]],
-        };
-    }
-    $.$bog_doodle_piece_unpack = $bog_doodle_piece_unpack;
-    function $bog_doodle_piece_simplify(points, tolerance) {
-        const count = points.length / 3;
-        if (count < 3)
-            return points;
-        const keep = new Uint8Array(count);
-        keep[0] = keep[count - 1] = 1;
-        const stack = [[0, count - 1]];
-        while (stack.length) {
-            const [from, to] = stack.pop();
-            const ax = points[from * 3], ay = points[from * 3 + 1];
-            const bx = points[to * 3], by = points[to * 3 + 1];
-            const len = Math.hypot(bx - ax, by - ay) || 1e-9;
-            let far = -1, dist = tolerance;
-            for (let i = from + 1; i < to; ++i) {
-                const px = points[i * 3], py = points[i * 3 + 1];
-                const d = Math.abs((bx - ax) * (ay - py) - (ax - px) * (by - ay)) / len;
-                const dp = Math.abs(points[i * 3 + 2] - points[from * 3 + 2]);
-                const score = Math.max(d, dp * tolerance * 4);
-                if (score > dist) {
-                    dist = score;
-                    far = i;
-                }
-            }
-            if (far < 0)
-                continue;
-            keep[far] = 1;
-            stack.push([from, far], [far, to]);
-        }
-        const result = [];
-        for (let i = 0; i < count; ++i) {
-            if (keep[i])
-                result.push(points[i * 3], points[i * 3 + 1], points[i * 3 + 2]);
-        }
-        return result;
-    }
-    $.$bog_doodle_piece_simplify = $bog_doodle_piece_simplify;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
     $.$bog_doodle_synth_colors = [
         { ink: '#1f1d1a' },
         { ink: '#d8452f' },
@@ -8100,12 +7957,16 @@ var $;
     $.$bog_doodle_synth_ink = $bog_doodle_synth_ink;
     function envelope(ctx, dest, time, attack, peak, hold, release) {
         const gain = ctx.createGain();
-        gain.gain.setValueAtTime(0.0001, time);
+        const decay = Math.min(hold, 0.12);
+        const sustain = peak * 0.6;
+        const fade = time + attack + hold;
+        gain.gain.setValueAtTime(0, time);
         gain.gain.linearRampToValueAtTime(peak, time + attack);
-        gain.gain.setTargetAtTime(peak * 0.6, time + attack, hold / 3 + 0.01);
-        gain.gain.setTargetAtTime(0.0001, time + attack + hold, release / 4);
+        gain.gain.linearRampToValueAtTime(sustain, time + attack + decay);
+        gain.gain.setValueAtTime(sustain, fade);
+        gain.gain.linearRampToValueAtTime(0, fade + release);
         gain.connect(dest);
-        return { gain, end: time + attack + hold + release };
+        return { gain, end: fade + release + 0.03 };
     }
     function osc(ctx, type, freq, dest, time, end, detune = 0) {
         const node = ctx.createOscillator();
@@ -8180,11 +8041,24 @@ var $;
     }
     $.$bog_doodle_synth_click = $bog_doodle_synth_click;
     function $bog_doodle_synth_bus(ctx) {
+        const master = ctx.createGain();
+        master.gain.setValueAtTime(0.7, 0);
         const comp = ctx.createDynamicsCompressor();
-        comp.threshold.setValueAtTime(-14, 0);
+        comp.threshold.setValueAtTime(-18, 0);
+        comp.knee.setValueAtTime(12, 0);
         comp.ratio.setValueAtTime(4, 0);
-        comp.connect(ctx.destination);
-        return comp;
+        comp.attack.setValueAtTime(0.005, 0);
+        comp.release.setValueAtTime(0.2, 0);
+        const limit = ctx.createDynamicsCompressor();
+        limit.threshold.setValueAtTime(-3, 0);
+        limit.knee.setValueAtTime(0, 0);
+        limit.ratio.setValueAtTime(20, 0);
+        limit.attack.setValueAtTime(0.001, 0);
+        limit.release.setValueAtTime(0.1, 0);
+        master.connect(comp);
+        comp.connect(limit);
+        limit.connect(ctx.destination);
+        return master;
     }
     $.$bog_doodle_synth_bus = $bog_doodle_synth_bus;
 })($ || ($ = {}));
@@ -8278,8 +8152,7 @@ var $;
             touches = new Map();
             draft = [];
             smooth = null;
-            erased = new Set();
-            box = null;
+            loop_path = null;
             drag = null;
             pinch = null;
             hover = null;
@@ -8319,6 +8192,11 @@ var $;
                 }
                 if (this.touches.size > 2)
                     return;
+                if (this.blocked()) {
+                    this.touches.delete(event.pointerId);
+                    this.unblock(event);
+                    return;
+                }
                 const point = this.to_world(event.clientX, event.clientY);
                 const gesture = this.gesture_tool(event);
                 if (gesture === 'draw') {
@@ -8329,7 +8207,6 @@ var $;
                 }
                 else if (gesture === 'erase') {
                     this.gesture = 'erase';
-                    this.erased = new Set;
                     this.erase_at(point.x, point.y);
                 }
                 else if (gesture === 'select') {
@@ -8346,7 +8223,7 @@ var $;
                     }
                     else {
                         this.gesture = 'select';
-                        this.box = { x1: point.x, y1: point.y, x2: point.x, y2: point.y };
+                        this.loop_path = [point.x, point.y];
                     }
                 }
                 else {
@@ -8387,8 +8264,8 @@ var $;
                 else if (this.gesture === 'erase') {
                     this.erase_at(point.x, point.y);
                 }
-                else if (this.gesture === 'select' && this.box) {
-                    this.box = { ...this.box, x2: point.x, y2: point.y };
+                else if (this.gesture === 'select' && this.loop_path) {
+                    this.loop_path.push(point.x, point.y);
                 }
                 else if (this.gesture === 'move' && this.drag) {
                     this.drag = { ...this.drag, dx: point.x - this.drag.x, dy: point.y - this.drag.y };
@@ -8408,11 +8285,9 @@ var $;
                 if (this.gesture === 'draw')
                     this.draft_commit();
                 if (this.gesture === 'erase')
-                    this.sketch().remove([...this.erased]);
-                if (this.gesture === 'select' && this.box) {
-                    const { x1, y1, x2, y2 } = this.box;
-                    this.selected(this.sketch().inside(Math.min(x1, x2), Math.min(y1, y2), Math.max(x1, x2), Math.max(y1, y2), s => this.editable(s)));
-                }
+                    this.erase_commit();
+                if (this.gesture === 'select' && this.loop_path)
+                    this.loop_commit(this.loop_path);
                 if (this.gesture === 'move' && this.drag && (this.drag.dx || this.drag.dy)) {
                     this.sketch().shift(this.selected(), this.drag.dx, this.drag.dy);
                 }
@@ -8420,8 +8295,8 @@ var $;
             }
             gesture_reset() {
                 this.gesture = null;
-                this.erased = new Set;
-                this.box = null;
+                this.loop_path = null;
+                this.preview(null);
                 this.drag = null;
                 this.draft = [];
                 this.note_hover(null);
@@ -8494,7 +8369,7 @@ var $;
                 const draft = this.draft;
                 if (!draft.length)
                     return;
-                const points = $bog_doodle_piece_simplify(draft, 0.0012 / this.view().zoom);
+                const points = $bog_doodle_sketch_simplify(draft, 0.0012 / this.view().zoom);
                 const ink = this.ink();
                 const size = this.brush();
                 this.sketch().add({
@@ -8507,8 +8382,35 @@ var $;
                 });
             }
             erase_at(x, y) {
-                for (const id of this.sketch().hits(x, y, this.erase_radius(), s => this.editable(s)))
-                    this.erased.add(id);
+                const sketch = this.sketch();
+                const next = sketch.erased(x, y, this.erase_radius(), s => this.editable(s), this.preview() ?? sketch.strokes());
+                if (next !== (this.preview() ?? sketch.strokes()))
+                    this.preview(next);
+            }
+            preview(next) {
+                return next ?? null;
+            }
+            erase_commit() {
+                const next = this.preview();
+                if (next)
+                    this.sketch().commit(next);
+                this.preview(null);
+            }
+            loop_commit(path) {
+                let left = Infinity, right = -Infinity, top = Infinity, bottom = -Infinity;
+                for (let i = 0; i < path.length; i += 2) {
+                    left = Math.min(left, path[i]);
+                    right = Math.max(right, path[i]);
+                    top = Math.min(top, path[i + 1]);
+                    bottom = Math.max(bottom, path[i + 1]);
+                }
+                const tiny = Math.max(right - left, bottom - top) < this.hit_radius();
+                if (tiny) {
+                    const hit = this.sketch().hits(path[0], path[1], this.hit_radius(), s => this.editable(s));
+                    this.selected(hit.slice(-1));
+                    return;
+                }
+                this.selected(this.sketch().lasso(path, s => this.editable(s)));
             }
             frame = null;
             redraw() {
@@ -8671,7 +8573,7 @@ var $;
             }
             ordered() {
                 const order = this.layer_order();
-                const strokes = this.sketch().strokes();
+                const strokes = this.preview() ?? this.sketch().strokes();
                 const list = [];
                 for (const id of order) {
                     for (const stroke of strokes)
@@ -8710,8 +8612,9 @@ var $;
                             this.paint_path(target, stroke.points, $bog_doodle_synth_ink(stroke), stroke.size ?? 1, width, height, dpr);
                         }
                     };
-                    if (focus && id !== active)
-                        this.paint_faded(ctx, width, height, 0.3, paint);
+                    const alpha = this.layer_alpha(id) * (focus && id !== active ? 0.3 : 1);
+                    if (alpha < 1)
+                        this.paint_faded(ctx, width, height, alpha, paint);
                     else
                         paint(ctx);
                 }
@@ -8740,24 +8643,25 @@ var $;
                         this.paint_path(ctx, stroke.points, $bog_doodle_synth_ink(stroke), stroke.size ?? 1, width, height, dpr, drag?.dx, drag?.dy);
                     }
                 }
-                if (this.erased.size) {
-                    const erased = this.sketch().strokes().filter(stroke => this.erased.has(stroke.id));
-                    this.paint_faded(ctx, width, height, 0.8, target => {
-                        for (const stroke of erased) {
-                            this.paint_path(target, stroke.points, '#fbfaf6', stroke.size ?? 1, width, height, dpr, 0, 0, true);
-                        }
-                    });
-                }
                 if (this.draft.length)
                     this.paint_path(ctx, this.draft, this.ink(), this.brush(), width, height, dpr);
-                if (this.box) {
-                    const { x1, y1, x2, y2 } = this.box;
-                    const a = this.pt(x1, y1, width, height);
-                    const b = this.pt(x2, y2, width, height);
+                const path = this.loop_path;
+                if (path && path.length >= 4) {
                     ctx.setLineDash([6 * dpr, 4 * dpr]);
                     ctx.strokeStyle = '#2f6fd8';
+                    ctx.fillStyle = '#2f6fd812';
                     ctx.lineWidth = dpr;
-                    ctx.strokeRect(a.x, a.y, b.x - a.x, b.y - a.y);
+                    ctx.beginPath();
+                    for (let i = 0; i < path.length; i += 2) {
+                        const at = this.pt(path[i], path[i + 1], width, height);
+                        if (i)
+                            ctx.lineTo(at.x, at.y);
+                        else
+                            ctx.moveTo(at.x, at.y);
+                    }
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.stroke();
                     ctx.setLineDash([]);
                 }
                 const head = this.playhead();
@@ -8841,6 +8745,9 @@ var $;
         __decorate([
             $mol_mem
         ], $bog_doodle_board.prototype, "size", null);
+        __decorate([
+            $mol_mem
+        ], $bog_doodle_board.prototype, "preview", null);
         __decorate([
             $mol_mem
         ], $bog_doodle_board.prototype, "back_image", null);
@@ -13405,14 +13312,17 @@ var $;
 		block_content(id){
 			return [];
 		}
-		uri_resolve(id){
-			return "";
-		}
 		quote_text(id){
 			return "";
 		}
 		highlight(){
 			return "";
+		}
+		uri_resolve(id){
+			return "";
+		}
+		code_sidebar_showed(){
+			return true;
 		}
 		list_type(id){
 			return "-";
@@ -13431,12 +13341,6 @@ var $;
 		}
 		pre_themes(id){
 			return [];
-		}
-		code_sidebar_showed(){
-			return true;
-		}
-		pre_sidebar_showed(){
-			return (this.code_sidebar_showed());
 		}
 		table_head_cells(id){
 			return [];
@@ -13483,6 +13387,9 @@ var $;
 		Spoiler_label(id){
 			const obj = new this.$.$mol_text();
 			(obj.text) = () => ((this.spoiler_label(id)));
+			(obj.highlight) = () => ((this.highlight()));
+			(obj.uri_resolve) = (id) => ((this.uri_resolve(id)));
+			(obj.code_sidebar_showed) = () => ((this.code_sidebar_showed()));
 			return obj;
 		}
 		spoiler_content(id){
@@ -13491,6 +13398,9 @@ var $;
 		Spoiler_content(id){
 			const obj = new this.$.$mol_text();
 			(obj.text) = () => ((this.spoiler_content(id)));
+			(obj.highlight) = () => ((this.highlight()));
+			(obj.uri_resolve) = (id) => ((this.uri_resolve(id)));
+			(obj.code_sidebar_showed) = () => ((this.code_sidebar_showed()));
 			return obj;
 		}
 		uri_base(){
@@ -13518,18 +13428,20 @@ var $;
 		}
 		Quote(id){
 			const obj = new this.$.$mol_text();
-			(obj.uri_resolve) = (id) => ((this.uri_resolve(id)));
 			(obj.text) = () => ((this.quote_text(id)));
-			(obj.highlight) = () => ((this.highlight()));
 			(obj.auto_scroll) = () => (null);
+			(obj.highlight) = () => ((this.highlight()));
+			(obj.uri_resolve) = (id) => ((this.uri_resolve(id)));
+			(obj.code_sidebar_showed) = () => ((this.code_sidebar_showed()));
 			return obj;
 		}
 		List(id){
 			const obj = new this.$.$mol_text_list();
-			(obj.uri_resolve) = (id) => ((this.uri_resolve(id)));
 			(obj.type) = () => ((this.list_type(id)));
 			(obj.text) = () => ((this.list_text(id)));
 			(obj.highlight) = () => ((this.highlight()));
+			(obj.uri_resolve) = (id) => ((this.uri_resolve(id)));
+			(obj.code_sidebar_showed) = () => ((this.code_sidebar_showed()));
 			return obj;
 		}
 		item_index(id){
@@ -13549,7 +13461,7 @@ var $;
 			(obj.row_themes) = () => ((this.pre_themes(id)));
 			(obj.highlight) = () => ((this.highlight()));
 			(obj.uri_resolve) = (id) => ((this.uri_resolve(id)));
-			(obj.sidebar_showed) = () => ((this.pre_sidebar_showed()));
+			(obj.sidebar_showed) = () => ((this.code_sidebar_showed()));
 			return obj;
 		}
 		Cut(id){
@@ -13571,9 +13483,10 @@ var $;
 		Table_cell(id){
 			const obj = new this.$.$mol_text();
 			(obj.auto_scroll) = () => (null);
+			(obj.text) = () => ((this.table_cell_text(id)));
 			(obj.highlight) = () => ((this.highlight()));
 			(obj.uri_resolve) = (id) => ((this.uri_resolve(id)));
-			(obj.text) = () => ((this.table_cell_text(id)));
+			(obj.code_sidebar_showed) = () => ((this.code_sidebar_showed()));
 			return obj;
 		}
 		Grid(id){
@@ -13589,9 +13502,10 @@ var $;
 		Grid_cell(id){
 			const obj = new this.$.$mol_text();
 			(obj.auto_scroll) = () => (null);
+			(obj.text) = () => ((this.grid_cell_text(id)));
 			(obj.highlight) = () => ((this.highlight()));
 			(obj.uri_resolve) = (id) => ((this.uri_resolve(id)));
-			(obj.text) = () => ((this.grid_cell_text(id)));
+			(obj.code_sidebar_showed) = () => ((this.code_sidebar_showed()));
 			return obj;
 		}
 		String(id){
@@ -14045,6 +13959,287 @@ var $;
 var $;
 (function ($) {
     $mol_style_attach("mol/text/text/text.view.css", "[mol_text] {\n\tline-height: 1.5em;\n\tbox-sizing: border-box;\n\tborder-radius: var(--mol_gap_round);\n\twhite-space: pre-line;\n\tdisplay: flex;\n\tflex-direction: column;\n\tflex: 0 0 auto;\n\ttab-size: 4;\n}\n\n[mol_text_paragraph] {\n\tpadding: var(--mol_gap_text);\n\toverflow: auto;\n\toverflow-x: overlay;\n\tmax-width: 100%;\n\tdisplay: block;\n\tmax-width: 60rem;\n\tbreak-inside: avoid;\n}\n\n[mol_text_spoiler_label_paragraph] {\n\tpadding: 0;\n}\n\n[mol_text_span] {\n\tdisplay: inline;\n}\n\n[mol_text_string] {\n\tdisplay: inline;\n\tflex: 0 1 auto;\n\twhite-space: normal;\n}\n\n[mol_text_quote] {\n\tmargin: var(--mol_gap_block);\n\tpadding: var(--mol_gap_block);\n\tbackground: var(--mol_theme_card);\n\tbox-shadow: 0 0 0 1px var(--mol_theme_back);\n\tbreak-inside: avoid;\n}\n\n[mol_text_header] {\n\tdisplay: block;\n\ttext-shadow: 0 0;\n\tfont-weight: normal;\n\tbreak-after: avoid;\n\tletter-spacing: 2px;\n}\n\n* + [mol_text_header] {\n\tmargin-top: 0.75rem;\n}\n\nh1[mol_text_header] {\n\tfont-size: 1.5rem;\n}\n\nh2[mol_text_header] {\n\tfont-size: 1.5rem;\n\tfont-style: italic;\n}\n\nh3[mol_text_header] {\n\tfont-size: 1.25rem;\n}\n\nh4[mol_text_header] {\n\tfont-size: 1.25em;\n\tfont-style: italic;\n}\n\nh5[mol_text_header] {\n\tfont-size: 1rem;\n}\n\nh6[mol_text_header] {\n\tfont-size: 1rem;\n\tfont-style: italic;\n}\n\n[mol_text_header_link] {\n\tcolor: inherit;\n}\n\n[mol_text_table] {\n\tbreak-inside: avoid;\n}\n\n[mol_text_table_cell] {\n\twidth: auto;\n\tdisplay: table-cell;\n\tvertical-align: baseline;\n\tpadding: 0;\n\tborder-radius: 0;\n}\n\n[mol_text_grid] {\n\tbreak-inside: avoid;\n}\n\n[mol_text_grid_cell] {\n\twidth: auto;\n\tdisplay: table-cell;\n\tvertical-align: top;\n\tpadding: 0;\n\tborder-radius: 0;\n}\n\n[mol_text_cut] {\n\tborder: none;\n\twidth: 100%;\n\tbox-shadow: 0 0 0 1px var(--mol_theme_line);\n}\n\n[mol_text_link_http],\n[mol_text_link] {\n\tpadding: 0;\n\tdisplay: inline;\n\twhite-space: nowrap;\n}\n\n[mol_text_link_icon] + [mol_text_embed] {\n\tmargin-inline-start: -1.5rem;\n}\n\n[mol_text_embed_youtube] {\n\tdisplay: inline;\n}\n\n[mol_text_embed_youtube_image],\n[mol_text_embed_youtube_frame],\n[mol_text_embed_object] {\n\tobject-fit: contain;\n\tobject-position: center;\n\twidth: 100vw;\n\tmax-height: calc( 100vh - 6rem );\n}\n[mol_text_embed_object_fallback] {\n\tpadding: 0;\n}\n[mol_text_embed_image] {\n\tobject-fit: contain;\n\tobject-position: center;\n\tdisplay: inline;\n\t/* max-height: calc( 100vh - 6rem ); */\n\tvertical-align: top;\n}\n\n[mol_text_pre] {\n\twhite-space: pre;\n\toverflow-x: auto;\n\toverflow-x: overlay;\n\ttab-size: 2;\n\tbreak-inside: avoid;\n}\n\n[mol_text_code_line] {\n\tdisplay: inline-block;\n}\n\n[mol_text_type=\"strong\"] {\n\ttext-shadow: 0 0;\n\tfilter: contrast(1.5);\n}\n\n[mol_text_type=\"emphasis\"] {\n\tfont-style: italic;\n}\n\n[mol_text_type=\"insert\"] {\n\tcolor: var(--mol_theme_special);\n}\n\n[mol_text_type=\"delete\"] {\n\tcolor: var(--mol_theme_shade);\n}\n\n[mol_text_type=\"remark\"] {\n\tcolor: var(--mol_theme_shade);\n}\n\n[mol_text_type=\"quote\"] {\n\tfont-style: italic;\n}\n");
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $.$bog_doodle_score_grids = {
+        '4': 4,
+        '8': 8,
+        '8t': 12,
+        '16': 16,
+        '16t': 24,
+        '32': 32,
+        'free': 96,
+    };
+    function rows_at(points, left, right, count) {
+        const center = (left + right) / 2;
+        const found = new Map();
+        for (let i = 0; i + 3 < points.length; i += 3) {
+            const x1 = points[i], x2 = points[i + 3];
+            if (Math.min(x1, x2) > center || Math.max(x1, x2) < center || x1 === x2)
+                continue;
+            const t = (center - x1) / (x2 - x1);
+            const y = points[i + 1] + t * (points[i + 4] - points[i + 1]);
+            const p = points[i + 2] + t * (points[i + 5] - points[i + 2]);
+            const row = $bog_doodle_scale_row(y, count);
+            found.set(row, Math.max(found.get(row) ?? 0, p));
+        }
+        if (found.size)
+            return found;
+        let low = Infinity, high = -Infinity, pressure = 0;
+        for (let i = 0; i < points.length; i += 3) {
+            if (points[i] < left || points[i] >= right)
+                continue;
+            const row = $bog_doodle_scale_row(points[i + 1], count);
+            low = Math.min(low, row);
+            high = Math.max(high, row);
+            pressure = Math.max(pressure, points[i + 2]);
+        }
+        for (let row = low; row <= high; ++row)
+            found.set(row, pressure);
+        return found;
+    }
+    function $bog_doodle_score(strokes, notes, steps) {
+        const events = [];
+        for (const stroke of strokes) {
+            const box = $bog_doodle_sketch_stroke_box(stroke);
+            const first = Math.max(0, Math.floor(box.left * steps));
+            const last = Math.min(steps - 1, Math.max(first, Math.ceil(box.right * steps) - 1));
+            let open = new Map();
+            for (let step = first; step <= last; ++step) {
+                const rows = rows_at(stroke.points, step / steps, (step + 1) / steps, notes.length);
+                const next = new Map();
+                for (const [row, pressure] of rows) {
+                    const prev = open.get(row);
+                    if (prev) {
+                        prev.length++;
+                        next.set(row, prev);
+                        continue;
+                    }
+                    const event = {
+                        stroke: stroke.id,
+                        color: stroke.color,
+                        step,
+                        length: 1,
+                        midi: notes[row],
+                        velocity: Math.round((0.25 + 0.75 * pressure) * 100) / 100,
+                    };
+                    events.push(event);
+                    next.set(row, event);
+                }
+                open = next;
+            }
+        }
+        return events.sort((a, b) => a.step - b.step || a.midi - b.midi);
+    }
+    $.$bog_doodle_score = $bog_doodle_score;
+    function $bog_doodle_score_thin(events, limit) {
+        const by_step = new Map();
+        for (const event of events) {
+            const step = by_step.get(event.step) ?? new Map;
+            const key = event.midi + ':' + event.color;
+            const prev = step.get(key);
+            if (!prev || prev.velocity < event.velocity || (prev.velocity === event.velocity && prev.length < event.length))
+                step.set(key, event);
+            by_step.set(event.step, step);
+        }
+        const result = [];
+        for (const step of by_step.values()) {
+            result.push(...[...step.values()].sort((a, b) => b.velocity - a.velocity || a.midi - b.midi).slice(0, limit));
+        }
+        return result.sort((a, b) => a.step - b.step || a.midi - b.midi);
+    }
+    $.$bog_doodle_score_thin = $bog_doodle_score_thin;
+    function $bog_doodle_score_time(step, steps_per_bar, bar_time, swing) {
+        const step_time = bar_time / steps_per_bar;
+        const swingable = steps_per_bar === 8 || steps_per_bar === 16;
+        const shift = swingable && step % 2 === 1 ? swing * step_time / 3 : 0;
+        return step * step_time + shift;
+    }
+    $.$bog_doodle_score_time = $bog_doodle_score_time;
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_base64_encode(src) {
+        return src.toBase64();
+    }
+    $.$mol_base64_encode = $mol_base64_encode;
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    function binary_string(bytes) {
+        let binary = '';
+        if (typeof bytes !== 'string') {
+            for (const byte of bytes)
+                binary += String.fromCharCode(byte);
+        }
+        else {
+            binary = unescape(encodeURIComponent(bytes));
+        }
+        return binary;
+    }
+    function $mol_base64_encode_web(str) {
+        return $mol_dom_context.btoa(binary_string(str));
+    }
+    $.$mol_base64_encode_web = $mol_base64_encode_web;
+    if (!('toBase64' in Uint8Array.prototype)) {
+        $.$mol_base64_encode = $mol_base64_encode_web;
+    }
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_base64_decode(base64) {
+        return Uint8Array.fromBase64(base64);
+    }
+    $.$mol_base64_decode = $mol_base64_decode;
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_base64_decode_web(base64Str) {
+        const buf = Uint8Array.from($mol_dom_context.atob(base64Str), c => c.charCodeAt(0));
+        return buf;
+    }
+    $.$mol_base64_decode_web = $mol_base64_decode_web;
+    if (!('fromBase64' in Uint8Array)) {
+        $.$mol_base64_decode = $mol_base64_decode_web;
+    }
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    function $bog_doodle_piece_layer_of(piece, stroke) {
+        const id = stroke.layer;
+        return piece.layers.find(layer => layer.id === id) ?? piece.layers[0];
+    }
+    $.$bog_doodle_piece_layer_of = $bog_doodle_piece_layer_of;
+    function $bog_doodle_piece_empty() {
+        return {
+            title: '',
+            key: 0,
+            scale: 'major_penta',
+            octave: 3,
+            range: 2,
+            bpm: 100,
+            bars: 2,
+            grid: '8',
+            swing: 0,
+            patterns: [[]],
+            chain: false,
+            back: '',
+            layers: [{ id: 'l1', name: '', visible: true }],
+            axis: 'time_y',
+        };
+    }
+    $.$bog_doodle_piece_empty = $bog_doodle_piece_empty;
+    function points_pack(points) {
+        const bytes = new Uint8Array(points.length / 3 * 4);
+        for (let i = 0, j = 0; i < points.length; i += 3, j += 4) {
+            const x = Math.round(Math.max(0, Math.min(1, points[i])) * 4095);
+            const y = Math.round(Math.max(0, Math.min(1, points[i + 1])) * 4095);
+            const p = Math.round(Math.max(0, Math.min(1, points[i + 2])) * 255);
+            bytes[j] = x >> 4;
+            bytes[j + 1] = ((x & 15) << 4) | (y >> 8);
+            bytes[j + 2] = y & 255;
+            bytes[j + 3] = p;
+        }
+        return $mol_base64_encode(bytes).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    }
+    function points_unpack(str) {
+        const base64 = str.replace(/-/g, '+').replace(/_/g, '/');
+        const bytes = $mol_base64_decode(base64 + '='.repeat((4 - base64.length % 4) % 4));
+        const points = [];
+        for (let j = 0; j + 3 < bytes.length; j += 4) {
+            const x = (bytes[j] << 4) | (bytes[j + 1] >> 4);
+            const y = ((bytes[j + 1] & 15) << 8) | bytes[j + 2];
+            points.push(x / 4095, y / 4095, bytes[j + 3] / 255);
+        }
+        return points;
+    }
+    function $bog_doodle_piece_pack(piece) {
+        return JSON.stringify({
+            v: 3,
+            t: piece.title,
+            k: piece.key,
+            s: piece.scale,
+            o: piece.octave,
+            r: piece.range,
+            b: piece.bpm,
+            n: piece.bars,
+            g: piece.grid,
+            w: piece.swing,
+            c: piece.chain ? 1 : 0,
+            a: piece.axis,
+            l: piece.layers.map(l => [l.id, l.name, l.visible ? 1 : 0, Math.round((l.opacity ?? 1) * 100) / 100]),
+            p: piece.patterns.map(strokes => strokes.map(s => [
+                s.color,
+                points_pack(s.points),
+                s.ink ?? '',
+                Math.round((s.size ?? 1) * 100) / 100,
+                s.layer ?? '',
+            ])),
+        });
+    }
+    $.$bog_doodle_piece_pack = $bog_doodle_piece_pack;
+    function stroke_unpack(item) {
+        if (typeof item === 'string') {
+            const [color, points] = item.split('.');
+            return { id: $bog_doodle_sketch_stroke_id(), color: Number(color) || 0, points: points_unpack(points ?? '') };
+        }
+        const [color, points, ink, size, layer] = item;
+        return {
+            id: $bog_doodle_sketch_stroke_id(),
+            color: Number(color) || 0,
+            points: points_unpack(String(points ?? '')),
+            ...ink ? { ink: String(ink) } : {},
+            ...size && Number(size) !== 1 ? { size: Number(size) } : {},
+            ...layer ? { layer: String(layer) } : {},
+        };
+    }
+    function $bog_doodle_piece_unpack(str) {
+        const raw = JSON.parse(str);
+        const empty = $bog_doodle_piece_empty();
+        const patterns = (raw.p ?? [[]]).map(strokes => strokes.map(stroke_unpack));
+        const layers = (raw.l ?? []).map(([id, name, visible, opacity]) => ({
+            id: String(id),
+            name: String(name ?? ''),
+            visible: Boolean(visible),
+            ...raw.v >= 3 && Number(opacity) < 1 ? { opacity: Math.max(0, Number(opacity)) } : {},
+        }));
+        return {
+            ...empty,
+            title: String(raw.t ?? ''),
+            key: Number(raw.k ?? empty.key),
+            scale: raw.s in $bog_doodle_scale_steps ? raw.s : empty.scale,
+            octave: Number(raw.o ?? empty.octave),
+            range: Number(raw.r ?? empty.range),
+            bpm: Number(raw.b ?? empty.bpm),
+            bars: Number(raw.n ?? empty.bars),
+            grid: raw.g in $bog_doodle_score_grids ? raw.g : empty.grid,
+            swing: Number(raw.w ?? 0),
+            chain: Boolean(raw.c),
+            axis: raw.a === 'time_x' ? 'time_x' : 'time_y',
+            layers: layers.length ? layers : empty.layers,
+            patterns: patterns.length ? patterns : [[]],
+        };
+    }
+    $.$bog_doodle_piece_unpack = $bog_doodle_piece_unpack;
 })($ || ($ = {}));
 
 ;
@@ -14514,6 +14709,21 @@ var $;
 			]);
 			return obj;
 		}
+		select_all(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		Select_all_icon(){
+			const obj = new this.$.$mol_icon_select_all();
+			return obj;
+		}
+		Select_all(){
+			const obj = new this.$.$mol_button_minor();
+			(obj.hint) = () => ((this.$.$mol_locale.text("$bog_doodle_app_Select_all_hint")));
+			(obj.click) = (next) => ((this.select_all(next)));
+			(obj.sub) = () => ([(this.Select_all_icon())]);
+			return obj;
+		}
 		selection_copy(next){
 			if(next !== undefined) return next;
 			return null;
@@ -14545,7 +14755,11 @@ var $;
 			return obj;
 		}
 		selection_tools(){
-			return [(this.Copy()), (this.Drop())];
+			return [
+				(this.Select_all()), 
+				(this.Copy()), 
+				(this.Drop())
+			];
 		}
 		Selection(){
 			const obj = new this.$.$mol_view();
@@ -14660,6 +14874,16 @@ var $;
 			if(next !== undefined) return next;
 			return false;
 		}
+		layer_alpha(id){
+			return 1;
+		}
+		panel_open(){
+			return false;
+		}
+		panel_close(next){
+			if(next !== undefined) return next;
+			return null;
+		}
 		selected(next){
 			if(next !== undefined) return next;
 			return [];
@@ -14693,6 +14917,9 @@ var $;
 			(obj.layer_active) = () => ((this.layer_active()));
 			(obj.layer_default) = () => ((this.layer_default()));
 			(obj.layer_focus) = () => ((this.layer_focus()));
+			(obj.layer_alpha) = (id) => ((this.layer_alpha(id)));
+			(obj.blocked) = () => ((this.panel_open()));
+			(obj.unblock) = (next) => ((this.panel_close(next)));
 			(obj.selected) = (next) => ((this.selected(next)));
 			(obj.playhead) = () => ((this.playhead()));
 			(obj.playing) = () => ((this.playing()));
@@ -14789,6 +15016,19 @@ var $;
 			(obj.title) = () => ((this.layer_title(id)));
 			return obj;
 		}
+		layer_opacity(id, next){
+			if(next !== undefined) return next;
+			return 100;
+		}
+		Layer_opacity(id){
+			const obj = new this.$.$bog_doodle_slider();
+			(obj.hint) = () => ((this.$.$mol_locale.text("$bog_doodle_app_Layer_opacity_hint")));
+			(obj.value) = (next) => ((this.layer_opacity(id, next)));
+			(obj.min) = () => (0);
+			(obj.max) = () => (100);
+			(obj.step) = () => (5);
+			return obj;
+		}
 		layer_up(id, next){
 			if(next !== undefined) return next;
 			return null;
@@ -14843,6 +15083,7 @@ var $;
 			(obj.sub) = () => ([
 				(this.Layer_visible(id)), 
 				(this.Layer_pick(id)), 
+				(this.Layer_opacity(id)), 
 				(this.Layer_up(id)), 
 				(this.Layer_down(id)), 
 				(this.Layer_drop(id))
@@ -15513,6 +15754,9 @@ var $;
 	($mol_mem(($.$bog_doodle_app.prototype), "Zoom_in_icon"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Zoom_in"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Zoom"));
+	($mol_mem(($.$bog_doodle_app.prototype), "select_all"));
+	($mol_mem(($.$bog_doodle_app.prototype), "Select_all_icon"));
+	($mol_mem(($.$bog_doodle_app.prototype), "Select_all"));
 	($mol_mem(($.$bog_doodle_app.prototype), "selection_copy"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Copy_icon"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Copy"));
@@ -15533,6 +15777,7 @@ var $;
 	($mol_mem(($.$bog_doodle_app.prototype), "pen_only"));
 	($mol_mem(($.$bog_doodle_app.prototype), "layer_active"));
 	($mol_mem(($.$bog_doodle_app.prototype), "layer_focus"));
+	($mol_mem(($.$bog_doodle_app.prototype), "panel_close"));
 	($mol_mem(($.$bog_doodle_app.prototype), "selected"));
 	($mol_mem(($.$bog_doodle_app.prototype), "note_preview"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Board"));
@@ -15551,6 +15796,8 @@ var $;
 	($mol_mem_key(($.$bog_doodle_app.prototype), "Layer_visible"));
 	($mol_mem_key(($.$bog_doodle_app.prototype), "layer_picked"));
 	($mol_mem_key(($.$bog_doodle_app.prototype), "Layer_pick"));
+	($mol_mem_key(($.$bog_doodle_app.prototype), "layer_opacity"));
+	($mol_mem_key(($.$bog_doodle_app.prototype), "Layer_opacity"));
 	($mol_mem_key(($.$bog_doodle_app.prototype), "layer_up"));
 	($mol_mem_key(($.$bog_doodle_app.prototype), "Layer_up_icon"));
 	($mol_mem_key(($.$bog_doodle_app.prototype), "Layer_up"));
@@ -15755,7 +16002,7 @@ var $;
             return $bog_doodle_scale_notes(piece.key, piece.scale, piece.octave, piece.range);
         }
         events(pattern) {
-            const events = $bog_doodle_score(this.piece().patterns[pattern] ?? [], this.notes(), this.steps());
+            const events = $bog_doodle_score_thin($bog_doodle_score(this.piece().patterns[pattern] ?? [], this.notes(), this.steps()), 10);
             const by_step = new Map();
             for (const event of events) {
                 const list = by_step.get(event.step) ?? [];
@@ -15984,6 +16231,181 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    class writer {
+        bytes = [];
+        uint(value) {
+            value = Math.max(0, Math.round(value));
+            while (value > 127) {
+                this.bytes.push((value & 127) | 128);
+                value = Math.floor(value / 128);
+            }
+            this.bytes.push(value);
+        }
+        int(value) {
+            this.uint(value < 0 ? -value * 2 - 1 : value * 2);
+        }
+    }
+    class reader {
+        bytes;
+        at = 0;
+        constructor(bytes) {
+            this.bytes = bytes;
+        }
+        uint() {
+            let value = 0, scale = 1;
+            while (this.at < this.bytes.length) {
+                const byte = this.bytes[this.at++];
+                value += (byte & 127) * scale;
+                if (byte < 128)
+                    break;
+                scale *= 128;
+            }
+            return value;
+        }
+        int() {
+            const value = this.uint();
+            return value % 2 ? -(value + 1) / 2 : value / 2;
+        }
+    }
+    const grid = 1023;
+    const levels = 7;
+    class $bog_doodle_share extends $mol_object {
+        static bytes(piece) {
+            const inks = [];
+            const ink_index = (ink) => {
+                const index = inks.indexOf(ink);
+                if (index >= 0)
+                    return index;
+                inks.push(ink);
+                return inks.length - 1;
+            };
+            const layer_ids = piece.layers.map(layer => layer.id);
+            const body = new writer;
+            body.uint(piece.patterns.length);
+            for (const strokes of piece.patterns) {
+                body.uint(strokes.length);
+                for (const stroke of strokes) {
+                    const points = $bog_doodle_sketch_simplify(stroke.points, 0.0015);
+                    body.uint(ink_index($bog_doodle_synth_ink(stroke)));
+                    body.uint(Math.max(0, layer_ids.indexOf(stroke.layer || layer_ids[0])));
+                    body.uint((stroke.size ?? 1) * 20);
+                    body.uint(points.length / 3);
+                    let x = 0, y = 0, p = 0;
+                    for (let i = 0; i < points.length; i += 3) {
+                        const nx = Math.round(Math.max(0, Math.min(1, points[i])) * grid);
+                        const ny = Math.round(Math.max(0, Math.min(1, points[i + 1])) * grid);
+                        const np = Math.round(Math.max(0, Math.min(1, points[i + 2])) * levels);
+                        body.int(nx - x);
+                        body.int(ny - y);
+                        body.int(np - p);
+                        x = nx;
+                        y = ny;
+                        p = np;
+                    }
+                }
+            }
+            const head = new TextEncoder().encode(JSON.stringify({
+                t: piece.title,
+                k: piece.key,
+                s: piece.scale,
+                o: piece.octave,
+                r: piece.range,
+                b: piece.bpm,
+                n: piece.bars,
+                g: piece.grid,
+                w: piece.swing,
+                c: piece.chain ? 1 : 0,
+                a: piece.axis,
+                l: piece.layers.map(l => [l.name, l.visible ? 1 : 0, Math.round((l.opacity ?? 1) * 100)]),
+                i: inks,
+            }));
+            const size = new writer;
+            size.uint(head.length);
+            return new Uint8Array([...size.bytes, ...head, ...body.bytes]);
+        }
+        static parse(bytes) {
+            const read = new reader(bytes);
+            const head_size = read.uint();
+            const raw = JSON.parse(new TextDecoder().decode(bytes.slice(read.at, read.at + head_size)));
+            read.at += head_size;
+            const empty = $bog_doodle_piece_empty();
+            const inks = (raw.i ?? []);
+            const layers = (raw.l ?? []).map(([name, visible, opacity], index) => ({
+                id: 'l' + (index + 1),
+                name: String(name ?? ''),
+                visible: Boolean(visible),
+                ...Number(opacity) < 100 ? { opacity: Math.max(0, Number(opacity)) / 100 } : {},
+            }));
+            const patterns = [];
+            const pattern_count = read.uint();
+            for (let pi = 0; pi < pattern_count; ++pi) {
+                const strokes = [];
+                const stroke_count = read.uint();
+                for (let si = 0; si < stroke_count; ++si) {
+                    const ink = inks[read.uint()] ?? '#1f1d1a';
+                    const layer = read.uint();
+                    const size = read.uint() / 20;
+                    const count = read.uint();
+                    const points = [];
+                    let x = 0, y = 0, p = 0;
+                    for (let k = 0; k < count; ++k) {
+                        x += read.int();
+                        y += read.int();
+                        p += read.int();
+                        points.push(x / grid, y / grid, p / levels);
+                    }
+                    strokes.push({
+                        id: $bog_doodle_sketch_stroke_id(),
+                        color: $bog_doodle_synth_timbre(ink),
+                        ink,
+                        ...size && size !== 1 ? { size } : {},
+                        layer: 'l' + (layer + 1),
+                        points,
+                    });
+                }
+                patterns.push(strokes);
+            }
+            return {
+                ...empty,
+                title: String(raw.t ?? ''),
+                key: Number(raw.k ?? empty.key),
+                scale: raw.s in $bog_doodle_scale_steps ? raw.s : empty.scale,
+                octave: Number(raw.o ?? empty.octave),
+                range: Number(raw.r ?? empty.range),
+                bpm: Number(raw.b ?? empty.bpm),
+                bars: Number(raw.n ?? empty.bars),
+                grid: raw.g in $bog_doodle_score_grids ? raw.g : empty.grid,
+                swing: Number(raw.w ?? 0),
+                chain: Boolean(raw.c),
+                axis: raw.a === 'time_x' ? 'time_x' : 'time_y',
+                layers: layers.length ? layers : empty.layers,
+                patterns: patterns.length ? patterns : [[]],
+            };
+        }
+        static async squeeze(bytes, mode) {
+            const Stream = mode === 'compress' ? CompressionStream : DecompressionStream;
+            const stream = new Blob([bytes]).stream().pipeThrough(new Stream('deflate-raw'));
+            return new Uint8Array(await new Response(stream).arrayBuffer());
+        }
+        static async encode(piece) {
+            const packed = await this.squeeze(this.bytes(piece), 'compress');
+            return 'z' + $mol_base64_encode(packed).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        }
+        static async decode(code) {
+            if (!code.startsWith('z'))
+                return $bog_doodle_piece_unpack(code);
+            const base64 = code.slice(1).replace(/-/g, '+').replace(/_/g, '/');
+            const bytes = $mol_base64_decode(base64 + '='.repeat((4 - base64.length % 4) % 4));
+            return this.parse(await this.squeeze(bytes, 'decompress'));
+        }
+    }
+    $.$bog_doodle_share = $bog_doodle_share;
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
     function $mol_offline() { }
     $.$mol_offline = $mol_offline;
 })($ || ($ = {}));
@@ -16139,14 +16561,8 @@ var $;
                 const store = this.Store();
                 const share = this.share();
                 if (next === undefined) {
-                    if (share) {
-                        try {
-                            return $bog_doodle_piece_unpack(share);
-                        }
-                        catch {
-                            return $bog_doodle_piece_empty();
-                        }
-                    }
+                    if (share)
+                        return this.share_piece();
                     const id = store.current();
                     return id ? store.piece(id) : $bog_doodle_piece_empty();
                 }
@@ -16353,7 +16769,30 @@ var $;
                 return next ?? [];
             }
             selection_tools() {
-                return this.selected().length ? [this.Copy(), this.Drop()] : [];
+                return [
+                    ...this.tool() === 'select' ? [this.Select_all()] : [],
+                    ...this.selected().length ? [this.Copy(), this.Drop()] : [],
+                ];
+            }
+            select_all() {
+                const board = this.board();
+                if (this.tool() !== 'select')
+                    this.tool('select');
+                this.selected(this.sketch().strokes().filter(s => board.editable(s)).map(s => s.id));
+            }
+            panel_open() {
+                return this.panel() !== '';
+            }
+            panel_close() {
+                this.panel('');
+            }
+            layer_opacity(id, next) {
+                if (next !== undefined)
+                    this.layer_patch(id, { opacity: Math.max(0, Math.min(100, next)) / 100 });
+                return Math.round((this.layers()[this.layer_index(id)]?.opacity ?? 1) * 100);
+            }
+            layer_alpha(id) {
+                return this.layer_opacity(id) / 100;
             }
             selection_copy() {
                 this.selected(this.sketch().copy(this.selected(), 0.02, -0.02));
@@ -16681,8 +17120,21 @@ var $;
                 };
                 image.src = url;
             }
+            share_piece() {
+                try {
+                    return $mol_wire_sync(this.$.$bog_doodle_share).decode(this.share());
+                }
+                catch (error) {
+                    if ($mol_promise_like(error))
+                        $mol_fail_hidden(error);
+                    return $bog_doodle_piece_empty();
+                }
+            }
+            share_code() {
+                return $mol_wire_sync(this.$.$bog_doodle_share).encode(this.piece());
+            }
             share_link() {
-                const link = this.$.$mol_state_arg.link({ share: $bog_doodle_piece_pack(this.piece()) });
+                const link = this.$.$mol_state_arg.link({ share: this.share_code() });
                 return new URL(link, this.$.$mol_dom_context.location.href).toString();
             }
             file_name(ext) {
@@ -16752,7 +17204,7 @@ var $;
                     return;
                 const mod = event.ctrlKey || event.metaKey;
                 const action = mod
-                    ? { KeyZ: event.shiftKey ? 'redo' : 'undo', KeyY: 'redo' }[event.code]
+                    ? { KeyZ: event.shiftKey ? 'redo' : 'undo', KeyY: 'redo', KeyA: 'all' }[event.code]
                     : {
                         Space: 'play', KeyB: 'draw', KeyP: 'draw', KeyE: 'erase', KeyV: 'select', KeyH: 'pan',
                         Digit0: 'zoom', Equal: 'zoom_in', NumpadAdd: 'zoom_in', Minus: 'zoom_out', NumpadSubtract: 'zoom_out',
@@ -16773,7 +17225,8 @@ var $;
                     case 'bigger': return this.size_step(1);
                     case 'copy': return this.selected().length && this.selection_copy();
                     case 'drop': return this.selected().length && this.selection_drop();
-                    case 'escape': return this.selected([]);
+                    case 'all': return this.select_all();
+                    case 'escape': return this.panel_open() ? this.panel_close() : this.selected([]);
                     default: this.tool_set(action, true);
                 }
             }
@@ -16891,6 +17344,12 @@ var $;
         __decorate([
             $mol_mem
         ], $bog_doodle_app.prototype, "draw_sound", null);
+        __decorate([
+            $mol_mem
+        ], $bog_doodle_app.prototype, "share_piece", null);
+        __decorate([
+            $mol_mem
+        ], $bog_doodle_app.prototype, "share_code", null);
         __decorate([
             $mol_mem
         ], $bog_doodle_app.prototype, "hotkeys", null);

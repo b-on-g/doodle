@@ -610,10 +610,19 @@ namespace $.$$ {
 
 		note_preview( next?: number | null ) {
 			if( next !== undefined ) {
-				if( next !== null && next !== this.last_note && !this.playing() ) this.Player().live( this.color(), next, 0.5, 0.25 )
+				if( next !== null && next !== this.last_note && this.draw_sound() && !this.playing() ) this.note_sound( next )
 				this.last_note = next
 			}
 			return this.last_note
+		}
+
+		note_sound( midi: number ) {
+			this.Player().live( this.color(), midi, 0.5, 0.25 )
+		}
+
+		@ $mol_mem
+		draw_sound( next?: boolean ) {
+			return this.pref( 'draw_sound', next, false )
 		}
 
 		back_id() {

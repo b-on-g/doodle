@@ -325,6 +325,9 @@ $bog_doodle_app $mol_view
 							1 @ \жёсткий
 			<= Flags $mol_view
 				sub /
+					<= Draw_sound_input $mol_check_box
+						title @ \Играть ноту при рисовании
+						checked? <=> draw_sound? false
 					<= Click_input $mol_check_box
 						title @ \Метроном
 						checked? <=> click? false

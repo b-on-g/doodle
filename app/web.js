@@ -5939,6 +5939,86 @@ var $;
 
 
 ;
+	($.$bog_doodle_slider) = class $bog_doodle_slider extends ($.$mol_view) {
+		hint(){
+			return "";
+		}
+		value_text(){
+			return "0";
+		}
+		changed(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		dom_name(){
+			return "input";
+		}
+		value(next){
+			if(next !== undefined) return next;
+			return 0;
+		}
+		min(){
+			return 0;
+		}
+		max(){
+			return 100;
+		}
+		step(){
+			return 1;
+		}
+		attr(){
+			return {
+				...(super.attr()), 
+				"type": "range", 
+				"min": (this.min()), 
+				"max": (this.max()), 
+				"step": (this.step()), 
+				"title": (this.hint())
+			};
+		}
+		field(){
+			return {...(super.field()), "value": (this.value_text())};
+		}
+		event(){
+			return {"input": (next) => (this.changed(next))};
+		}
+	};
+	($mol_mem(($.$bog_doodle_slider.prototype), "changed"));
+	($mol_mem(($.$bog_doodle_slider.prototype), "value"));
+
+
+;
+"use strict";
+
+
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $bog_doodle_slider extends $.$bog_doodle_slider {
+            value_text() {
+                return String(this.value());
+            }
+            changed(event) {
+                const next = Number(event.target.value);
+                if (!Number.isNaN(next))
+                    this.value(next);
+            }
+        }
+        $$.$bog_doodle_slider = $bog_doodle_slider;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("bog/doodle/slider/slider.view.css", "[bog_doodle_slider] {\n\tdisplay: block;\n\tappearance: auto;\n\t-webkit-appearance: auto;\n\tbackground: transparent;\n\twidth: 7rem;\n\theight: 2.5rem;\n\tmargin: 0 var(--mol_gap_text);\n\taccent-color: var(--mol_theme_current);\n\tcursor: pointer;\n}\n");
+})($ || ($ = {}));
+
+;
 	($.$mol_icon_undo) = class $mol_icon_undo extends ($.$mol_icon) {
 		path(){
 			return "M12.5,8C9.85,8 7.45,9 5.6,10.6L2,7V16H11L7.38,12.38C8.77,11.22 10.54,10.5 12.5,10.5C16.04,10.5 19.05,12.81 20.1,16L22.47,15.22C21.08,11.03 17.15,8 12.5,8Z";
@@ -6188,86 +6268,6 @@ var $;
 ;
 "use strict";
 
-
-;
-	($.$bog_doodle_slider) = class $bog_doodle_slider extends ($.$mol_view) {
-		hint(){
-			return "";
-		}
-		value_text(){
-			return "0";
-		}
-		changed(next){
-			if(next !== undefined) return next;
-			return null;
-		}
-		dom_name(){
-			return "input";
-		}
-		value(next){
-			if(next !== undefined) return next;
-			return 0;
-		}
-		min(){
-			return 0;
-		}
-		max(){
-			return 100;
-		}
-		step(){
-			return 1;
-		}
-		attr(){
-			return {
-				...(super.attr()), 
-				"type": "range", 
-				"min": (this.min()), 
-				"max": (this.max()), 
-				"step": (this.step()), 
-				"title": (this.hint())
-			};
-		}
-		field(){
-			return {...(super.field()), "value": (this.value_text())};
-		}
-		event(){
-			return {"input": (next) => (this.changed(next))};
-		}
-	};
-	($mol_mem(($.$bog_doodle_slider.prototype), "changed"));
-	($mol_mem(($.$bog_doodle_slider.prototype), "value"));
-
-
-;
-"use strict";
-
-
-;
-"use strict";
-var $;
-(function ($) {
-    var $$;
-    (function ($$) {
-        class $bog_doodle_slider extends $.$bog_doodle_slider {
-            value_text() {
-                return String(this.value());
-            }
-            changed(event) {
-                const next = Number(event.target.value);
-                if (!Number.isNaN(next))
-                    this.value(next);
-            }
-        }
-        $$.$bog_doodle_slider = $bog_doodle_slider;
-    })($$ = $.$$ || ($.$$ = {}));
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_style_attach("bog/doodle/slider/slider.view.css", "[bog_doodle_slider] {\n\tdisplay: block;\n\tappearance: auto;\n\t-webkit-appearance: auto;\n\tbackground: transparent;\n\twidth: 7rem;\n\theight: 2.5rem;\n\tmargin: 0 var(--mol_gap_text);\n\taccent-color: var(--mol_theme_current);\n\tcursor: pointer;\n}\n");
-})($ || ($ = {}));
 
 ;
 	($.$mol_icon_palette) = class $mol_icon_palette extends ($.$mol_icon) {
@@ -7982,52 +7982,67 @@ var $;
         const level = 0.18 * velocity;
         switch (color) {
             case 1: {
-                const env = envelope(ctx, dest, time, 0.004, level * 1.2, Math.min(length, 0.25), 0.4);
+                const env = envelope(ctx, dest, time, 0.003, level * 1.3, Math.min(length, 0.12), 0.9);
                 const filter = ctx.createBiquadFilter();
                 filter.type = 'lowpass';
-                filter.frequency.setValueAtTime(freq * 8, time);
-                filter.frequency.exponentialRampToValueAtTime(freq * 1.5, time + 0.3);
+                filter.Q.setValueAtTime(0.5, time);
+                filter.frequency.setValueAtTime(Math.min(9000, freq * (3 + 5 * velocity)), time);
+                filter.frequency.exponentialRampToValueAtTime(Math.min(9000, freq * 1.2), time + 0.35);
                 filter.connect(env.gain);
                 osc(ctx, 'sawtooth', freq, filter, time, env.end);
                 return;
             }
             case 2: {
-                const env = envelope(ctx, dest, time, Math.min(0.25, length / 2), level * 0.8, length, 0.6);
-                osc(ctx, 'triangle', freq, env.gain, time, env.end, -6);
-                osc(ctx, 'sine', freq * 2, env.gain, time, env.end, 5);
+                const env = envelope(ctx, dest, time, Math.min(0.3, Math.max(0.08, length / 2)), level * 0.9, length, 1.2);
+                const filter = ctx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.Q.setValueAtTime(0.3, time);
+                filter.frequency.setValueAtTime(Math.min(6000, freq * 2.5), time);
+                filter.connect(env.gain);
+                osc(ctx, 'sawtooth', freq, filter, time, env.end, -7);
+                osc(ctx, 'sawtooth', freq, filter, time, env.end, 7);
                 return;
             }
             case 3: {
-                const env = envelope(ctx, dest, time, 0.003, level * 1.4, 0.05, 0.5);
+                const env = envelope(ctx, dest, time, 0.002, level * 1.5, 0.03, 0.7);
                 osc(ctx, 'sine', freq, env.gain, time, env.end);
-                const over = envelope(ctx, dest, time, 0.002, level * 0.4, 0.01, 0.12);
-                osc(ctx, 'sine', freq * 4, over.gain, time, over.end);
+                const over = envelope(ctx, dest, time, 0.001, level * 0.18, 0.005, 0.08);
+                osc(ctx, 'sine', freq * 3.99, over.gain, time, over.end);
                 return;
             }
             case 4: {
-                const env = envelope(ctx, dest, time, 0.01, level * 0.6, length, 0.12);
+                const env = envelope(ctx, dest, time, 0.02, level * 0.7, length, 0.25);
                 const filter = ctx.createBiquadFilter();
                 filter.type = 'lowpass';
-                filter.frequency.setValueAtTime(Math.min(12000, freq * 6), time);
-                filter.Q.setValueAtTime(4, time);
+                filter.Q.setValueAtTime(0.8, time);
+                filter.frequency.setValueAtTime(Math.min(7000, freq * 3), time);
                 filter.connect(env.gain);
-                osc(ctx, 'sawtooth', freq, filter, time, env.end);
+                const voice = osc(ctx, 'square', freq, filter, time, env.end);
+                const wobble = ctx.createGain();
+                wobble.gain.setValueAtTime(0, time);
+                wobble.gain.linearRampToValueAtTime(6, time + 0.3);
+                wobble.connect(voice.detune);
+                osc(ctx, 'sine', 5.5, wobble, time, env.end);
                 return;
             }
             case 5: {
-                const env = envelope(ctx, dest, time, 0.002, level * 1.1, 0.02, 1.6);
+                const env = envelope(ctx, dest, time, 0.002, level * 1.1, 0.02, 2);
                 const carrier = osc(ctx, 'sine', freq, env.gain, time, env.end);
                 const depth = ctx.createGain();
-                depth.gain.setValueAtTime(freq * 2.5, time);
-                depth.gain.exponentialRampToValueAtTime(1, time + 1.2);
+                depth.gain.setValueAtTime(freq * 1.4, time);
+                depth.gain.exponentialRampToValueAtTime(Math.max(1, freq * 0.05), time + 1);
                 depth.connect(carrier.frequency);
                 osc(ctx, 'sine', freq * 3.5, depth, time, env.end);
                 return;
             }
             default: {
-                const env = envelope(ctx, dest, time, 0.005, level * 1.3, Math.min(length, 0.4), 0.8);
-                osc(ctx, 'triangle', freq, env.gain, time, env.end);
-                osc(ctx, 'sine', freq * 2, env.gain, time, env.end);
+                const env = envelope(ctx, dest, time, 0.004, level * 1.4, Math.min(length, 0.5), 1);
+                const carrier = osc(ctx, 'sine', freq, env.gain, time, env.end);
+                const depth = ctx.createGain();
+                depth.gain.setValueAtTime(freq * (0.6 + velocity), time);
+                depth.gain.exponentialRampToValueAtTime(Math.max(1, freq * 0.08), time + 0.7);
+                depth.connect(carrier.frequency);
+                osc(ctx, 'sine', freq, depth, time, env.end);
             }
         }
     }
@@ -8037,9 +8052,25 @@ var $;
         osc(ctx, 'square', accent ? 1760 : 1320, env.gain, time, env.end);
     }
     $.$bog_doodle_synth_click = $bog_doodle_synth_click;
-    function $bog_doodle_synth_bus(ctx) {
+    function $bog_doodle_synth_room(ctx, seconds) {
+        const rate = ctx.sampleRate;
+        const frames = Math.round(rate * seconds);
+        const buffer = ctx.createBuffer(2, frames, rate);
+        let seed = 1;
+        const noise = () => (seed = (seed * 16807) % 2147483647) / 1073741823.5 - 1;
+        for (let channel = 0; channel < 2; ++channel) {
+            const data = buffer.getChannelData(channel);
+            for (let i = 0; i < frames; ++i) {
+                const t = i / frames;
+                data[i] = noise() * (1 - t) ** 3 * Math.min(1, i / (rate * 0.01));
+            }
+        }
+        return buffer;
+    }
+    $.$bog_doodle_synth_room = $bog_doodle_synth_room;
+    function $bog_doodle_synth_bus(ctx, room = 2) {
         const master = ctx.createGain();
-        master.gain.setValueAtTime(0.6, 0);
+        master.gain.setValueAtTime(0.55, 0);
         const limit = ctx.createDynamicsCompressor();
         limit.threshold.setValueAtTime(-6, 0);
         limit.knee.setValueAtTime(6, 0);
@@ -8047,6 +8078,15 @@ var $;
         limit.attack.setValueAtTime(0.002, 0);
         limit.release.setValueAtTime(0.15, 0);
         master.connect(limit);
+        if (room > 0) {
+            const reverb = ctx.createConvolver();
+            reverb.buffer = $bog_doodle_synth_room(ctx, room);
+            const wet = ctx.createGain();
+            wet.gain.setValueAtTime(0.22, 0);
+            master.connect(reverb);
+            reverb.connect(wet);
+            wet.connect(limit);
+        }
         limit.connect(ctx.destination);
         return master;
     }
@@ -14389,6 +14429,31 @@ var $;
 			(obj.sub) = () => ((this.play_icon()));
 			return obj;
 		}
+		bpm_value(next){
+			if(next !== undefined) return next;
+			return 100;
+		}
+		Tempo_slider(){
+			const obj = new this.$.$bog_doodle_slider();
+			(obj.hint) = () => ((this.$.$mol_locale.text("$bog_doodle_app_Tempo_slider_hint")));
+			(obj.value) = (next) => ((this.bpm_value(next)));
+			(obj.min) = () => (40);
+			(obj.max) = () => (220);
+			return obj;
+		}
+		bpm_label(){
+			return "";
+		}
+		Tempo_value(){
+			const obj = new this.$.$mol_view();
+			(obj.sub) = () => ([(this.bpm_label())]);
+			return obj;
+		}
+		Tempo_quick(){
+			const obj = new this.$.$mol_view();
+			(obj.sub) = () => ([(this.Tempo_slider()), (this.Tempo_value())]);
+			return obj;
+		}
 		undo_enabled(){
 			return false;
 		}
@@ -14799,6 +14864,7 @@ var $;
 				(this.Brand()), 
 				(this.Title_input()), 
 				(this.Play()), 
+				(this.Tempo_quick()), 
 				(this.Undo()), 
 				(this.Redo()), 
 				(this.Gallery_open()), 
@@ -15214,10 +15280,6 @@ var $;
 			(obj.title) = () => ((this.$.$mol_locale.text("$bog_doodle_app_Octave_field_title")));
 			(obj.content) = () => ([(this.Octave_input())]);
 			return obj;
-		}
-		bpm_value(next){
-			if(next !== undefined) return next;
-			return 100;
 		}
 		Tempo_input(){
 			const obj = new this.$.$mol_number();
@@ -15693,6 +15755,10 @@ var $;
 	($mol_mem(($.$bog_doodle_app.prototype), "Play_icon"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Stop_icon"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Play"));
+	($mol_mem(($.$bog_doodle_app.prototype), "bpm_value"));
+	($mol_mem(($.$bog_doodle_app.prototype), "Tempo_slider"));
+	($mol_mem(($.$bog_doodle_app.prototype), "Tempo_value"));
+	($mol_mem(($.$bog_doodle_app.prototype), "Tempo_quick"));
 	($mol_mem(($.$bog_doodle_app.prototype), "undo"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Undo_icon"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Undo"));
@@ -15819,7 +15885,6 @@ var $;
 	($mol_mem(($.$bog_doodle_app.prototype), "octave_value"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Octave_input"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Octave_field"));
-	($mol_mem(($.$bog_doodle_app.prototype), "bpm_value"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Tempo_input"));
 	($mol_mem(($.$bog_doodle_app.prototype), "tap"));
 	($mol_mem(($.$bog_doodle_app.prototype), "Tap"));
@@ -16051,7 +16116,7 @@ var $;
                 return this.audio;
             const Context = this.$.$mol_dom_context.AudioContext;
             this.audio = new Context({ latencyHint: 'playback' });
-            this.bus = $bog_doodle_synth_bus(this.audio);
+            this.bus = $bog_doodle_synth_bus(this.audio, this.weak() ? 1.2 : 2);
             return this.audio;
         }
         playing(next) {
@@ -17053,6 +17118,9 @@ var $;
                     this.piece_patch({ bpm: Math.round(next) });
                 return this.piece().bpm;
             }
+            bpm_label() {
+                return this.piece().bpm + ' bpm';
+            }
             bars_value(next) {
                 if (next !== undefined)
                     this.piece_patch({ bars: Number(next) });
@@ -17435,6 +17503,16 @@ var $;
                     basis: '12rem',
                 },
                 minWidth: '7rem',
+            },
+            Tempo_quick: {
+                alignItems: 'center',
+            },
+            Tempo_value: {
+                minWidth: '4.5rem',
+                color: $mol_theme.shade,
+                font: {
+                    size: '.875rem',
+                },
             },
             Tools: {
                 border: {

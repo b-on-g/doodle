@@ -2517,6 +2517,45 @@ declare namespace $ {
 //# sourceMappingURL=major.view.tree.d.ts.map
 declare namespace $ {
 
+	export class $bog_doodle_slider extends $mol_view {
+		hint( ): string
+		value_text( ): string
+		changed( next?: any ): any
+		dom_name( ): string
+		value( next?: number ): number
+		min( ): number
+		max( ): number
+		step( ): number
+		attr( ): ({ 
+			'type': string,
+			'min': ReturnType< $bog_doodle_slider['min'] >,
+			'max': ReturnType< $bog_doodle_slider['max'] >,
+			'step': ReturnType< $bog_doodle_slider['step'] >,
+			'title': ReturnType< $bog_doodle_slider['hint'] >,
+		})  & ReturnType< $mol_view['attr'] >
+		field( ): ({ 
+			'value': ReturnType< $bog_doodle_slider['value_text'] >,
+		})  & ReturnType< $mol_view['field'] >
+		event( ): ({ 
+			input( next?: ReturnType< $bog_doodle_slider['changed'] > ): ReturnType< $bog_doodle_slider['changed'] >,
+		}) 
+	}
+	
+}
+
+//# sourceMappingURL=slider.view.tree.d.ts.map
+declare namespace $.$$ {
+    class $bog_doodle_slider extends $.$bog_doodle_slider {
+        value_text(): string;
+        changed(event: Event): void;
+    }
+}
+
+declare namespace $ {
+}
+
+declare namespace $ {
+
 	export class $mol_icon_undo extends $mol_icon {
 		path( ): string
 	}
@@ -2667,45 +2706,6 @@ declare namespace $ {
 }
 
 //# sourceMappingURL=pan.view.tree.d.ts.map
-declare namespace $ {
-
-	export class $bog_doodle_slider extends $mol_view {
-		hint( ): string
-		value_text( ): string
-		changed( next?: any ): any
-		dom_name( ): string
-		value( next?: number ): number
-		min( ): number
-		max( ): number
-		step( ): number
-		attr( ): ({ 
-			'type': string,
-			'min': ReturnType< $bog_doodle_slider['min'] >,
-			'max': ReturnType< $bog_doodle_slider['max'] >,
-			'step': ReturnType< $bog_doodle_slider['step'] >,
-			'title': ReturnType< $bog_doodle_slider['hint'] >,
-		})  & ReturnType< $mol_view['attr'] >
-		field( ): ({ 
-			'value': ReturnType< $bog_doodle_slider['value_text'] >,
-		})  & ReturnType< $mol_view['field'] >
-		event( ): ({ 
-			input( next?: ReturnType< $bog_doodle_slider['changed'] > ): ReturnType< $bog_doodle_slider['changed'] >,
-		}) 
-	}
-	
-}
-
-//# sourceMappingURL=slider.view.tree.d.ts.map
-declare namespace $.$$ {
-    class $bog_doodle_slider extends $.$bog_doodle_slider {
-        value_text(): string;
-        changed(event: Event): void;
-    }
-}
-
-declare namespace $ {
-}
-
 declare namespace $ {
 
 	export class $mol_icon_palette extends $mol_icon {
@@ -3380,7 +3380,8 @@ declare namespace $ {
     }): string;
     function $bog_doodle_synth_note(ctx: BaseAudioContext, dest: AudioNode, color: number, freq: number, time: number, length: number, velocity: number): void;
     function $bog_doodle_synth_click(ctx: BaseAudioContext, dest: AudioNode, time: number, accent: boolean): void;
-    function $bog_doodle_synth_bus(ctx: BaseAudioContext): GainNode;
+    function $bog_doodle_synth_room(ctx: BaseAudioContext, seconds: number): AudioBuffer;
+    function $bog_doodle_synth_bus(ctx: BaseAudioContext, room?: number): GainNode;
 }
 
 declare namespace $ {
@@ -6499,75 +6500,75 @@ declare namespace $ {
 		,
 		ReturnType< $mol_button_major['sub'] >
 	>
-	type $mol_button_minor__hint_bog_doodle_app_7 = $mol_type_enforce<
+	type $bog_doodle_slider__hint_bog_doodle_app_7 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $bog_doodle_slider['hint'] >
+	>
+	type $bog_doodle_slider__value_bog_doodle_app_8 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['bpm_value'] >
+		,
+		ReturnType< $bog_doodle_slider['value'] >
+	>
+	type $bog_doodle_slider__min_bog_doodle_app_9 = $mol_type_enforce<
+		number
+		,
+		ReturnType< $bog_doodle_slider['min'] >
+	>
+	type $bog_doodle_slider__max_bog_doodle_app_10 = $mol_type_enforce<
+		number
+		,
+		ReturnType< $bog_doodle_slider['max'] >
+	>
+	type $mol_view__sub_bog_doodle_app_11 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_view['sub'] >
+	>
+	type $mol_view__sub_bog_doodle_app_12 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_view['sub'] >
+	>
+	type $mol_button_minor__hint_bog_doodle_app_13 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_button_minor['hint'] >
 	>
-	type $mol_button_minor__enabled_bog_doodle_app_8 = $mol_type_enforce<
+	type $mol_button_minor__enabled_bog_doodle_app_14 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['undo_enabled'] >
 		,
 		ReturnType< $mol_button_minor['enabled'] >
 	>
-	type $mol_button_minor__click_bog_doodle_app_9 = $mol_type_enforce<
+	type $mol_button_minor__click_bog_doodle_app_15 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['undo'] >
 		,
 		ReturnType< $mol_button_minor['click'] >
 	>
-	type $mol_button_minor__sub_bog_doodle_app_10 = $mol_type_enforce<
+	type $mol_button_minor__sub_bog_doodle_app_16 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_button_minor['sub'] >
 	>
-	type $mol_button_minor__hint_bog_doodle_app_11 = $mol_type_enforce<
+	type $mol_button_minor__hint_bog_doodle_app_17 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_button_minor['hint'] >
 	>
-	type $mol_button_minor__enabled_bog_doodle_app_12 = $mol_type_enforce<
+	type $mol_button_minor__enabled_bog_doodle_app_18 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['redo_enabled'] >
 		,
 		ReturnType< $mol_button_minor['enabled'] >
 	>
-	type $mol_button_minor__click_bog_doodle_app_13 = $mol_type_enforce<
+	type $mol_button_minor__click_bog_doodle_app_19 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['redo'] >
 		,
 		ReturnType< $mol_button_minor['click'] >
 	>
-	type $mol_button_minor__sub_bog_doodle_app_14 = $mol_type_enforce<
+	type $mol_button_minor__sub_bog_doodle_app_20 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_button_minor['sub'] >
-	>
-	type $mol_check_icon__hint_bog_doodle_app_15 = $mol_type_enforce<
-		string
-		,
-		ReturnType< $mol_check_icon['hint'] >
-	>
-	type $mol_check_icon__checked_bog_doodle_app_16 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['gallery_opened'] >
-		,
-		ReturnType< $mol_check_icon['checked'] >
-	>
-	type $mol_check_icon__Icon_bog_doodle_app_17 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['Gallery_open_icon'] >
-		,
-		ReturnType< $mol_check_icon['Icon'] >
-	>
-	type $mol_check_icon__hint_bog_doodle_app_18 = $mol_type_enforce<
-		string
-		,
-		ReturnType< $mol_check_icon['hint'] >
-	>
-	type $mol_check_icon__checked_bog_doodle_app_19 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['layers_opened'] >
-		,
-		ReturnType< $mol_check_icon['checked'] >
-	>
-	type $mol_check_icon__Icon_bog_doodle_app_20 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['Layers_open_icon'] >
-		,
-		ReturnType< $mol_check_icon['Icon'] >
 	>
 	type $mol_check_icon__hint_bog_doodle_app_21 = $mol_type_enforce<
 		string
@@ -6575,12 +6576,12 @@ declare namespace $ {
 		ReturnType< $mol_check_icon['hint'] >
 	>
 	type $mol_check_icon__checked_bog_doodle_app_22 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['settings_opened'] >
+		ReturnType< $bog_doodle_app['gallery_opened'] >
 		,
 		ReturnType< $mol_check_icon['checked'] >
 	>
 	type $mol_check_icon__Icon_bog_doodle_app_23 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['Settings_open_icon'] >
+		ReturnType< $bog_doodle_app['Gallery_open_icon'] >
 		,
 		ReturnType< $mol_check_icon['Icon'] >
 	>
@@ -6590,12 +6591,12 @@ declare namespace $ {
 		ReturnType< $mol_check_icon['hint'] >
 	>
 	type $mol_check_icon__checked_bog_doodle_app_25 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['tool_draw'] >
+		ReturnType< $bog_doodle_app['layers_opened'] >
 		,
 		ReturnType< $mol_check_icon['checked'] >
 	>
 	type $mol_check_icon__Icon_bog_doodle_app_26 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['Tool_draw_icon'] >
+		ReturnType< $bog_doodle_app['Layers_open_icon'] >
 		,
 		ReturnType< $mol_check_icon['Icon'] >
 	>
@@ -6605,12 +6606,12 @@ declare namespace $ {
 		ReturnType< $mol_check_icon['hint'] >
 	>
 	type $mol_check_icon__checked_bog_doodle_app_28 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['tool_erase'] >
+		ReturnType< $bog_doodle_app['settings_opened'] >
 		,
 		ReturnType< $mol_check_icon['checked'] >
 	>
 	type $mol_check_icon__Icon_bog_doodle_app_29 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['Tool_erase_icon'] >
+		ReturnType< $bog_doodle_app['Settings_open_icon'] >
 		,
 		ReturnType< $mol_check_icon['Icon'] >
 	>
@@ -6620,12 +6621,12 @@ declare namespace $ {
 		ReturnType< $mol_check_icon['hint'] >
 	>
 	type $mol_check_icon__checked_bog_doodle_app_31 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['tool_select'] >
+		ReturnType< $bog_doodle_app['tool_draw'] >
 		,
 		ReturnType< $mol_check_icon['checked'] >
 	>
 	type $mol_check_icon__Icon_bog_doodle_app_32 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['Tool_select_icon'] >
+		ReturnType< $bog_doodle_app['Tool_draw_icon'] >
 		,
 		ReturnType< $mol_check_icon['Icon'] >
 	>
@@ -6635,163 +6636,163 @@ declare namespace $ {
 		ReturnType< $mol_check_icon['hint'] >
 	>
 	type $mol_check_icon__checked_bog_doodle_app_34 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['tool_pan'] >
+		ReturnType< $bog_doodle_app['tool_erase'] >
 		,
 		ReturnType< $mol_check_icon['checked'] >
 	>
 	type $mol_check_icon__Icon_bog_doodle_app_35 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['Tool_erase_icon'] >
+		,
+		ReturnType< $mol_check_icon['Icon'] >
+	>
+	type $mol_check_icon__hint_bog_doodle_app_36 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_check_icon['hint'] >
+	>
+	type $mol_check_icon__checked_bog_doodle_app_37 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['tool_select'] >
+		,
+		ReturnType< $mol_check_icon['checked'] >
+	>
+	type $mol_check_icon__Icon_bog_doodle_app_38 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['Tool_select_icon'] >
+		,
+		ReturnType< $mol_check_icon['Icon'] >
+	>
+	type $mol_check_icon__hint_bog_doodle_app_39 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_check_icon['hint'] >
+	>
+	type $mol_check_icon__checked_bog_doodle_app_40 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['tool_pan'] >
+		,
+		ReturnType< $mol_check_icon['checked'] >
+	>
+	type $mol_check_icon__Icon_bog_doodle_app_41 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['Tool_pan_icon'] >
 		,
 		ReturnType< $mol_check_icon['Icon'] >
 	>
-	type $mol_view__sub_bog_doodle_app_36 = $mol_type_enforce<
+	type $mol_view__sub_bog_doodle_app_42 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_view['sub'] >
 	>
-	type $bog_doodle_slider__hint_bog_doodle_app_37 = $mol_type_enforce<
+	type $bog_doodle_slider__hint_bog_doodle_app_43 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $bog_doodle_slider['hint'] >
 	>
-	type $bog_doodle_slider__value_bog_doodle_app_38 = $mol_type_enforce<
+	type $bog_doodle_slider__value_bog_doodle_app_44 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['brush_value'] >
 		,
 		ReturnType< $bog_doodle_slider['value'] >
 	>
-	type $bog_doodle_slider__min_bog_doodle_app_39 = $mol_type_enforce<
+	type $bog_doodle_slider__min_bog_doodle_app_45 = $mol_type_enforce<
 		number
 		,
 		ReturnType< $bog_doodle_slider['min'] >
 	>
-	type $bog_doodle_slider__max_bog_doodle_app_40 = $mol_type_enforce<
+	type $bog_doodle_slider__max_bog_doodle_app_46 = $mol_type_enforce<
 		number
 		,
 		ReturnType< $bog_doodle_slider['max'] >
 	>
-	type $bog_doodle_slider__hint_bog_doodle_app_41 = $mol_type_enforce<
+	type $bog_doodle_slider__hint_bog_doodle_app_47 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $bog_doodle_slider['hint'] >
 	>
-	type $bog_doodle_slider__value_bog_doodle_app_42 = $mol_type_enforce<
+	type $bog_doodle_slider__value_bog_doodle_app_48 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['eraser'] >
 		,
 		ReturnType< $bog_doodle_slider['value'] >
 	>
-	type $bog_doodle_slider__min_bog_doodle_app_43 = $mol_type_enforce<
+	type $bog_doodle_slider__min_bog_doodle_app_49 = $mol_type_enforce<
 		number
 		,
 		ReturnType< $bog_doodle_slider['min'] >
 	>
-	type $bog_doodle_slider__max_bog_doodle_app_44 = $mol_type_enforce<
+	type $bog_doodle_slider__max_bog_doodle_app_50 = $mol_type_enforce<
 		number
 		,
 		ReturnType< $bog_doodle_slider['max'] >
 	>
-	type $mol_view__sub_bog_doodle_app_45 = $mol_type_enforce<
+	type $mol_view__sub_bog_doodle_app_51 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['size_tools'] >
 		,
 		ReturnType< $mol_view['sub'] >
 	>
-	type $mol_check__hint_bog_doodle_app_46 = $mol_type_enforce<
+	type $mol_check__hint_bog_doodle_app_52 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['color_name'] >
 		,
 		ReturnType< $mol_check['hint'] >
 	>
-	type $mol_check__checked_bog_doodle_app_47 = $mol_type_enforce<
+	type $mol_check__checked_bog_doodle_app_53 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['color_checked'] >
 		,
 		ReturnType< $mol_check['checked'] >
 	>
-	type $mol_check__style_bog_doodle_app_48 = $mol_type_enforce<
+	type $mol_check__style_bog_doodle_app_54 = $mol_type_enforce<
 		({ 
 			'--bog_doodle_app_ink': ReturnType< $bog_doodle_app['color_ink'] >,
 		})  & ReturnType< $mol_check['style'] >
 		,
 		ReturnType< $mol_check['style'] >
 	>
-	type $mol_check__sub_bog_doodle_app_49 = $mol_type_enforce<
+	type $mol_check__sub_bog_doodle_app_55 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_check['sub'] >
 	>
-	type $mol_view__style_bog_doodle_app_50 = $mol_type_enforce<
+	type $mol_view__style_bog_doodle_app_56 = $mol_type_enforce<
 		({ 
 			'--bog_doodle_app_ink': ReturnType< $bog_doodle_app['ink'] >,
 		})  & ReturnType< $mol_view['style'] >
 		,
 		ReturnType< $mol_view['style'] >
 	>
-	type $bog_doodle_picker__value_bog_doodle_app_51 = $mol_type_enforce<
+	type $bog_doodle_picker__value_bog_doodle_app_57 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['ink'] >
 		,
 		ReturnType< $bog_doodle_picker['value'] >
 	>
-	type $bog_doodle_picker__swatches_bog_doodle_app_52 = $mol_type_enforce<
+	type $bog_doodle_picker__swatches_bog_doodle_app_58 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['ink_recent'] >
 		,
 		ReturnType< $bog_doodle_picker['swatches'] >
 	>
-	type $mol_pick__hint_bog_doodle_app_53 = $mol_type_enforce<
+	type $mol_pick__hint_bog_doodle_app_59 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_pick['hint'] >
 	>
-	type $mol_pick__align_hor_bog_doodle_app_54 = $mol_type_enforce<
+	type $mol_pick__align_hor_bog_doodle_app_60 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_pick['align_hor'] >
 	>
-	type $mol_pick__trigger_content_bog_doodle_app_55 = $mol_type_enforce<
+	type $mol_pick__trigger_content_bog_doodle_app_61 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_pick['trigger_content'] >
 	>
-	type $mol_pick__bubble_content_bog_doodle_app_56 = $mol_type_enforce<
+	type $mol_pick__bubble_content_bog_doodle_app_62 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_pick['bubble_content'] >
 	>
-	type $mol_view__sub_bog_doodle_app_57 = $mol_type_enforce<
+	type $mol_view__sub_bog_doodle_app_63 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_view['sub'] >
 	>
-	type $mol_view__sub_bog_doodle_app_58 = $mol_type_enforce<
+	type $mol_view__sub_bog_doodle_app_64 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['palette'] >
 		,
 		ReturnType< $mol_view['sub'] >
-	>
-	type $mol_button_minor__hint_bog_doodle_app_59 = $mol_type_enforce<
-		string
-		,
-		ReturnType< $mol_button_minor['hint'] >
-	>
-	type $mol_button_minor__click_bog_doodle_app_60 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['zoom_out'] >
-		,
-		ReturnType< $mol_button_minor['click'] >
-	>
-	type $mol_button_minor__sub_bog_doodle_app_61 = $mol_type_enforce<
-		readonly(any)[]
-		,
-		ReturnType< $mol_button_minor['sub'] >
-	>
-	type $mol_button_minor__hint_bog_doodle_app_62 = $mol_type_enforce<
-		string
-		,
-		ReturnType< $mol_button_minor['hint'] >
-	>
-	type $mol_button_minor__click_bog_doodle_app_63 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['zoom_reset'] >
-		,
-		ReturnType< $mol_button_minor['click'] >
-	>
-	type $mol_button_minor__title_bog_doodle_app_64 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['zoom_percent'] >
-		,
-		ReturnType< $mol_button_minor['title'] >
 	>
 	type $mol_button_minor__hint_bog_doodle_app_65 = $mol_type_enforce<
 		string
@@ -6799,7 +6800,7 @@ declare namespace $ {
 		ReturnType< $mol_button_minor['hint'] >
 	>
 	type $mol_button_minor__click_bog_doodle_app_66 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['zoom_in'] >
+		ReturnType< $bog_doodle_app['zoom_out'] >
 		,
 		ReturnType< $mol_button_minor['click'] >
 	>
@@ -6808,40 +6809,40 @@ declare namespace $ {
 		,
 		ReturnType< $mol_button_minor['sub'] >
 	>
-	type $mol_view__sub_bog_doodle_app_68 = $mol_type_enforce<
+	type $mol_button_minor__hint_bog_doodle_app_68 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_button_minor['hint'] >
+	>
+	type $mol_button_minor__click_bog_doodle_app_69 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['zoom_reset'] >
+		,
+		ReturnType< $mol_button_minor['click'] >
+	>
+	type $mol_button_minor__title_bog_doodle_app_70 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['zoom_percent'] >
+		,
+		ReturnType< $mol_button_minor['title'] >
+	>
+	type $mol_button_minor__hint_bog_doodle_app_71 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_button_minor['hint'] >
+	>
+	type $mol_button_minor__click_bog_doodle_app_72 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['zoom_in'] >
+		,
+		ReturnType< $mol_button_minor['click'] >
+	>
+	type $mol_button_minor__sub_bog_doodle_app_73 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_button_minor['sub'] >
+	>
+	type $mol_view__sub_bog_doodle_app_74 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_view['sub'] >
-	>
-	type $mol_button_minor__hint_bog_doodle_app_69 = $mol_type_enforce<
-		string
-		,
-		ReturnType< $mol_button_minor['hint'] >
-	>
-	type $mol_button_minor__click_bog_doodle_app_70 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['select_all'] >
-		,
-		ReturnType< $mol_button_minor['click'] >
-	>
-	type $mol_button_minor__sub_bog_doodle_app_71 = $mol_type_enforce<
-		readonly(any)[]
-		,
-		ReturnType< $mol_button_minor['sub'] >
-	>
-	type $mol_button_minor__hint_bog_doodle_app_72 = $mol_type_enforce<
-		string
-		,
-		ReturnType< $mol_button_minor['hint'] >
-	>
-	type $mol_button_minor__click_bog_doodle_app_73 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['selection_copy'] >
-		,
-		ReturnType< $mol_button_minor['click'] >
-	>
-	type $mol_button_minor__sub_bog_doodle_app_74 = $mol_type_enforce<
-		readonly(any)[]
-		,
-		ReturnType< $mol_button_minor['sub'] >
 	>
 	type $mol_button_minor__hint_bog_doodle_app_75 = $mol_type_enforce<
 		string
@@ -6849,7 +6850,7 @@ declare namespace $ {
 		ReturnType< $mol_button_minor['hint'] >
 	>
 	type $mol_button_minor__click_bog_doodle_app_76 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['selection_drop'] >
+		ReturnType< $bog_doodle_app['select_all'] >
 		,
 		ReturnType< $mol_button_minor['click'] >
 	>
@@ -6858,397 +6859,427 @@ declare namespace $ {
 		,
 		ReturnType< $mol_button_minor['sub'] >
 	>
-	type $mol_view__sub_bog_doodle_app_78 = $mol_type_enforce<
+	type $mol_button_minor__hint_bog_doodle_app_78 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_button_minor['hint'] >
+	>
+	type $mol_button_minor__click_bog_doodle_app_79 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['selection_copy'] >
+		,
+		ReturnType< $mol_button_minor['click'] >
+	>
+	type $mol_button_minor__sub_bog_doodle_app_80 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_button_minor['sub'] >
+	>
+	type $mol_button_minor__hint_bog_doodle_app_81 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_button_minor['hint'] >
+	>
+	type $mol_button_minor__click_bog_doodle_app_82 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['selection_drop'] >
+		,
+		ReturnType< $mol_button_minor['click'] >
+	>
+	type $mol_button_minor__sub_bog_doodle_app_83 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_button_minor['sub'] >
+	>
+	type $mol_view__sub_bog_doodle_app_84 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['selection_tools'] >
 		,
 		ReturnType< $mol_view['sub'] >
 	>
-	type $mol_check__hint_bog_doodle_app_79 = $mol_type_enforce<
+	type $mol_check__hint_bog_doodle_app_85 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_check['hint'] >
 	>
-	type $mol_check__checked_bog_doodle_app_80 = $mol_type_enforce<
+	type $mol_check__checked_bog_doodle_app_86 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['pattern_checked'] >
 		,
 		ReturnType< $mol_check['checked'] >
 	>
-	type $mol_check__title_bog_doodle_app_81 = $mol_type_enforce<
+	type $mol_check__title_bog_doodle_app_87 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['pattern_title'] >
 		,
 		ReturnType< $mol_check['title'] >
 	>
-	type $mol_button_minor__hint_bog_doodle_app_82 = $mol_type_enforce<
+	type $mol_button_minor__hint_bog_doodle_app_88 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_button_minor['hint'] >
 	>
-	type $mol_button_minor__click_bog_doodle_app_83 = $mol_type_enforce<
+	type $mol_button_minor__click_bog_doodle_app_89 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['pattern_add'] >
 		,
 		ReturnType< $mol_button_minor['click'] >
 	>
-	type $mol_button_minor__sub_bog_doodle_app_84 = $mol_type_enforce<
+	type $mol_button_minor__sub_bog_doodle_app_90 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_button_minor['sub'] >
 	>
-	type $mol_view__sub_bog_doodle_app_85 = $mol_type_enforce<
+	type $mol_view__sub_bog_doodle_app_91 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['pattern_tabs'] >
 		,
 		ReturnType< $mol_view['sub'] >
 	>
-	type $mol_view__sub_bog_doodle_app_86 = $mol_type_enforce<
+	type $mol_view__sub_bog_doodle_app_92 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_view['sub'] >
 	>
-	type $bog_doodle_board__sketch_bog_doodle_app_87 = $mol_type_enforce<
+	type $bog_doodle_board__sketch_bog_doodle_app_93 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['sketch'] >
 		,
 		ReturnType< $bog_doodle_board['sketch'] >
 	>
-	type $bog_doodle_board__notes_bog_doodle_app_88 = $mol_type_enforce<
+	type $bog_doodle_board__notes_bog_doodle_app_94 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['notes'] >
 		,
 		ReturnType< $bog_doodle_board['notes'] >
 	>
-	type $bog_doodle_board__steps_bog_doodle_app_89 = $mol_type_enforce<
+	type $bog_doodle_board__steps_bog_doodle_app_95 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['steps'] >
 		,
 		ReturnType< $bog_doodle_board['steps'] >
 	>
-	type $bog_doodle_board__beat_steps_bog_doodle_app_90 = $mol_type_enforce<
+	type $bog_doodle_board__beat_steps_bog_doodle_app_96 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['beat_steps'] >
 		,
 		ReturnType< $bog_doodle_board['beat_steps'] >
 	>
-	type $bog_doodle_board__bar_steps_bog_doodle_app_91 = $mol_type_enforce<
+	type $bog_doodle_board__bar_steps_bog_doodle_app_97 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['bar_steps'] >
 		,
 		ReturnType< $bog_doodle_board['bar_steps'] >
 	>
-	type $bog_doodle_board__axis_bog_doodle_app_92 = $mol_type_enforce<
+	type $bog_doodle_board__axis_bog_doodle_app_98 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['axis'] >
 		,
 		ReturnType< $bog_doodle_board['axis'] >
 	>
-	type $bog_doodle_board__tool_bog_doodle_app_93 = $mol_type_enforce<
+	type $bog_doodle_board__tool_bog_doodle_app_99 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['tool'] >
 		,
 		ReturnType< $bog_doodle_board['tool'] >
 	>
-	type $bog_doodle_board__ink_bog_doodle_app_94 = $mol_type_enforce<
+	type $bog_doodle_board__ink_bog_doodle_app_100 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['ink'] >
 		,
 		ReturnType< $bog_doodle_board['ink'] >
 	>
-	type $bog_doodle_board__brush_bog_doodle_app_95 = $mol_type_enforce<
+	type $bog_doodle_board__brush_bog_doodle_app_101 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['brush'] >
 		,
 		ReturnType< $bog_doodle_board['brush'] >
 	>
-	type $bog_doodle_board__eraser_bog_doodle_app_96 = $mol_type_enforce<
+	type $bog_doodle_board__eraser_bog_doodle_app_102 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['eraser'] >
 		,
 		ReturnType< $bog_doodle_board['eraser'] >
 	>
-	type $bog_doodle_board__snap_bog_doodle_app_97 = $mol_type_enforce<
+	type $bog_doodle_board__snap_bog_doodle_app_103 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['snap'] >
 		,
 		ReturnType< $bog_doodle_board['snap'] >
 	>
-	type $bog_doodle_board__pen_only_bog_doodle_app_98 = $mol_type_enforce<
+	type $bog_doodle_board__pen_only_bog_doodle_app_104 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['pen_only'] >
 		,
 		ReturnType< $bog_doodle_board['pen_only'] >
 	>
-	type $bog_doodle_board__back_bog_doodle_app_99 = $mol_type_enforce<
+	type $bog_doodle_board__back_bog_doodle_app_105 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['back'] >
 		,
 		ReturnType< $bog_doodle_board['back'] >
 	>
-	type $bog_doodle_board__layer_order_bog_doodle_app_100 = $mol_type_enforce<
+	type $bog_doodle_board__layer_order_bog_doodle_app_106 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['layer_order'] >
 		,
 		ReturnType< $bog_doodle_board['layer_order'] >
 	>
-	type $bog_doodle_board__layer_active_bog_doodle_app_101 = $mol_type_enforce<
+	type $bog_doodle_board__layer_active_bog_doodle_app_107 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['layer_active'] >
 		,
 		ReturnType< $bog_doodle_board['layer_active'] >
 	>
-	type $bog_doodle_board__layer_default_bog_doodle_app_102 = $mol_type_enforce<
+	type $bog_doodle_board__layer_default_bog_doodle_app_108 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['layer_default'] >
 		,
 		ReturnType< $bog_doodle_board['layer_default'] >
 	>
-	type $bog_doodle_board__layer_focus_bog_doodle_app_103 = $mol_type_enforce<
+	type $bog_doodle_board__layer_focus_bog_doodle_app_109 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['layer_focus'] >
 		,
 		ReturnType< $bog_doodle_board['layer_focus'] >
 	>
-	type $bog_doodle_board__layer_alpha_bog_doodle_app_104 = $mol_type_enforce<
+	type $bog_doodle_board__layer_alpha_bog_doodle_app_110 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['layer_alpha'] >
 		,
 		ReturnType< $bog_doodle_board['layer_alpha'] >
 	>
-	type $bog_doodle_board__blocked_bog_doodle_app_105 = $mol_type_enforce<
+	type $bog_doodle_board__blocked_bog_doodle_app_111 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['panel_open'] >
 		,
 		ReturnType< $bog_doodle_board['blocked'] >
 	>
-	type $bog_doodle_board__unblock_bog_doodle_app_106 = $mol_type_enforce<
+	type $bog_doodle_board__unblock_bog_doodle_app_112 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['panel_close'] >
 		,
 		ReturnType< $bog_doodle_board['unblock'] >
 	>
-	type $bog_doodle_board__selected_bog_doodle_app_107 = $mol_type_enforce<
+	type $bog_doodle_board__selected_bog_doodle_app_113 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['selected'] >
 		,
 		ReturnType< $bog_doodle_board['selected'] >
 	>
-	type $bog_doodle_board__playhead_bog_doodle_app_108 = $mol_type_enforce<
+	type $bog_doodle_board__playhead_bog_doodle_app_114 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['playhead'] >
 		,
 		ReturnType< $bog_doodle_board['playhead'] >
 	>
-	type $bog_doodle_board__playing_bog_doodle_app_109 = $mol_type_enforce<
+	type $bog_doodle_board__playing_bog_doodle_app_115 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['playing'] >
 		,
 		ReturnType< $bog_doodle_board['playing'] >
 	>
-	type $bog_doodle_board__note_hover_bog_doodle_app_110 = $mol_type_enforce<
+	type $bog_doodle_board__note_hover_bog_doodle_app_116 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['note_preview'] >
 		,
 		ReturnType< $bog_doodle_board['note_hover'] >
 	>
-	type $mol_list__rows_bog_doodle_app_111 = $mol_type_enforce<
+	type $mol_list__rows_bog_doodle_app_117 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['panel_rows'] >
 		,
 		ReturnType< $mol_list['rows'] >
 	>
-	type $mol_scroll__sub_bog_doodle_app_112 = $mol_type_enforce<
+	type $mol_scroll__sub_bog_doodle_app_118 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_scroll['sub'] >
 	>
-	type $mol_view__sub_bog_doodle_app_113 = $mol_type_enforce<
+	type $mol_view__sub_bog_doodle_app_119 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['main'] >
 		,
 		ReturnType< $mol_view['sub'] >
 	>
-	type $mol_button_major__title_bog_doodle_app_114 = $mol_type_enforce<
+	type $mol_button_major__title_bog_doodle_app_120 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_button_major['title'] >
 	>
-	type $mol_button_major__click_bog_doodle_app_115 = $mol_type_enforce<
+	type $mol_button_major__click_bog_doodle_app_121 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['layer_add'] >
 		,
 		ReturnType< $mol_button_major['click'] >
 	>
-	type $mol_check_box__title_bog_doodle_app_116 = $mol_type_enforce<
+	type $mol_check_box__title_bog_doodle_app_122 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_check_box['title'] >
 	>
-	type $mol_check_box__checked_bog_doodle_app_117 = $mol_type_enforce<
+	type $mol_check_box__checked_bog_doodle_app_123 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['layer_focus'] >
 		,
 		ReturnType< $mol_check_box['checked'] >
 	>
-	type $mol_view__sub_bog_doodle_app_118 = $mol_type_enforce<
+	type $mol_view__sub_bog_doodle_app_124 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_view['sub'] >
 	>
-	type $mol_string__hint_bog_doodle_app_119 = $mol_type_enforce<
+	type $mol_string__hint_bog_doodle_app_125 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['layer_name_hint'] >
 		,
 		ReturnType< $mol_string['hint'] >
 	>
-	type $mol_string__value_bog_doodle_app_120 = $mol_type_enforce<
+	type $mol_string__value_bog_doodle_app_126 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['layer_name'] >
 		,
 		ReturnType< $mol_string['value'] >
 	>
-	type $mol_labeler__title_bog_doodle_app_121 = $mol_type_enforce<
+	type $mol_labeler__title_bog_doodle_app_127 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_labeler['title'] >
 	>
-	type $mol_labeler__content_bog_doodle_app_122 = $mol_type_enforce<
+	type $mol_labeler__content_bog_doodle_app_128 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_labeler['content'] >
 	>
-	type $mol_check_icon__hint_bog_doodle_app_123 = $mol_type_enforce<
+	type $mol_check_icon__hint_bog_doodle_app_129 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_check_icon['hint'] >
 	>
-	type $mol_check_icon__checked_bog_doodle_app_124 = $mol_type_enforce<
+	type $mol_check_icon__checked_bog_doodle_app_130 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['layer_visible'] >
 		,
 		ReturnType< $mol_check_icon['checked'] >
 	>
-	type $mol_check_icon__Icon_bog_doodle_app_125 = $mol_type_enforce<
+	type $mol_check_icon__Icon_bog_doodle_app_131 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['Layer_visible_icon'] >
 		,
 		ReturnType< $mol_check_icon['Icon'] >
 	>
-	type $mol_check__hint_bog_doodle_app_126 = $mol_type_enforce<
+	type $mol_check__hint_bog_doodle_app_132 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_check['hint'] >
 	>
-	type $mol_check__checked_bog_doodle_app_127 = $mol_type_enforce<
+	type $mol_check__checked_bog_doodle_app_133 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['layer_picked'] >
 		,
 		ReturnType< $mol_check['checked'] >
 	>
-	type $mol_check__title_bog_doodle_app_128 = $mol_type_enforce<
+	type $mol_check__title_bog_doodle_app_134 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['layer_title'] >
 		,
 		ReturnType< $mol_check['title'] >
 	>
-	type $bog_doodle_slider__hint_bog_doodle_app_129 = $mol_type_enforce<
+	type $bog_doodle_slider__hint_bog_doodle_app_135 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $bog_doodle_slider['hint'] >
 	>
-	type $bog_doodle_slider__value_bog_doodle_app_130 = $mol_type_enforce<
+	type $bog_doodle_slider__value_bog_doodle_app_136 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['layer_opacity'] >
 		,
 		ReturnType< $bog_doodle_slider['value'] >
 	>
-	type $bog_doodle_slider__min_bog_doodle_app_131 = $mol_type_enforce<
+	type $bog_doodle_slider__min_bog_doodle_app_137 = $mol_type_enforce<
 		number
 		,
 		ReturnType< $bog_doodle_slider['min'] >
 	>
-	type $bog_doodle_slider__max_bog_doodle_app_132 = $mol_type_enforce<
+	type $bog_doodle_slider__max_bog_doodle_app_138 = $mol_type_enforce<
 		number
 		,
 		ReturnType< $bog_doodle_slider['max'] >
 	>
-	type $bog_doodle_slider__step_bog_doodle_app_133 = $mol_type_enforce<
+	type $bog_doodle_slider__step_bog_doodle_app_139 = $mol_type_enforce<
 		number
 		,
 		ReturnType< $bog_doodle_slider['step'] >
-	>
-	type $mol_button_minor__hint_bog_doodle_app_134 = $mol_type_enforce<
-		string
-		,
-		ReturnType< $mol_button_minor['hint'] >
-	>
-	type $mol_button_minor__click_bog_doodle_app_135 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['layer_up'] >
-		,
-		ReturnType< $mol_button_minor['click'] >
-	>
-	type $mol_button_minor__sub_bog_doodle_app_136 = $mol_type_enforce<
-		readonly(any)[]
-		,
-		ReturnType< $mol_button_minor['sub'] >
-	>
-	type $mol_button_minor__hint_bog_doodle_app_137 = $mol_type_enforce<
-		string
-		,
-		ReturnType< $mol_button_minor['hint'] >
-	>
-	type $mol_button_minor__click_bog_doodle_app_138 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['layer_down'] >
-		,
-		ReturnType< $mol_button_minor['click'] >
-	>
-	type $mol_button_minor__sub_bog_doodle_app_139 = $mol_type_enforce<
-		readonly(any)[]
-		,
-		ReturnType< $mol_button_minor['sub'] >
 	>
 	type $mol_button_minor__hint_bog_doodle_app_140 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_button_minor['hint'] >
 	>
-	type $mol_button_minor__enabled_bog_doodle_app_141 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['layer_drop_enabled'] >
-		,
-		ReturnType< $mol_button_minor['enabled'] >
-	>
-	type $mol_button_minor__click_bog_doodle_app_142 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['layer_drop'] >
+	type $mol_button_minor__click_bog_doodle_app_141 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['layer_up'] >
 		,
 		ReturnType< $mol_button_minor['click'] >
 	>
-	type $mol_button_minor__sub_bog_doodle_app_143 = $mol_type_enforce<
+	type $mol_button_minor__sub_bog_doodle_app_142 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_button_minor['sub'] >
 	>
-	type $mol_view__sub_bog_doodle_app_144 = $mol_type_enforce<
+	type $mol_button_minor__hint_bog_doodle_app_143 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_button_minor['hint'] >
+	>
+	type $mol_button_minor__click_bog_doodle_app_144 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['layer_down'] >
+		,
+		ReturnType< $mol_button_minor['click'] >
+	>
+	type $mol_button_minor__sub_bog_doodle_app_145 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_button_minor['sub'] >
+	>
+	type $mol_button_minor__hint_bog_doodle_app_146 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_button_minor['hint'] >
+	>
+	type $mol_button_minor__enabled_bog_doodle_app_147 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['layer_drop_enabled'] >
+		,
+		ReturnType< $mol_button_minor['enabled'] >
+	>
+	type $mol_button_minor__click_bog_doodle_app_148 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['layer_drop'] >
+		,
+		ReturnType< $mol_button_minor['click'] >
+	>
+	type $mol_button_minor__sub_bog_doodle_app_149 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_button_minor['sub'] >
+	>
+	type $mol_view__sub_bog_doodle_app_150 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_view['sub'] >
 	>
-	type $mol_list__rows_bog_doodle_app_145 = $mol_type_enforce<
+	type $mol_list__rows_bog_doodle_app_151 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['layer_rows'] >
 		,
 		ReturnType< $mol_list['rows'] >
 	>
-	type $mol_check__title_bog_doodle_app_146 = $mol_type_enforce<
+	type $mol_check__title_bog_doodle_app_152 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['vibe_name'] >
 		,
 		ReturnType< $mol_check['title'] >
 	>
-	type $mol_check__checked_bog_doodle_app_147 = $mol_type_enforce<
+	type $mol_check__checked_bog_doodle_app_153 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['vibe_checked'] >
 		,
 		ReturnType< $mol_check['checked'] >
 	>
-	type $mol_view__sub_bog_doodle_app_148 = $mol_type_enforce<
+	type $mol_view__sub_bog_doodle_app_154 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['vibe_list'] >
 		,
 		ReturnType< $mol_view['sub'] >
 	>
-	type $mol_labeler__title_bog_doodle_app_149 = $mol_type_enforce<
+	type $mol_labeler__title_bog_doodle_app_155 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_labeler['title'] >
 	>
-	type $mol_labeler__content_bog_doodle_app_150 = $mol_type_enforce<
+	type $mol_labeler__content_bog_doodle_app_156 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_labeler['content'] >
 	>
-	type $mol_select__value_bog_doodle_app_151 = $mol_type_enforce<
+	type $mol_select__value_bog_doodle_app_157 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['key_value'] >
 		,
 		ReturnType< $mol_select['value'] >
 	>
-	type $mol_select__dictionary_bog_doodle_app_152 = $mol_type_enforce<
+	type $mol_select__dictionary_bog_doodle_app_158 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['key_options'] >
 		,
 		ReturnType< $mol_select['dictionary'] >
 	>
-	type $mol_labeler__title_bog_doodle_app_153 = $mol_type_enforce<
+	type $mol_labeler__title_bog_doodle_app_159 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_labeler['title'] >
 	>
-	type $mol_labeler__content_bog_doodle_app_154 = $mol_type_enforce<
+	type $mol_labeler__content_bog_doodle_app_160 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_labeler['content'] >
 	>
-	type $mol_select__value_bog_doodle_app_155 = $mol_type_enforce<
+	type $mol_select__value_bog_doodle_app_161 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['scale_value'] >
 		,
 		ReturnType< $mol_select['value'] >
 	>
-	type $mol_select__dictionary_bog_doodle_app_156 = $mol_type_enforce<
+	type $mol_select__dictionary_bog_doodle_app_162 = $mol_type_enforce<
 		({ 
 			'major_penta': string,
 			'minor_penta': string,
@@ -7265,22 +7296,22 @@ declare namespace $ {
 		,
 		ReturnType< $mol_select['dictionary'] >
 	>
-	type $mol_labeler__title_bog_doodle_app_157 = $mol_type_enforce<
+	type $mol_labeler__title_bog_doodle_app_163 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_labeler['title'] >
 	>
-	type $mol_labeler__content_bog_doodle_app_158 = $mol_type_enforce<
+	type $mol_labeler__content_bog_doodle_app_164 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_labeler['content'] >
 	>
-	type $mol_switch__value_bog_doodle_app_159 = $mol_type_enforce<
+	type $mol_switch__value_bog_doodle_app_165 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['axis_value'] >
 		,
 		ReturnType< $mol_switch['value'] >
 	>
-	type $mol_switch__options_bog_doodle_app_160 = $mol_type_enforce<
+	type $mol_switch__options_bog_doodle_app_166 = $mol_type_enforce<
 		({ 
 			'time_y': string,
 			'time_x': string,
@@ -7288,22 +7319,22 @@ declare namespace $ {
 		,
 		ReturnType< $mol_switch['options'] >
 	>
-	type $mol_labeler__title_bog_doodle_app_161 = $mol_type_enforce<
+	type $mol_labeler__title_bog_doodle_app_167 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_labeler['title'] >
 	>
-	type $mol_labeler__content_bog_doodle_app_162 = $mol_type_enforce<
+	type $mol_labeler__content_bog_doodle_app_168 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_labeler['content'] >
 	>
-	type $mol_switch__value_bog_doodle_app_163 = $mol_type_enforce<
+	type $mol_switch__value_bog_doodle_app_169 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['range_value'] >
 		,
 		ReturnType< $mol_switch['value'] >
 	>
-	type $mol_switch__options_bog_doodle_app_164 = $mol_type_enforce<
+	type $mol_switch__options_bog_doodle_app_170 = $mol_type_enforce<
 		({ 
 			'1': string,
 			'2': string,
@@ -7312,92 +7343,92 @@ declare namespace $ {
 		,
 		ReturnType< $mol_switch['options'] >
 	>
-	type $mol_labeler__title_bog_doodle_app_165 = $mol_type_enforce<
+	type $mol_labeler__title_bog_doodle_app_171 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_labeler['title'] >
 	>
-	type $mol_labeler__content_bog_doodle_app_166 = $mol_type_enforce<
+	type $mol_labeler__content_bog_doodle_app_172 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_labeler['content'] >
 	>
-	type $mol_number__value_bog_doodle_app_167 = $mol_type_enforce<
+	type $mol_number__value_bog_doodle_app_173 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['octave_value'] >
 		,
 		ReturnType< $mol_number['value'] >
 	>
-	type $mol_number__value_min_bog_doodle_app_168 = $mol_type_enforce<
+	type $mol_number__value_min_bog_doodle_app_174 = $mol_type_enforce<
 		number
 		,
 		ReturnType< $mol_number['value_min'] >
 	>
-	type $mol_number__value_max_bog_doodle_app_169 = $mol_type_enforce<
+	type $mol_number__value_max_bog_doodle_app_175 = $mol_type_enforce<
 		number
 		,
 		ReturnType< $mol_number['value_max'] >
 	>
-	type $mol_labeler__title_bog_doodle_app_170 = $mol_type_enforce<
+	type $mol_labeler__title_bog_doodle_app_176 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_labeler['title'] >
 	>
-	type $mol_labeler__content_bog_doodle_app_171 = $mol_type_enforce<
+	type $mol_labeler__content_bog_doodle_app_177 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_labeler['content'] >
 	>
-	type $mol_number__value_bog_doodle_app_172 = $mol_type_enforce<
+	type $mol_number__value_bog_doodle_app_178 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['bpm_value'] >
 		,
 		ReturnType< $mol_number['value'] >
 	>
-	type $mol_number__value_min_bog_doodle_app_173 = $mol_type_enforce<
+	type $mol_number__value_min_bog_doodle_app_179 = $mol_type_enforce<
 		number
 		,
 		ReturnType< $mol_number['value_min'] >
 	>
-	type $mol_number__value_max_bog_doodle_app_174 = $mol_type_enforce<
+	type $mol_number__value_max_bog_doodle_app_180 = $mol_type_enforce<
 		number
 		,
 		ReturnType< $mol_number['value_max'] >
 	>
-	type $mol_button_minor__hint_bog_doodle_app_175 = $mol_type_enforce<
+	type $mol_button_minor__hint_bog_doodle_app_181 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_button_minor['hint'] >
 	>
-	type $mol_button_minor__title_bog_doodle_app_176 = $mol_type_enforce<
+	type $mol_button_minor__title_bog_doodle_app_182 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_button_minor['title'] >
 	>
-	type $mol_button_minor__click_bog_doodle_app_177 = $mol_type_enforce<
+	type $mol_button_minor__click_bog_doodle_app_183 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['tap'] >
 		,
 		ReturnType< $mol_button_minor['click'] >
 	>
-	type $mol_view__sub_bog_doodle_app_178 = $mol_type_enforce<
+	type $mol_view__sub_bog_doodle_app_184 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_view['sub'] >
 	>
-	type $mol_labeler__title_bog_doodle_app_179 = $mol_type_enforce<
+	type $mol_labeler__title_bog_doodle_app_185 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_labeler['title'] >
 	>
-	type $mol_labeler__content_bog_doodle_app_180 = $mol_type_enforce<
+	type $mol_labeler__content_bog_doodle_app_186 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_labeler['content'] >
 	>
-	type $mol_switch__value_bog_doodle_app_181 = $mol_type_enforce<
+	type $mol_switch__value_bog_doodle_app_187 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['bars_value'] >
 		,
 		ReturnType< $mol_switch['value'] >
 	>
-	type $mol_switch__options_bog_doodle_app_182 = $mol_type_enforce<
+	type $mol_switch__options_bog_doodle_app_188 = $mol_type_enforce<
 		({ 
 			'1': string,
 			'2': string,
@@ -7406,22 +7437,22 @@ declare namespace $ {
 		,
 		ReturnType< $mol_switch['options'] >
 	>
-	type $mol_labeler__title_bog_doodle_app_183 = $mol_type_enforce<
+	type $mol_labeler__title_bog_doodle_app_189 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_labeler['title'] >
 	>
-	type $mol_labeler__content_bog_doodle_app_184 = $mol_type_enforce<
+	type $mol_labeler__content_bog_doodle_app_190 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_labeler['content'] >
 	>
-	type $mol_switch__value_bog_doodle_app_185 = $mol_type_enforce<
+	type $mol_switch__value_bog_doodle_app_191 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['grid_value'] >
 		,
 		ReturnType< $mol_switch['value'] >
 	>
-	type $mol_switch__options_bog_doodle_app_186 = $mol_type_enforce<
+	type $mol_switch__options_bog_doodle_app_192 = $mol_type_enforce<
 		({ 
 			'4': string,
 			'8': string,
@@ -7434,22 +7465,22 @@ declare namespace $ {
 		,
 		ReturnType< $mol_switch['options'] >
 	>
-	type $mol_labeler__title_bog_doodle_app_187 = $mol_type_enforce<
+	type $mol_labeler__title_bog_doodle_app_193 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_labeler['title'] >
 	>
-	type $mol_labeler__content_bog_doodle_app_188 = $mol_type_enforce<
+	type $mol_labeler__content_bog_doodle_app_194 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_labeler['content'] >
 	>
-	type $mol_switch__value_bog_doodle_app_189 = $mol_type_enforce<
+	type $mol_switch__value_bog_doodle_app_195 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['swing_value'] >
 		,
 		ReturnType< $mol_switch['value'] >
 	>
-	type $mol_switch__options_bog_doodle_app_190 = $mol_type_enforce<
+	type $mol_switch__options_bog_doodle_app_196 = $mol_type_enforce<
 		({ 
 			'0': string,
 			'0.33': string,
@@ -7459,45 +7490,15 @@ declare namespace $ {
 		,
 		ReturnType< $mol_switch['options'] >
 	>
-	type $mol_labeler__title_bog_doodle_app_191 = $mol_type_enforce<
+	type $mol_labeler__title_bog_doodle_app_197 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_labeler['title'] >
 	>
-	type $mol_labeler__content_bog_doodle_app_192 = $mol_type_enforce<
+	type $mol_labeler__content_bog_doodle_app_198 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_labeler['content'] >
-	>
-	type $mol_check_box__title_bog_doodle_app_193 = $mol_type_enforce<
-		string
-		,
-		ReturnType< $mol_check_box['title'] >
-	>
-	type $mol_check_box__checked_bog_doodle_app_194 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['draw_sound'] >
-		,
-		ReturnType< $mol_check_box['checked'] >
-	>
-	type $mol_check_box__title_bog_doodle_app_195 = $mol_type_enforce<
-		string
-		,
-		ReturnType< $mol_check_box['title'] >
-	>
-	type $mol_check_box__checked_bog_doodle_app_196 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['click'] >
-		,
-		ReturnType< $mol_check_box['checked'] >
-	>
-	type $mol_check_box__title_bog_doodle_app_197 = $mol_type_enforce<
-		string
-		,
-		ReturnType< $mol_check_box['title'] >
-	>
-	type $mol_check_box__checked_bog_doodle_app_198 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['snap'] >
-		,
-		ReturnType< $mol_check_box['checked'] >
 	>
 	type $mol_check_box__title_bog_doodle_app_199 = $mol_type_enforce<
 		string
@@ -7505,7 +7506,7 @@ declare namespace $ {
 		ReturnType< $mol_check_box['title'] >
 	>
 	type $mol_check_box__checked_bog_doodle_app_200 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['pen_only'] >
+		ReturnType< $bog_doodle_app['draw_sound'] >
 		,
 		ReturnType< $mol_check_box['checked'] >
 	>
@@ -7515,7 +7516,7 @@ declare namespace $ {
 		ReturnType< $mol_check_box['title'] >
 	>
 	type $mol_check_box__checked_bog_doodle_app_202 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['chain'] >
+		ReturnType< $bog_doodle_app['click'] >
 		,
 		ReturnType< $mol_check_box['checked'] >
 	>
@@ -7525,241 +7526,271 @@ declare namespace $ {
 		ReturnType< $mol_check_box['title'] >
 	>
 	type $mol_check_box__checked_bog_doodle_app_204 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['snap'] >
+		,
+		ReturnType< $mol_check_box['checked'] >
+	>
+	type $mol_check_box__title_bog_doodle_app_205 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_check_box['title'] >
+	>
+	type $mol_check_box__checked_bog_doodle_app_206 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['pen_only'] >
+		,
+		ReturnType< $mol_check_box['checked'] >
+	>
+	type $mol_check_box__title_bog_doodle_app_207 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_check_box['title'] >
+	>
+	type $mol_check_box__checked_bog_doodle_app_208 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['chain'] >
+		,
+		ReturnType< $mol_check_box['checked'] >
+	>
+	type $mol_check_box__title_bog_doodle_app_209 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_check_box['title'] >
+	>
+	type $mol_check_box__checked_bog_doodle_app_210 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['midi_in'] >
 		,
 		ReturnType< $mol_check_box['checked'] >
 	>
-	type $mol_view__sub_bog_doodle_app_205 = $mol_type_enforce<
+	type $mol_view__sub_bog_doodle_app_211 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_view['sub'] >
 	>
-	type $mol_button_minor__title_bog_doodle_app_206 = $mol_type_enforce<
+	type $mol_button_minor__title_bog_doodle_app_212 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_button_minor['title'] >
 	>
-	type $mol_button_minor__click_bog_doodle_app_207 = $mol_type_enforce<
+	type $mol_button_minor__click_bog_doodle_app_213 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['pattern_copy'] >
 		,
 		ReturnType< $mol_button_minor['click'] >
 	>
-	type $mol_button_minor__title_bog_doodle_app_208 = $mol_type_enforce<
+	type $mol_button_minor__title_bog_doodle_app_214 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_button_minor['title'] >
 	>
-	type $mol_button_minor__click_bog_doodle_app_209 = $mol_type_enforce<
+	type $mol_button_minor__click_bog_doodle_app_215 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['pattern_clear'] >
 		,
 		ReturnType< $mol_button_minor['click'] >
 	>
-	type $mol_button_minor__title_bog_doodle_app_210 = $mol_type_enforce<
+	type $mol_button_minor__title_bog_doodle_app_216 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_button_minor['title'] >
 	>
-	type $mol_button_minor__enabled_bog_doodle_app_211 = $mol_type_enforce<
+	type $mol_button_minor__enabled_bog_doodle_app_217 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['pattern_drop_enabled'] >
 		,
 		ReturnType< $mol_button_minor['enabled'] >
 	>
-	type $mol_button_minor__click_bog_doodle_app_212 = $mol_type_enforce<
+	type $mol_button_minor__click_bog_doodle_app_218 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['pattern_drop'] >
 		,
 		ReturnType< $mol_button_minor['click'] >
 	>
-	type $mol_view__sub_bog_doodle_app_213 = $mol_type_enforce<
+	type $mol_view__sub_bog_doodle_app_219 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_view['sub'] >
 	>
-	type $mol_labeler__title_bog_doodle_app_214 = $mol_type_enforce<
+	type $mol_labeler__title_bog_doodle_app_220 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_labeler['title'] >
 	>
-	type $mol_labeler__content_bog_doodle_app_215 = $mol_type_enforce<
+	type $mol_labeler__content_bog_doodle_app_221 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_labeler['content'] >
 	>
-	type $mol_button_open__title_bog_doodle_app_216 = $mol_type_enforce<
+	type $mol_button_open__title_bog_doodle_app_222 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_button_open['title'] >
 	>
-	type $mol_button_open__accept_bog_doodle_app_217 = $mol_type_enforce<
+	type $mol_button_open__accept_bog_doodle_app_223 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_button_open['accept'] >
 	>
-	type $mol_button_open__multiple_bog_doodle_app_218 = $mol_type_enforce<
+	type $mol_button_open__multiple_bog_doodle_app_224 = $mol_type_enforce<
 		boolean
 		,
 		ReturnType< $mol_button_open['multiple'] >
 	>
-	type $mol_button_open__files_bog_doodle_app_219 = $mol_type_enforce<
+	type $mol_button_open__files_bog_doodle_app_225 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['back_files'] >
 		,
 		ReturnType< $mol_button_open['files'] >
 	>
-	type $mol_button_minor__title_bog_doodle_app_220 = $mol_type_enforce<
+	type $mol_button_minor__title_bog_doodle_app_226 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_button_minor['title'] >
 	>
-	type $mol_button_minor__enabled_bog_doodle_app_221 = $mol_type_enforce<
+	type $mol_button_minor__enabled_bog_doodle_app_227 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['back_enabled'] >
 		,
 		ReturnType< $mol_button_minor['enabled'] >
 	>
-	type $mol_button_minor__click_bog_doodle_app_222 = $mol_type_enforce<
+	type $mol_button_minor__click_bog_doodle_app_228 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['back_drop'] >
 		,
 		ReturnType< $mol_button_minor['click'] >
 	>
-	type $mol_view__sub_bog_doodle_app_223 = $mol_type_enforce<
+	type $mol_view__sub_bog_doodle_app_229 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_view['sub'] >
 	>
-	type $mol_labeler__title_bog_doodle_app_224 = $mol_type_enforce<
+	type $mol_labeler__title_bog_doodle_app_230 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_labeler['title'] >
 	>
-	type $mol_labeler__content_bog_doodle_app_225 = $mol_type_enforce<
+	type $mol_labeler__content_bog_doodle_app_231 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_labeler['content'] >
 	>
-	type $mol_button_copy__title_bog_doodle_app_226 = $mol_type_enforce<
+	type $mol_button_copy__title_bog_doodle_app_232 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_button_copy['title'] >
 	>
-	type $mol_button_copy__hint_bog_doodle_app_227 = $mol_type_enforce<
+	type $mol_button_copy__hint_bog_doodle_app_233 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_button_copy['hint'] >
 	>
-	type $mol_button_copy__text_bog_doodle_app_228 = $mol_type_enforce<
+	type $mol_button_copy__text_bog_doodle_app_234 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['share_link'] >
 		,
 		ReturnType< $mol_button_copy['text'] >
 	>
-	type $mol_button_minor__title_bog_doodle_app_229 = $mol_type_enforce<
+	type $mol_button_minor__title_bog_doodle_app_235 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_button_minor['title'] >
 	>
-	type $mol_button_minor__click_bog_doodle_app_230 = $mol_type_enforce<
+	type $mol_button_minor__click_bog_doodle_app_236 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['export_png'] >
 		,
 		ReturnType< $mol_button_minor['click'] >
 	>
-	type $mol_button_minor__title_bog_doodle_app_231 = $mol_type_enforce<
+	type $mol_button_minor__title_bog_doodle_app_237 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_button_minor['title'] >
 	>
-	type $mol_button_minor__click_bog_doodle_app_232 = $mol_type_enforce<
+	type $mol_button_minor__click_bog_doodle_app_238 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['export_wav'] >
 		,
 		ReturnType< $mol_button_minor['click'] >
 	>
-	type $mol_button_minor__title_bog_doodle_app_233 = $mol_type_enforce<
+	type $mol_button_minor__title_bog_doodle_app_239 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_button_minor['title'] >
 	>
-	type $mol_button_minor__click_bog_doodle_app_234 = $mol_type_enforce<
+	type $mol_button_minor__click_bog_doodle_app_240 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['export_midi'] >
 		,
 		ReturnType< $mol_button_minor['click'] >
-	>
-	type $mol_view__sub_bog_doodle_app_235 = $mol_type_enforce<
-		readonly(any)[]
-		,
-		ReturnType< $mol_view['sub'] >
-	>
-	type $mol_labeler__title_bog_doodle_app_236 = $mol_type_enforce<
-		string
-		,
-		ReturnType< $mol_labeler['title'] >
-	>
-	type $mol_labeler__content_bog_doodle_app_237 = $mol_type_enforce<
-		readonly(any)[]
-		,
-		ReturnType< $mol_labeler['content'] >
-	>
-	type $mol_text__text_bog_doodle_app_238 = $mol_type_enforce<
-		string
-		,
-		ReturnType< $mol_text['text'] >
-	>
-	type $mol_button_major__title_bog_doodle_app_239 = $mol_type_enforce<
-		string
-		,
-		ReturnType< $mol_button_major['title'] >
-	>
-	type $mol_button_major__click_bog_doodle_app_240 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['piece_new'] >
-		,
-		ReturnType< $mol_button_major['click'] >
 	>
 	type $mol_view__sub_bog_doodle_app_241 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_view['sub'] >
 	>
-	type $mol_view__sub_bog_doodle_app_242 = $mol_type_enforce<
+	type $mol_labeler__title_bog_doodle_app_242 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_labeler['title'] >
+	>
+	type $mol_labeler__content_bog_doodle_app_243 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_labeler['content'] >
+	>
+	type $mol_text__text_bog_doodle_app_244 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_text['text'] >
+	>
+	type $mol_button_major__title_bog_doodle_app_245 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_button_major['title'] >
+	>
+	type $mol_button_major__click_bog_doodle_app_246 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['piece_new'] >
+		,
+		ReturnType< $mol_button_major['click'] >
+	>
+	type $mol_view__sub_bog_doodle_app_247 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_view['sub'] >
-	>
-	type $mol_button_minor__click_bog_doodle_app_243 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['piece_open'] >
-		,
-		ReturnType< $mol_button_minor['click'] >
-	>
-	type $mol_button_minor__sub_bog_doodle_app_244 = $mol_type_enforce<
-		readonly(any)[]
-		,
-		ReturnType< $mol_button_minor['sub'] >
-	>
-	type $mol_button_minor__hint_bog_doodle_app_245 = $mol_type_enforce<
-		string
-		,
-		ReturnType< $mol_button_minor['hint'] >
-	>
-	type $mol_button_minor__click_bog_doodle_app_246 = $mol_type_enforce<
-		ReturnType< $bog_doodle_app['piece_drop'] >
-		,
-		ReturnType< $mol_button_minor['click'] >
-	>
-	type $mol_button_minor__sub_bog_doodle_app_247 = $mol_type_enforce<
-		readonly(any)[]
-		,
-		ReturnType< $mol_button_minor['sub'] >
 	>
 	type $mol_view__sub_bog_doodle_app_248 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_view['sub'] >
 	>
-	type $mol_list__rows_bog_doodle_app_249 = $mol_type_enforce<
+	type $mol_button_minor__click_bog_doodle_app_249 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['piece_open'] >
+		,
+		ReturnType< $mol_button_minor['click'] >
+	>
+	type $mol_button_minor__sub_bog_doodle_app_250 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_button_minor['sub'] >
+	>
+	type $mol_button_minor__hint_bog_doodle_app_251 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_button_minor['hint'] >
+	>
+	type $mol_button_minor__click_bog_doodle_app_252 = $mol_type_enforce<
+		ReturnType< $bog_doodle_app['piece_drop'] >
+		,
+		ReturnType< $mol_button_minor['click'] >
+	>
+	type $mol_button_minor__sub_bog_doodle_app_253 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_button_minor['sub'] >
+	>
+	type $mol_view__sub_bog_doodle_app_254 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_view['sub'] >
+	>
+	type $mol_list__rows_bog_doodle_app_255 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_list['rows'] >
 	>
-	type $mol_list__rows_bog_doodle_app_250 = $mol_type_enforce<
+	type $mol_list__rows_bog_doodle_app_256 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_list['rows'] >
 	>
-	type $mol_list__rows_bog_doodle_app_251 = $mol_type_enforce<
+	type $mol_list__rows_bog_doodle_app_257 = $mol_type_enforce<
 		ReturnType< $bog_doodle_app['gallery_rows'] >
 		,
 		ReturnType< $mol_list['rows'] >
@@ -7776,6 +7807,11 @@ declare namespace $ {
 		Stop_icon( ): $mol_icon_stop
 		play_icon( ): readonly(any)[]
 		Play( ): $mol_button_major
+		bpm_value( next?: number ): number
+		Tempo_slider( ): $bog_doodle_slider
+		bpm_label( ): string
+		Tempo_value( ): $mol_view
+		Tempo_quick( ): $mol_view
 		undo_enabled( ): boolean
 		undo( next?: any ): any
 		Undo_icon( ): $mol_icon_undo
@@ -7936,7 +7972,6 @@ declare namespace $ {
 		octave_value( next?: number ): number
 		Octave_input( ): $mol_number
 		Octave_field( ): $mol_labeler
-		bpm_value( next?: number ): number
 		Tempo_input( ): $mol_number
 		tap( next?: any ): any
 		Tap( ): $mol_button_minor
@@ -8169,6 +8204,7 @@ declare namespace $.$$ {
         range_value(next?: string): string;
         octave_value(next?: number): number;
         bpm_value(next?: number): number;
+        bpm_label(): string;
         bars_value(next?: string): string;
         grid_value(next?: string): "4" | "8" | "8t" | "16" | "16t" | "32" | "free";
         swing_value(next?: string): string;

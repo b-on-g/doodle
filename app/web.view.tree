@@ -116,6 +116,25 @@ $mol_button_minor $mol_button_typed
 $mol_button_major $mol_button_minor
 	theme \$mol_theme_base
 
+$bog_doodle_slider $mol_view
+	dom_name \input
+	value? 0
+	min 0
+	max 100
+	step 1
+	attr *
+		^
+		type \range
+		min <= min
+		max <= max
+		step <= step
+		title <= hint \
+	field *
+		^
+		value <= value_text \0
+	event *
+		input? <=> changed? null
+
 $mol_icon_undo $mol_icon path \M12.5,8C9.85,8 7.45,9 5.6,10.6L2,7V16H11L7.38,12.38C8.77,11.22 10.54,10.5 12.5,10.5C16.04,10.5 19.05,12.81 20.1,16L22.47,15.22C21.08,11.03 17.15,8 12.5,8Z
 
 $mol_icon_redo $mol_icon path \M18.4,10.6C16.55,9 14.15,8 11.5,8C6.85,8 2.92,11.03 1.54,15.22L3.9,16C4.95,12.81 7.95,10.5 11.5,10.5C13.45,10.5 15.23,11.22 16.62,12.38L13,16H22V7L18.4,10.6Z
@@ -150,25 +169,6 @@ $mol_icon_eraser $mol_icon path \M16.24,3.56L21.19,8.5C21.97,9.29 21.97,10.55 21
 $mol_icon_cursor_default $mol_icon path \M13.64,21.97C13.14,22.21 12.54,22 12.31,21.5L10.13,16.76L7.62,18.78C7.45,18.92 7.24,19 7,19A1,1 0 0,1 6,18V3A1,1 0 0,1 7,2C7.24,2 7.47,2.09 7.64,2.23L7.65,2.22L19.14,11.86C19.57,12.22 19.62,12.85 19.27,13.27C19.12,13.45 18.91,13.57 18.7,13.61L15.54,14.23L17.74,18.96C18,19.46 17.76,20.05 17.26,20.28L13.64,21.97Z
 
 $mol_icon_pan $mol_icon path \M12,2.5L8,7H16L12,2.5M7,8L2.5,12L7,16V8M17,8V16L21.5,12L17,8M12,10A2,2 0 0,0 10,12A2,2 0 0,0 12,14A2,2 0 0,0 14,12A2,2 0 0,0 12,10M8,17L12,21.5L16,17H8Z
-
-$bog_doodle_slider $mol_view
-	dom_name \input
-	value? 0
-	min 0
-	max 100
-	step 1
-	attr *
-		^
-		type \range
-		min <= min
-		max <= max
-		step <= step
-		title <= hint \
-	field *
-		^
-		value <= value_text \0
-	event *
-		input? <=> changed? null
 
 $mol_icon_palette $mol_icon path \M17.5,12A1.5,1.5 0 0,1 16,10.5A1.5,1.5 0 0,1 17.5,9A1.5,1.5 0 0,1 19,10.5A1.5,1.5 0 0,1 17.5,12M14.5,8A1.5,1.5 0 0,1 13,6.5A1.5,1.5 0 0,1 14.5,5A1.5,1.5 0 0,1 16,6.5A1.5,1.5 0 0,1 14.5,8M9.5,8A1.5,1.5 0 0,1 8,6.5A1.5,1.5 0 0,1 9.5,5A1.5,1.5 0 0,1 11,6.5A1.5,1.5 0 0,1 9.5,8M6.5,12A1.5,1.5 0 0,1 5,10.5A1.5,1.5 0 0,1 6.5,9A1.5,1.5 0 0,1 8,10.5A1.5,1.5 0 0,1 6.5,12M12,3A9,9 0 0,0 3,12A9,9 0 0,0 12,21A1.5,1.5 0 0,0 13.5,19.5C13.5,19.11 13.35,18.76 13.11,18.5C12.88,18.23 12.73,17.88 12.73,17.5A1.5,1.5 0 0,1 14.23,16H16A5,5 0 0,0 21,11C21,6.58 16.97,3 12,3Z
 
@@ -1047,6 +1047,16 @@ $bog_doodle_app $mol_view
 					sub <= play_icon /
 						<= Play_icon $mol_icon_play
 						<= Stop_icon $mol_icon_stop
+				<= Tempo_quick $mol_view
+					sub /
+						<= Tempo_slider $bog_doodle_slider
+							hint @ \Tempo: playback speed
+							value? <=> bpm_value? 100
+							min 40
+							max 220
+						<= Tempo_value $mol_view
+							sub /
+								<= bpm_label \
 				<= Undo $mol_button_minor
 					hint @ \Undo (Ctrl+Z)
 					enabled <= undo_enabled false

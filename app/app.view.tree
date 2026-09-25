@@ -1,11 +1,300 @@
-$bog_doodle_app $mol_page
+$bog_doodle_app $mol_view
 	title @ \Doodle
-	tools /
-		<= Sources $mol_link_source
-			uri \https://github.com/b-on-g/doodle
-	body /
-		<= Intro $mol_text
-			text @ \
-				\Рисуй линии, слушай музыку. Каждая линия звучит в выбранной тональности, всё бесплатно и работает без сети.
-				\
-				\Скоро здесь будет холст.
+	untitled @ \Без названия
+	Store $bog_doodle_gallery
+	plugins /
+		<= Theme $mol_theme_auto
+	auto /
+		<= hotkeys null
+		<= midi_listen null
+	sub /
+		<= Bar $mol_view
+			sub /
+				<= Brand $mol_view
+					sub /
+						<= title
+				<= Play $mol_button_major
+					hint @ \Играть или стоп (пробел)
+					click? <=> play_toggle? null
+					sub <= play_icon /
+						<= Play_icon $mol_icon_play
+						<= Stop_icon $mol_icon_stop
+				<= Undo $mol_button_minor
+					hint @ \Отменить (Ctrl+Z)
+					enabled <= undo_enabled false
+					click? <=> undo? null
+					sub /
+						<= Undo_icon $mol_icon_undo
+				<= Redo $mol_button_minor
+					hint @ \Вернуть (Ctrl+Y)
+					enabled <= redo_enabled false
+					click? <=> redo? null
+					sub /
+						<= Redo_icon $mol_icon_redo
+				<= Gallery_open $mol_check_icon
+					hint @ \Мои рисунки
+					checked? <=> gallery_opened? false
+					Icon <= Gallery_open_icon $mol_icon_folder_music
+				<= Settings_open $mol_check_icon
+					hint @ \Настройки, экспорт и ссылка
+					checked? <=> settings_opened? false
+					Icon <= Settings_open_icon $mol_icon_tune
+				<= Tools $mol_view
+					sub /
+						<= Tool_draw $mol_check_icon
+							hint @ \Карандаш (B)
+							checked? <=> tool_draw? false
+							Icon <= Tool_draw_icon $mol_icon_pencil
+						<= Tool_erase $mol_check_icon
+							hint @ \Ластик (E), правая кнопка или кнопка пера
+							checked? <=> tool_erase? false
+							Icon <= Tool_erase_icon $mol_icon_eraser
+						<= Tool_select $mol_check_icon
+							hint @ \Выделение (V): рамкой или касанием, потом тащить
+							checked? <=> tool_select? false
+							Icon <= Tool_select_icon $mol_icon_cursor_default
+						<= Tool_pan $mol_check_icon
+							hint @ \Рука (H): двигать холст, колесо с Ctrl или щипок меняют масштаб
+							checked? <=> tool_pan? false
+							Icon <= Tool_pan_icon $mol_icon_pan
+						<= Zoom_reset $mol_button_minor
+							hint @ \Показать весь луп (0)
+							click? <=> zoom_reset? null
+							sub /
+								<= Zoom_reset_icon $mol_icon_magnify_minus
+				<= Palette $mol_view
+					sub <= palette /
+						<= Color* $mol_check
+							hint <= color_name* \
+							checked? <=> color_checked*? false
+							style *
+								^
+								--bog_doodle_app_ink <= color_ink* \
+							sub /
+								<= Color_dot* $mol_view
+				<= Selection $mol_view
+					sub <= selection_tools /
+						<= Copy $mol_button_minor
+							hint @ \Дублировать выделенное (D)
+							click? <=> selection_copy? null
+							sub /
+								<= Copy_icon $mol_icon_content_duplicate
+						<= Drop $mol_button_minor
+							hint @ \Удалить выделенное (Delete)
+							click? <=> selection_drop? null
+							sub /
+								<= Drop_icon $mol_icon_delete
+				<= Patterns $mol_view
+					sub <= pattern_tabs /
+						<= Pattern* $mol_check
+							hint @ \Паттерн
+							checked? <=> pattern_checked*? false
+							title <= pattern_title* \
+						<= Pattern_add $mol_button_minor
+							hint @ \Новый паттерн
+							click? <=> pattern_add? null
+							sub /
+								<= Pattern_add_icon $mol_icon_plus
+		<= Main $mol_view
+			sub <= main /
+				<= Board $bog_doodle_board
+					sketch <= sketch $bog_doodle_sketch
+					notes <= notes /number
+					steps <= steps 16
+					beat_steps <= beat_steps 2
+					bar_steps <= bar_steps 8
+					tool? <=> tool? \draw
+					color <= color 0
+					snap <= snap false
+					pen_only <= pen_only false
+					back <= back \
+					selected? <=> selected? /string
+					playhead <= playhead null
+					playing <= playing false
+					note_hover? <=> note_preview? null
+				<= Panel $mol_scroll
+					sub /
+						<= Panel_content $mol_list
+							rows <= panel_rows /
+	Settings $mol_list
+		rows /
+			<= Title_field $mol_labeler
+				title @ \Название
+				content /
+					<= Title_input $mol_string
+						hint @ \Без названия
+						value? <=> piece_title? \
+			<= Key_field $mol_labeler
+				title @ \Тональность
+				content /
+					<= Key_input $mol_select
+						value? <=> key_value? \0
+						dictionary <= key_options *
+			<= Scale_field $mol_labeler
+				title @ \Лад
+				content /
+					<= Scale_input $mol_select
+						value? <=> scale_value? \major_penta
+						dictionary *
+							major_penta @ \Мажорная пентатоника
+							minor_penta @ \Минорная пентатоника
+							major @ \Мажор
+							minor @ \Минор
+							harmonic @ \Гармонический минор
+							dorian @ \Дорийский
+							phrygian @ \Фригийский
+							lydian @ \Лидийский
+							mixolydian @ \Миксолидийский
+							blues @ \Блюз
+							chromatic @ \Хроматика
+			<= Range_field $mol_labeler
+				title @ \Диапазон, октав
+				content /
+					<= Range_input $mol_switch
+						value? <=> range_value? \2
+						options *
+							1 \1
+							2 \2
+							3 \3
+			<= Octave_field $mol_labeler
+				title @ \Нижняя октава
+				content /
+					<= Octave_input $mol_number
+						value? <=> octave_value? 3
+						value_min 1
+						value_max 6
+			<= Tempo_field $mol_labeler
+				title @ \Темп, ударов в минуту
+				content /
+					<= Tempo_row $mol_view
+						sub /
+							<= Tempo_input $mol_number
+								value? <=> bpm_value? 100
+								value_min 30
+								value_max 300
+							<= Tap $mol_button_minor
+								hint @ \Настучать темп
+								title @ \Тап
+								click? <=> tap? null
+			<= Bars_field $mol_labeler
+				title @ \Тактов в паттерне
+				content /
+					<= Bars_input $mol_switch
+						value? <=> bars_value? \2
+						options *
+							1 \1
+							2 \2
+							4 \4
+			<= Grid_field $mol_labeler
+				title @ \Квантайз
+				content /
+					<= Grid_input $mol_switch
+						value? <=> grid_value? \8
+						options *
+							4 \1/4
+							8 \1/8
+							8t \1/8т
+							16 \1/16
+							16t \1/16т
+							32 \1/32
+							free @ \свободно
+			<= Swing_field $mol_labeler
+				title @ \Свинг
+				content /
+					<= Swing_input $mol_switch
+						value? <=> swing_value? \0
+						options *
+							0 @ \нет
+							0.33 @ \лёгкий
+							0.66 @ \средний
+							1 @ \жёсткий
+			<= Flags $mol_view
+				sub /
+					<= Click_input $mol_check_box
+						title @ \Метроном
+						checked? <=> click? false
+					<= Snap_input $mol_check_box
+						title @ \Липнуть к нотам
+						checked? <=> snap? false
+					<= Pen_input $mol_check_box
+						title @ \Только перо: пальцы двигают холст
+						checked? <=> pen_only? false
+					<= Chain_input $mol_check_box
+						title @ \Играть все паттерны подряд
+						checked? <=> chain? false
+					<= Midi_input $mol_check_box
+						title @ \MIDI-клавиатура
+						checked? <=> midi_in? false
+			<= Pattern_field $mol_labeler
+				title @ \Паттерн
+				content /
+					<= Pattern_tools $mol_view
+						sub /
+							<= Pattern_copy $mol_button_minor
+								title @ \Дублировать
+								click? <=> pattern_copy? null
+							<= Pattern_clear $mol_button_minor
+								title @ \Очистить
+								click? <=> pattern_clear? null
+							<= Pattern_drop $mol_button_minor
+								title @ \Удалить
+								enabled <= pattern_drop_enabled false
+								click? <=> pattern_drop? null
+			<= Back_field $mol_labeler
+				title @ \Фон
+				content /
+					<= Back_tools $mol_view
+						sub /
+							<= Back_open $mol_button_open
+								title @ \Фото
+								accept \image/*
+								multiple false
+								files? <=> back_files? /File
+							<= Back_drop $mol_button_minor
+								title @ \Убрать
+								enabled <= back_enabled false
+								click? <=> back_drop? null
+			<= Export_field $mol_labeler
+				title @ \Экспорт
+				content /
+					<= Export_tools $mol_view
+						sub /
+							<= Share $mol_button_copy
+								title @ \Ссылка
+								hint @ \Скопировать ссылку на рисунок
+								text <= share_link \
+							<= Png $mol_button_minor
+								title \PNG
+								click? <=> export_png? null
+							<= Wav $mol_button_minor
+								title \WAV
+								click? <=> export_wav? null
+							<= Midi $mol_button_minor
+								title \MIDI
+								click? <=> export_midi? null
+			<= About $mol_text
+				text @ \
+					\Рисуй, и линии зазвучат. По горизонтали время, по вертикали нота из выбранного лада. Цвет линии это инструмент, сила нажатия пера это громкость.
+					\
+					\Всё бесплатно, работает без сети, рисунки хранятся только на этом устройстве. [Исходники](https://github.com/b-on-g/doodle).
+	Gallery $mol_list
+		rows <= gallery_rows /
+			<= Gallery_new $mol_button_major
+				title @ \Новый рисунок
+				click? <=> piece_new? null
+			<= Piece* $mol_view
+				sub /
+					<= Piece_open* $mol_button_minor
+						click? <=> piece_open*? null
+						sub /
+							<= Piece_title* $mol_view
+								sub /
+									<= piece_name* \
+							<= Piece_info* $mol_view
+								sub /
+									<= piece_info* \
+					<= Piece_drop* $mol_button_minor
+						hint @ \Удалить рисунок
+						click? <=> piece_drop*? null
+						sub /
+							<= Piece_drop_icon* $mol_icon_delete

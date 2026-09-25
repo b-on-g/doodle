@@ -1,0 +1,27 @@
+$bog_doodle_board $mol_view
+	dom_name \canvas
+	sketch $bog_doodle_sketch
+	notes /number
+	steps 16
+	beat_steps 2
+	bar_steps 8
+	tool? \draw
+	color 0
+	snap false
+	pen_only false
+	back \
+	selected? /string
+	playhead null
+	playing false
+	note_hover? null
+	attr *
+		^
+		bog_doodle_board_tool <= tool?
+	event *
+		pointerdown? <=> pointer_down? null
+		pointermove? <=> pointer_move? null
+		pointerup? <=> pointer_up? null
+		pointercancel? <=> pointer_cancel? null
+		pointerleave? <=> pointer_leave? null
+		wheel? <=> wheel? null
+		contextmenu? <=> context_menu? null

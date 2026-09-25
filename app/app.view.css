@@ -1,0 +1,11 @@
+@media ( max-width: 720px ) {
+	[bog_doodle_app_panel] {
+		position: absolute;
+		top: 0;
+		right: var(--mol_gap_space);
+		bottom: var(--mol_gap_space);
+		left: var(--mol_gap_space);
+		z-index: 2;
+		box-shadow: 0 4px 24px 0 #0004;
+	}
+}
